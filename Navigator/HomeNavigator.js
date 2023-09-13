@@ -8,7 +8,7 @@ import RateCard from '../Screens/Checkout/RateCard';
 import ConfirmOrder from '../Screens/Checkout/ConfirmOrder';
 import Login from '../Screens/User/Login';
 
-const Stack = createStackNavigator();
+//const Stack = createStackNavigator();
 
 const HomeNavigator = () => {
 
