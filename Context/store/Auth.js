@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, userEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
-import AsyncStorageProvider from "./AsyncStorageProvider"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import authReducer from "../reducers/Auth.reducer";
 import { setCurrentUser } from "../actions/Auth.actions";
@@ -13,16 +13,19 @@ const Auth = props => {
     });
     const [showChild, setShowChild] = useState(false);
 
-    useEffect(async () => {
+    useEffect(() => {
         setShowChild(true);
-        let jwt = await AsyncStorageProvider.getData('jwt')
-        if (jwt) {
-            const decoded = jwt ? jwt : "";
-            if (setShowChild) {
-                dispatch(setCurrentUserUser(jwt_decode(decoded)))
+        AsyncStorage.getItem('jwt').then(async(jwt) => {
+            if (jwt) {
+                const decoded = jwt ? jwt : "";
+                if (setShowChild) {
+                    let user = await AsyncStorage.getItem("userProfile");
+                    console.log("user in Auth-" + user);
+                    dispatch(setCurrentUser(jwt_decode(decoded), JSON.parse(user)));
+                }
             }
-        }
-        return () => setShowChild(false);
+            return () => setShowChild(false);
+        });
     }, [])
 
 

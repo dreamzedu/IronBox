@@ -1,78 +1,40 @@
-// Example of Splash, Login and Sign Up in React Native
-// https://aboutreact.com/react-native-login-and-signup/
-import 'react-native-gesture-handler';
 
-// Import React and Component
-import React from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
+import { NativeBaseProvider, Box } from "native-base";
+import ProductContainer from './Screens/Products/ProductContainer';
+import { NavigationContainer } from "@react-navigation/native";
+import HomeNavigator from './Navigator/HomeNavigator';
 
-// Import Navigators from React Navigation
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+// Redux
+import { Provider } from "react-redux";
+import store from "./Redux/store";
 
-// Import Screens
-import SplashScreen from './Screens/SplashScreen';
-import LoginScreen from './Screens/LoginScreen';
-import RegisterScreen from './Screens/RegisterScreen';
-import DrawerNavigationRoutes from './Screens/DrawerNavigationRoutes';
+// Context API
+import Auth from "./Context/store/Auth";
+import Main from './Navigator/Main';
 
-const Stack = createStackNavigator();
+export default function App() {
+    return (
+        <Auth>
+            <Provider store={store}>
+                <NativeBaseProvider>
+                    <NavigationContainer>
 
-const Auth = () => {
-  // Stack Navigator for Login and Sign up Screen
-  return (
-    <Stack.Navigator initialRouteName="LoginScreen">
-      <Stack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="RegisterScreen"
-        component={RegisterScreen}
-        options={{
-          title: 'Register', //Set Header Title
-          headerStyle: {
-            backgroundColor: '#307ecc', //Set Header color
-          },
-          headerTintColor: '#fff', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
-    </Stack.Navigator>
+                        <Main />
+               
+                    </ NavigationContainer>
+                </NativeBaseProvider>
+            </Provider>
+        </Auth>
   );
-};
+}
 
-/* Switch Navigator for those screens which needs to be switched only once
-  and we don't want to switch back once we switch from them to the next one */
-const App = () => {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="SplashScreen">
-        {/* SplashScreen which will come once for 5 Seconds */}
-        <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
-          // Hiding header for Splash Screen
-          options={{headerShown: false}}
-        />
-        {/* Auth Navigator which includer Login Signup will come once */}
-        <Stack.Screen
-          name="Auth"
-          component={Auth}
-          options={{headerShown: false}}
-        />
-        {/* Navigation Drawer as a landing page */}
-        <Stack.Screen
-          name="DrawerNavigationRoutes"
-          component={DrawerNavigationRoutes}
-          // Hiding header for Navigation Drawer as we will use our custom header
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-};
-
-export default App;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

@@ -11,23 +11,32 @@ import { loginUser } from "../../Context/actions/Auth.actions";
 
 const Login = (props) => {
   const context = useContext(AuthGlobal);
-  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [error, setError] = useState("");
+    const [error, setError] = useState("");
+    const [msg, setMessage] = useState("");
 
   useEffect(() => {
-    if (context.stateUser.isAuthenticated === true) {
-      props.navigation.navigate("Home");
+      if (context.stateUser.isAuthenticated === true) {
+          //if (props.route.params != null && props.route.params.source === 'checkout') {
+          //    props.navigation.navigate("Add Pickup Address");
+          //}
+          if (props.route.params != null && props.route.params.msg !== null) {
+              setMessage(props.route.params.msg);
+          }
+         
+          props.navigation.navigate("Home");
+          
     }
   }, [context.stateUser.isAuthenticated]);
 
   const handleSubmit = () => {
     const user = {
       phone,
-      email,
+      password,
     };
 
-      if (email === "" || phone === "") {
+      if (password === "" || phone === "") {
       setError("Please fill in your credentials");
     } else {
       loginUser(user, context.dispatch);
@@ -35,20 +44,22 @@ const Login = (props) => {
   };
 
   return (
-    <FormContainer title={"Login"}>
-      <Input
-        placeholder={"Enter Email"}
-        name={"email"}
-        id={"email"}
-        value={email}
-        onChangeText={(text) => setEmail(text.toLowerCase())}
-      />
+      <FormContainer title={"Login"}>
+          <View><Text>{ }</Text></View>
       <Input
         placeholder={"Enter Phone"}
         name={"phone"}
         id={"phone"}
         value={phone}
-        onChangeText={(text) => setPhone(text)}
+        onChangeText={(text) => setPhone(text.toLowerCase())}
+      />
+      <Input
+        placeholder={"Enter Password"}
+        name={"password"}
+        id={"password"}
+              value={password}
+              secureTextEntry={true}
+        onChangeText={(text) => setPassword(text)}
       />
       <View style={styles.buttonGroup}>
               {error ? <Error message={error} /> : null}

@@ -14,18 +14,30 @@ const Register = (props) => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
+    const [password, setPassword] = useState("");
+    const [repassword, setRePassword] = useState("");
+
+    const [address1, setAddress1] = useState();
+    const [address2, setAddress2] = useState();
+    const [city, setCity] = useState();
+    const [zip, setZip] = useState();
   const [error, setError] = useState("");
 
   const register = () => {
     if (email === "" || name === "" || phone === "" || password === "") {
-      setError("Please fill in the form correctly");
-    }
+        setError("Please fill in the form correctly");
+        return;
+      }
+      else if (repassword !== password) {
+          setError("Password does not match with confirm password");
+          return;
+      }
 
     let user = {
       name: name,
       email: email,
-      phone: phone,
+        phone: phone,
+        password: password,
       isAdmin: false,
       isAgent:false
     };
@@ -61,12 +73,7 @@ const Register = (props) => {
       enableOnAndroid={true}
     >
       <FormContainer title={"Register"}>
-        <Input
-          placeholder={"Email"}
-          name={"email"}
-          id={"email"}
-          onChangeText={(text) => setEmail(text.toLowerCase())}
-        />
+        
         <Input
           placeholder={"Name"}
           name={"name"}
@@ -80,16 +87,35 @@ const Register = (props) => {
           keyboardType={"numeric"}
           onChangeText={(text) => setPhone(text)}
         />
-        
+        <Input
+            placeholder={"Email"}
+            name={"email"}
+            id={"email"}
+            onChangeText={(text) => setEmail(text.toLowerCase())}
+        />
+        <Input
+            placeholder={"Password"}
+            name={"password"}
+            id={"password"}
+            secureTextEntry={true}
+            onChangeText={(text) => setPassword(text)}
+              />
+              <Input
+                  placeholder={"Confirm Password"}
+                  name={"retypePassword"}
+                  id={"retypePassword"}
+                  secureTextEntry={true}
+                  onChangeText={(text) => setRePassword(text)}
+              />
+             
         <View style={styles.buttonGroup}>
           {error ? <Error message={error} /> : null}
         </View>
-              <View>
-                  <Button large primary onPress={() => register()} title="Register" />
+        <View>
+                <Button large primary onPress={() => register()} title="Register" />
         </View>
         <View>
-                  <Button
-                      onPress={() => props.navigation.navigate("Login")} title="Back to Login" />
+                <Button onPress={() => props.navigation.navigate("Login")} title="Back to Login" />
         </View>
       </FormContainer>
     </KeyboardAwareScrollView>

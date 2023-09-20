@@ -10,6 +10,11 @@ export default function (state, action) {
             user: action.payload,
             userProfile: action.userProfile
         };
+        case SET_USER_PROFILE:
+            return {
+                ...state,
+                userProfile: action.userProfile
+            };
         default:
             return state;
     }
