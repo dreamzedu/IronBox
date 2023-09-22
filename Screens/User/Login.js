@@ -39,7 +39,8 @@ const Login = (props) => {
       if (password === "" || phone === "") {
       setError("Please fill in your credentials");
     } else {
-      loginUser(user, context.dispatch);
+          loginUser(user, context.dispatch);
+          setPassword("");// Clear the password from state after login
     }
   };
 

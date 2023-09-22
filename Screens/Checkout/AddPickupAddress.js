@@ -79,7 +79,7 @@ const AddPickupAddress = (props) => {
                     keyboardType={"numeric"}
                     onChangeText={(text) => setZip(text)}
                 />
-                <View><Checkbox shadow={2} value={useAsDefaultAddress} onChange={setUseAsDefaultAddress} accessibilityLabel="Use this as default address" >
+                <View><Checkbox shadow={2} value={useAsDefaultAddress} onChange={setUseAsDefaultAddress} accessibilityLabel="Save this as your primary address" >
                     Use this as default address
                 </Checkbox></View>
                 <View style={{ width: '80%', alignItems: "center" }}>
