@@ -3,10 +3,11 @@ import styled, { css } from "styled-components";
 const EasyButton = styled.TouchableOpacity`
     flex-direction: row;
     border-radius: 3px;
-    padding: 10px;
-    margin: 5px;
+    padding: 5px;
     justify-content: center;
     background: transparent;
+    height:35px;
+    alignItems: center;
 
     ${(props) =>
         props.primary &&
@@ -18,35 +19,35 @@ const EasyButton = styled.TouchableOpacity`
     ${(props) =>
         props.secondary &&
         css`
-            background: #62b1f6
+            background: #62b1f6;
         `
     }
 
     ${(props) => 
         props.danger &&
         css`
-            background: #f40105
+            background: #f40105;
         `
     }
 
     ${(props) => 
         props.large &&
         css`
-            width: 135px
+            width: 135px;
         `
     }
 
     ${(props) => 
         props.medium &&
         css`
-            width: 100px
+            width: 80px;
         `
     }
 
     ${(props) => 
         props.small &&
         css`
-            width: 40px
+            width: 40px;
         `
     }
 `;

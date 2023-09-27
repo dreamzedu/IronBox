@@ -7,6 +7,7 @@ import SchedulePickup from "../Screens/Checkout/SchedulePickup"
 import AddPickupAddress from '../Screens/Checkout/AddPickupAddress';
 import SelectPickupAddress from '../Screens/Checkout/SelectPickupAddress';
 import RateCard from '../Screens/Checkout/RateCard';
+import AddItems from '../Screens/Checkout/AddItems';
 import ConfirmOrder from '../Screens/Checkout/ConfirmOrder';
 import Login from '../Screens/User/Login';
 
@@ -41,6 +42,10 @@ const HomeNavigator = () => {
 			<Stack.Screen
 				name="Rate Card"
 				component={RateCard}
+				options={{ headerShown: false }} />
+			<Stack.Screen
+				name="Add Items"
+				component={AddItems}
 				options={{ headerShown: true }} />
 			<Stack.Screen
 				name="Confirm Order"

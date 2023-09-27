@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Image, Dimensions, Text, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'native-base';
+import { TouchableOpacity } from '@gluestack-ui/themed';
 
 
 var { width } = Dimensions.get('window');
 
 const ProductCard = (props) => {
-    const { name, image } = props.item;
+    const { name, image } = props.product;
     return (
 
         <View style={styles.container}>

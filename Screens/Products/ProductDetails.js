@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { View, Text } from 'react-native';
-import { Container, Button } from 'native-base';
+import { Button } from '@gluestack-ui/themed';
 
 // Context
 import AuthGlobal from "../../Context/store/AuthGlobal";
@@ -10,9 +10,8 @@ import { logoutUser } from "../../Context/actions/Auth.actions";
 const ProductDetails = (props) => {
 
     const context = useContext(AuthGlobal);
-    const [item, setItem] = useState(props.route.params.item);
-    let order = {
-        items: [], pickupAddress: {}, pickupTime: {}, pickupDate: {}, status: {}
+    const [product, setProduct] = useState(props.route.params.product);
+    let order = {productId:product.id, userId:null, items: [], pickupAddress: null, pickupSlot: null, status: "Pending"
     };
 
     const Checkout = () => {
@@ -20,8 +19,9 @@ const ProductDetails = (props) => {
            // props.navigation.navigate("User", { screen: "Login", params: {source: "checkout"} });
             props.navigation.navigate("User", { screen: "Login", params: { msg: "you must login to checkout" } });
         }
-        else {
+        else {            
             console.log(context.stateUser);
+            order.userId = context.stateUser.user.userId;
             order.pickupAddress = context.stateUser.userProfile.address;
             if (order.pickupAddress) {
                 SelectPickupAddress(order);
@@ -46,25 +46,31 @@ const ProductDetails = (props) => {
         props.navigation.navigate("Rate Card");
     }
 
+    const AddServiceItems = () => {
+        props.navigation.navigate("Add Items");
+    }
+
     const Logout = ()=>
     {
         logoutUser(context.dispatch);
     }
 
     return (
-        <Container>
+        
             <View>
-                <Text> {item.name}</Text>
+                <Text> {product.name}</Text>
                 {/*<Button onPress={onPressLearnMore}*/}
                 {/*    title="Learn More"*/}
                 {/*    color="#841584"*/}
                 {/*    accessibilityLabel="Learn more about this purple button" />*/}
-                <Button onPress={Checkout}>Checkout</Button>
-                <Button onPress={AddPickupAddress}>Add Pickup Address</Button>
-                <Button onPress={ShowRateCard}>Rate Card</Button>
-                <Button onPress={Logout}>Logout</Button>
+            <Button onPress={Checkout}><Button.Text>Checkout</Button.Text></Button>
+            <Button onPress={AddPickupAddress}><Button.Text>Add Pickup Address</Button.Text></Button>
+            <Button onPress={ShowRateCard}><Button.Text>Rate Card</Button.Text></Button>
+            <Button onPress={AddServiceItems}><Button.Text>Add Items</Button.Text></Button>
+            <Button onPress={Logout}><Button.Text>Logout</Button.Text></Button>
+                
             </View>
-        </Container>
+        
     );
 
 }

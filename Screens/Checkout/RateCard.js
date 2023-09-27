@@ -1,9 +1,9 @@
-import { Container } from 'native-base';
+import { Container } from '@gluestack-ui/themed';
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
 import axios from 'axios'
 import baseUrl from '../../assets/common/baseUrl'
-import ServiceItem from './ServiceItem'
+import ServiceItemPrice from './ServiceItemPrice'
 
 var { width } = Dimensions.get("window");
 
@@ -41,7 +41,7 @@ const RateCard = (props) => {
                 data={serviceItems}
                 ListHeaderComponent={ListHeader}
                 renderItem={({ item, index }) => (
-                    <ServiceItem
+                    <ServiceItemPrice
                         item={item}
                         index={index}
                     />

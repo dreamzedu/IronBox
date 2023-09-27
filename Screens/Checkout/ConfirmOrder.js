@@ -16,7 +16,22 @@ const ConfirmOrder = (props) => {
       
   }, []);
 
-  
+  function formatTime(hours) {
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        var strTime = hours + ' ' + ampm;
+        return strTime;
+  }
+
+    function formatDate(date) {
+        var dt = new Date(date);
+        var options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+        
+        // Saturday, September 17, 2016
+        return dt.toLocaleDateString("en-US", options);
+    }
+
   const placeOrder = () => {
     
     axios
@@ -52,16 +67,23 @@ const ConfirmOrder = (props) => {
           <View style={{ borderWidth: 1, borderColor: "orange" }}>
             <Text style={styles.title}>Pickup Address:</Text>
                     <View style={{ padding: 8 }}>
-                        <Text>Address Line1: {order.address.addressLine1}</Text>
-                        <Text>Address Line2: {order.address.addressLine2}</Text>
-                        <Text>City: {order.address.city}</Text>
-                        <Text>Zip Code: {order.address.zip}</Text>            
+                      <Text>Address Line1: {order.pickupAddress.addressLine1}</Text>
+                      <Text>Address Line2: {order.pickupAddress.addressLine2}</Text>
+                      <Text>City: {order.pickupAddress.city}</Text>
+                      <Text>Zip Code: {order.pickupAddress.zip}</Text>
                     </View>
             <Text style={styles.title}>Pickup slot:</Text>
                       <View style={{ padding: 8 }}>
-                          <Text>Pickup Date: {order.pickupSlot.date}</Text>
-                          <Text>Pickup Time: {order.pickupSlot.time}</Text>
-                      </View>
+                      <Text>Pickup Date: {formatDate(order.pickupSlot.date)}</Text>
+                      <Text>Pickup Time: {formatTime(order.pickupSlot.startTime) + " to " + formatTime(order.pickupSlot.endTime)}</Text>
+                  </View>
+                  <Text style={styles.title}>Item List:</Text>
+                  <View>
+                      {order.items.map((item) => {
+                          return (<View class={styles.itemContainer}><Text class={styles.item}>{item.name}</Text><Text class={styles.item}>{item.count}</Text></View>)
+                      })}
+                  </View>
+
           </View>
         <View style={{ alignItems: "center", margin: 20 }}>
           <Button title={"Place order"} onPress={placeOrder} />
@@ -94,7 +116,17 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: "center",
     flexDirection: "row",
-  },
+    },
+
+    itemContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row"
+    },
+    item: {
+        alignSelf: "flex-end",
+        flexDirection: "row"
+    },
 });
 
 export default ConfirmOrder;

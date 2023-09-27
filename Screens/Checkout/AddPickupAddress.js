@@ -5,7 +5,7 @@ import Input from '../../Shared/Form/Input'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { saveUserAddress } from '../../Services/data-service';
 import AuthGlobal from '../../Context/store/AuthGlobal'
-import { Checkbox } from 'native-base';
+import { Checkbox, CheckboxIndicator, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
 import { setUserProfile } from '../../Context/actions/Auth.actions'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -31,19 +31,20 @@ const AddPickupAddress = (props) => {
             addressLine1: address1,
             addressLine2: address2,
             zip,
-            isPrimary: useAsDefaultAddress
+            isPrimary: useAsDefaultAddress,
+            user: context.stateUser.user.userId
         }
        
         //props.navigation.navigate("Payment", {order: order })
         if (useAsDefaultAddress) {
-            address = await saveUserAddress({ ...address, user: context.stateUser.user.userId })
+            address = await saveUserAddress(address)
             let user = { ...context.stateUser.userProfile, address: address };
             AsyncStorage.setItem("userProfile", JSON.stringify(user));
             setUserProfile(user, context.dispatch)
             
         }
         let order = props.route.params.order;
-        order.AddPickupAddress = address;
+        order.pickupAddress = address;
         props.navigation.navigate("Schedule Pickup", { order: order }) 
     }
 
@@ -79,9 +80,14 @@ const AddPickupAddress = (props) => {
                     keyboardType={"numeric"}
                     onChangeText={(text) => setZip(text)}
                 />
-                <View><Checkbox shadow={2} value={useAsDefaultAddress} onChange={setUseAsDefaultAddress} accessibilityLabel="Save this as your primary address" >
-                    Use this as default address
-                </Checkbox></View>
+                <View>
+                    <Checkbox size="md" isInvalid={false} isDisabled={false} value={useAsDefaultAddress} onChange={setUseAsDefaultAddress}>
+                        <CheckboxIndicator mr="$2">
+                            <CheckboxIcon as={CheckIcon} />
+                        </CheckboxIndicator>
+                        <CheckboxLabel>Use this as default address</CheckboxLabel>
+                    </Checkbox>
+                    </View>
                 <View style={{ width: '80%', alignItems: "center" }}>
                     <Button title="Confirm" onPress={() => setPickupAddress()}/>
                 </View>

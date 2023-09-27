@@ -6,7 +6,7 @@ import {
     ScrollView,
     Dimensions
 } from "react-native";
-import { Container, Header, Icon, Item, Input, Text } from "native-base";
+import { Container, Header, Icon, Item, Input, Text } from "@gluestack-ui/themed";
 import ProductList from "./ProductList";
 import axios from 'axios';
 import baseUrl from '../../assets/common/baseUrl';
@@ -88,7 +88,7 @@ const ProductContainer = (props) => {
 
 
     return (
-        <Container>
+        
                 
                    
                         <ScrollView>
@@ -98,7 +98,7 @@ const ProductContainer = (props) => {
                                         {productsCtg.map((item) => {
                                             return (
                                                 <ProductList
-                                                    item={item}
+                                                    product={item}
                                                     key={item.name}
                                                     navigation={props.navigation}
                                                 />
@@ -114,7 +114,7 @@ const ProductContainer = (props) => {
                             </View>
                         </ScrollView>
                     
-                </Container>           
+                     
         
     );
 };

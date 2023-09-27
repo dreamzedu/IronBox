@@ -5,7 +5,7 @@ import Input from '../../Shared/Form/Input'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { saveAddress } from '../Services/data-service';
 import AuthGlobal from '../Context/store/AuthGlobal'
-import { Checkbox } from 'native-base';
+import { Checkbox } from '@gluestack-ui/themed';
 
 const Address = (props) => {    
 

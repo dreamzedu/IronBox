@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Button, TextInput } from 'react-native';
-import { Container, Radio, Stack } from 'native-base'
+import { Radio, RadioGroup, VStack, RadioIndicator, RadioLabel, RadioIcon, CircleIcon, Heading } from '@gluestack-ui/themed'
 import Error from "../../Shared/Error";
 
 
@@ -8,6 +8,7 @@ import Error from "../../Shared/Error";
 const SchedulePickup = (props) => {
 
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let order = props.route.params.order;
 
     let date = new Date();
     let today = new Date();
@@ -31,7 +32,7 @@ const SchedulePickup = (props) => {
     const [error, setError] = useState("");
     //const [testTime, setTestTime] = useState("1");
 
-    let order = props.route.params.order;
+    
     
     useEffect(() => {
 
@@ -40,19 +41,37 @@ const SchedulePickup = (props) => {
             let slots = [...dateSlots]; // making a copy of array as the state should be treated as immutable if we use the same array then the change detection does not work because it compares the reference
             slots[0].isAvailable = false
             setDateSlots(slots);
-        }        
+        }
+
+        // Set date time in case editing or reviewing the screen
+        if (order.pickupSlot !== null) {
+            var dt = Date(order.pickupSlot?.date);
+            for (var i = 0; i < dateSlots.length; i++) {
+                if (dt?.getDate() === dateSlots[i]?.date?.getDate()) {
+                    setSelectedDateSlotIndex(i);
+                    break;
+                }
+            }
+
+            for (var i = 0; i < timeSlots.length; i++) {
+                if (order?.pickupSlot?.startTime === timeSlots[i].startTime && order?.pickupSlot?.endTime === timeSlots[i].endTime) {
+                    setSelectedTimeSlotIndex(i);
+                    break;
+                }
+            }
+        }
 
     }, [])
 
     function setPickupslot()
     {
-        if (selectedDateSlotIndex == null) { setError("Select a pickup date.") }
-        else if (selectedTimeSlotIndex == null) { setError("Select a pickup time slot.") }
+        if (selectedDateSlotIndex === -1) { setError("Select a pickup date.") }
+        else if (selectedTimeSlotIndex === -1) { setError("Select a pickup time slot.") }
         else {
             let pickupSlot = { date: dateSlots[selectedDateSlotIndex].date.toString(), startTime: timeSlots[selectedTimeSlotIndex].startTime, endTime: timeSlots[selectedTimeSlotIndex].endTime }
-            order = { ...order, pickupSlot };
+            order = { ...order, pickupSlot: pickupSlot};
             console.log(order);
-            props.navigation.navigate("Confirm Order", { order: order });
+            props.navigation.navigate("Add Items", { order: order });
         }
     }
 
@@ -91,59 +110,40 @@ const SchedulePickup = (props) => {
     return (
         < ScrollView >
             <View>
-                <Text>Choose the date for pickup</Text>
+                <Heading size="sm">Choose the date for pickup</Heading>
             </View>
             <View>
 
-                <Radio.Group name="exampleGroup" accessibilityLabel="Choose the date" value={selectedDateSlotIndex} onChange={(selectedIndex) => onDateSlotChanged(selectedIndex)}>
-                    <Stack direction={{
-                        base: "column",
-                        md: "row"
-                    }} alignItems={{
-                        base: "flex-start",
-                        md: "center"
-                        }} space={4} w="75%" maxW="300px">
-                        
+                <RadioGroup value={selectedDateSlotIndex} onChange={(selectedIndex) => onDateSlotChanged(selectedIndex)}>
+                    <VStack space="sm">
                         {dateSlots.map((slot, index) => {
-                            if(slot.isAvailable)
-                                return (<Radio value={index} key={"d_"+index} colorScheme="red" size="sm" my={1} >
-                                {slot.description}
-                                </Radio>)
-                            else
-                                return (<Radio value={index} key={"d_" + index} colorScheme="red" size="sm" my={1} isDisabled>
-                                    {slot.description + " (Not Available)"}
-                                </Radio>)
+                            return(<Radio value={index} isDisabled={!slot.isAvailable }>
+                            <RadioIndicator mr="$2">
+                                <RadioIcon as={CircleIcon} />
+                            </RadioIndicator>
+                                <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)": "")}</RadioLabel>
+                            </Radio>)                           
                         })}
-                    </Stack>
-                </Radio.Group>
+                    </VStack>
+                </RadioGroup>
             </View>
-            <View>
+            <Heading size="sm">
                 <Text>Choose a time slot for pickup</Text>
-            </View>
+            </Heading>
             <View>
-
-                <Radio.Group name="exampleGroup" accessibilityLabel="pick a time slot" value={selectedTimeSlotIndex} onChange={(selectedIndex) => onTimeSlotChanged(selectedIndex)}>
-                    <Stack direction={{
-                        base: "column",
-                        md: "row"
-                    }} alignItems={{
-                        base: "flex-start",
-                        md: "center"
-                    }} space={4} w="75%" maxW="300px">
-
+                <RadioGroup value={selectedTimeSlotIndex} onChange={(selectedIndex) => onTimeSlotChanged(selectedIndex)}>
+                    <VStack space="sm">
                         {timeSlots.map((slot, index) => {
-                                                      
-                            if (slot.isAvailable)
-                                return (<Radio value={index} key={"t_" + index} colorScheme="red" size="sm" my={1} >
-                                    {slot.description}
-                                </Radio>)
-                            else
-                                return (<Radio value={index} key={"t_" + index} colorScheme="red" size="sm" my={1} isDisabled>
-                                    {slot.description + " (Not Available)"}
-                                </Radio>)
+                            return (<Radio value={index} isDisabled={!slot.isAvailable}>
+                                <RadioIndicator mr="$2">
+                                    <RadioIcon as={CircleIcon} />
+                                </RadioIndicator>
+                                <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)" : "")}</RadioLabel>
+                            </Radio>)
                         })}
-                    </Stack>
-                </Radio.Group>
+                    </VStack>
+                </RadioGroup>
+                
             </View>
             <View>{error ? <Error message={error} /> : null}</View>
             {/*<TextInput value={testTime} onChangeText={(value) => setTestTime(value)} />*/}

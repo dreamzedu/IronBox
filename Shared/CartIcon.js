@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Badge, Text } from "native-base";
+import { Badge, Text } from "@gluestack-ui/themed";
 
 import { connect } from "react-redux";
 

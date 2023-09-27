@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Picker } from "native-base";
+import { Picker } from "@gluestack-ui/themed";
 import Icon from "react-native-vector-icons/FontAwesome";
 import TrafficLight from "./StyledComponents/TrafficLight";
 import EasyButton from "./StyledComponents/EasyButton";
