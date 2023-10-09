@@ -5,6 +5,7 @@ import { GluestackUIProvider, config } from "@gluestack-ui/themed";
 import ProductContainer from './Screens/Products/ProductContainer';
 import { NavigationContainer } from "@react-navigation/native";
 import HomeNavigator from './Navigator/HomeNavigator';
+import Toast from "react-native-toast-message";
 
 // Redux
 import { Provider } from "react-redux";
@@ -22,7 +23,7 @@ export default function App() {
                     <NavigationContainer>
 
                         <Main />
-               
+                        <Toast ref={(ref) => Toast.setRef(ref)} />
                     </ NavigationContainer>
                 </GluestackUIProvider>
             </Provider>

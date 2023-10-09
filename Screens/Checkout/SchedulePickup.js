@@ -37,7 +37,7 @@ const SchedulePickup = (props) => {
     useEffect(() => {
 
         var currentHours = date.getHours();
-        if (currentHours >= timeSlots[timeSlots.length - 1].startTime) {
+        if (currentHours >= timeSlots[timeSlots.length - 1].startTime - 2) {
             let slots = [...dateSlots]; // making a copy of array as the state should be treated as immutable if we use the same array then the change detection does not work because it compares the reference
             slots[0].isAvailable = false
             setDateSlots(slots);
@@ -89,7 +89,7 @@ const SchedulePickup = (props) => {
         if (selectedDate.date.getDate() === today.getDate()) {
             var currentHours = date.getHours(); //testTime;
             for (var i = timeSlots.length-1; i >=0 ; i--) {
-                if (currentHours >= timeSlots[i].startTime) {
+                if (currentHours >= timeSlots[i].startTime -2) {
                     for (var j = 0; j <= i; j++) {
                         timeSlots[j].isAvailable = false;
                     }
@@ -145,11 +145,12 @@ const SchedulePickup = (props) => {
                 </RadioGroup>
                 
             </View>
-            <View>{error ? <Error message={error} /> : null}</View>
+            <View><Text>Note: you can re-schedule the pick until one hour before the scheduled pickup. Any re-schedule or cancellation after that is chargable.</Text></View>
             {/*<TextInput value={testTime} onChangeText={(value) => setTestTime(value)} />*/}
             <View style={{ width: '80%', alignItems: "center" }}>
                 <Button title="Confirm" onPress={() => setPickupslot()} />
             </View>
+            <View>{error ? <Error message={error} /> : null}</View>
         </ScrollView>
     )
 

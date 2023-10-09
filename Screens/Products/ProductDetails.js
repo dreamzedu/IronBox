@@ -11,8 +11,8 @@ const ProductDetails = (props) => {
 
     const context = useContext(AuthGlobal);
     const [product, setProduct] = useState(props.route.params.product);
-    let order = {productId:product.id, userId:null, items: [], pickupAddress: null, pickupSlot: null, status: "Pending"
-    };
+    let order = {
+        productId: product.id, userId: null, items: [], pickupAddress: null, pickupSlot: null, totalPrice:0 };
 
     const Checkout = () => {
         if (!context.stateUser.isAuthenticated) {
@@ -67,6 +67,7 @@ const ProductDetails = (props) => {
             <Button onPress={AddPickupAddress}><Button.Text>Add Pickup Address</Button.Text></Button>
             <Button onPress={ShowRateCard}><Button.Text>Rate Card</Button.Text></Button>
             <Button onPress={AddServiceItems}><Button.Text>Add Items</Button.Text></Button>
+            <Button onPress={() => props.navigation.navigate("User", { screen: "MyOrders" })}><Button.Text>My Orders</Button.Text></Button>
             <Button onPress={Logout}><Button.Text>Logout</Button.Text></Button>
                 
             </View>

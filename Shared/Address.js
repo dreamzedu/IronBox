@@ -3,7 +3,7 @@ import { Text, View, Button } from 'react-native'
 import FormContainer from './Form/FormContainer'
 import Input from '../../Shared/Form/Input'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { saveAddress } from '../Services/data-service';
+import { saveUserAddress } from '../Services/data-service';
 import AuthGlobal from '../Context/store/AuthGlobal'
 import { Checkbox } from '@gluestack-ui/themed';
 

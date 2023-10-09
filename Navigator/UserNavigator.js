@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Login from '../Screens/User/Login'
 import Register from '../Screens/User/Register'
+import MyOrders from "../Screens/User/MyOrders";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,14 @@ function MyStack() {
                     headerShown: false
                 }}
             />
+            <Stack.Screen
+                name="MyOrders"
+                component={MyOrders}
+                options={{
+                    headerShown: false
+                }}
+            />
+           
             
         </Stack.Navigator>
     )

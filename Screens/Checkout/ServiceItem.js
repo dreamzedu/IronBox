@@ -18,12 +18,12 @@ const ServiceItem = (props) => {
             <Text style={styles.item}>{props.item.price}</Text>
 
             {counter === 0 ?
-                (<View style={{ flexDirection: 'row', alignSelf: "flex-end" }}><EasyButton secondary medium onPress={() => { setCounter(counter + 1), props.addItem(props.item.id, props.item.name) }}><Text>Add</Text></EasyButton></View>) : (
+                (<View style={{ flexDirection: 'row', alignSelf: "flex-end" }}><EasyButton secondary medium onPress={() => { setCounter(counter + 1), props.addItem(props.item) }}><Text>Add</Text></EasyButton></View>) : (
                     <View style={styles.counter}>
                 
                         <TouchableOpacity
                             style={styles.touchable}
-                            onPress={() => { setCounter(counter - 1); counter === 1 ? props.removeItem(props.item.id):props.decrease(props.item.id); }}
+                            onPress={() => { setCounter(counter - 1); counter === 1 ? props.removeItem(props.item):props.decrease(props.item); }}
                         >
                             <Icon style={styles.buttonText} color={"#007aff"} name="minus" />
 
@@ -37,7 +37,7 @@ const ServiceItem = (props) => {
 
                         <TouchableOpacity
                             style={styles.touchable}
-                            onPress={() => { if (counter < 100) { setCounter(counter + 1), props.increase(props.item.id) } }}
+                            onPress={() => { if (counter < 100) { setCounter(counter + 1), props.increase(props.item) } }}
                         >
                             <Icon style={styles.buttonText} color={"#007aff"} name="plus" />
                         </TouchableOpacity>

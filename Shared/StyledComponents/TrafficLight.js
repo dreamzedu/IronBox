@@ -23,6 +23,13 @@ const TrafficLight = styled.View`
     css`
       background: #ec241a;
     `}
+
+    ${(props) =>
+            props.cancelled &&
+            css`
+          background: #808080;
+    `}
+
 `;
 
 export default TrafficLight;

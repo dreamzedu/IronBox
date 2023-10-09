@@ -1,150 +1,125 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Picker } from "@gluestack-ui/themed";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { View, Text, StyleSheet, Button } from "react-native";
+import { Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, ChevronDownIcon, Icon} from "@gluestack-ui/themed";
+
 import TrafficLight from "./StyledComponents/TrafficLight";
 import EasyButton from "./StyledComponents/EasyButton";
 import Toast from "react-native-toast-message";
+import { updateOrderStatus, getOrderStatuses } from '../Services/data-service';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from "axios";
-import baseURL from "../assets/common/baseUrl";
 
-const codes = [
-  { name: "pending", code: "3" },
-  { name: "shipped", code: "2" },
-  { name: "delivered", code: "1" },
-];
+let orderStatuses = [];
 
 const OrderCard = (props) => {
-  const [orderStatus, setOrderStatus] = useState();
-  const [statusText, setStatusText] = useState();
-  const [statusChange, setStatusChange] = useState();
-  const [token, setToken] = useState();
-  const [cardColor, setCardColor] = useState();
+    
+    const [orderStatus, setOrderStatus] = useState();
+    const [statusChange, setStatusChange] = useState();
+    const [cardColor, setCardColor] = useState();
 
   useEffect(() => {
-    if (props.editMode) {
-      AsyncStorage.getItem("jwt")
-        .then((res) => {
-          setToken(res);
-        })
-        .catch((error) => console.log(error));
-    }
+      orderStatuses = getOrderStatuses();
 
-    if (props.status == "3") {
-      setOrderStatus(<TrafficLight unavailable></TrafficLight>);
-      setStatusText("pending");
-      setCardColor("#E74C3C");
-    } else if (props.status == "2") {
-      setOrderStatus(<TrafficLight limited></TrafficLight>);
-      setStatusText("shipped");
-      setCardColor("#F1C40F");
-    } else {
-      setOrderStatus(<TrafficLight available></TrafficLight>);
-      setStatusText("delivered");
-      setCardColor("#2ECC71");
-    }
+      switch (props.order.status.code) {
+          case 1:
+          case 2:
+              setOrderStatus(<TrafficLight unavailable></TrafficLight>);
+              setCardColor("#E74C3C");
+              break;
+          case 3:
+          case 4:    
+              setOrderStatus(<TrafficLight limited></TrafficLight>);
+              setCardColor("#F1C40F");
+              break;
+          case 5:
+              setOrderStatus(<TrafficLight available></TrafficLight>);
+              setCardColor("#2ECC71");
+              break;
+          case 6:
+          case 7:
+              setOrderStatus(<TrafficLight cancelled></TrafficLight>);
+              setCardColor("#808080");
+              break;
+          default:
+              setOrderStatus(<TrafficLight cancelled></TrafficLight>);
+              setCardColor("#808080");
+              break;
+
+      }
 
     return () => {
       setOrderStatus();
-      setStatusText();
       setCardColor();
     };
   }, []);
 
-  const updateOrder = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    const order = {
-      city: props.city,
-      country: props.country,
-      dateOrdered: props.dateOrdered,
-      id: props.id,
-      orderItems: props.orderItems,
-      phone: props.phone,
-      shippingAddress1: props.shippingAddress1,
-      shippingAddress2: props.shippingAddress2,
-      status: statusChange,
-      totalPrice: props.totalPrice,
-      user: props.user,
-      zip: props.zip,
-    };
-
-    axios
-      .put(`${baseURL}orders/${props.id}`, order, config)
-      .then((res) => {
-        if (res.status == 200 || res.status == 201) {
-          Toast.show({
-            topOffset: 60,
-            type: "success",
-            text1: "Order Edited",
-            text2: "",
-          });
-          setTimeout(() => {
-            props.navigation.navigate("Products");
-          }, 500);
-        }
-      })
-      .catch((error) => {
-        Toast.show({
-          topOffset: 60,
-          type: "error",
-          text1: "Something went wrong",
-          text2: "Please try again",
+    const updateOrder = () => {
+        updateOrderStatus(props.order.id, statusChange).then((order) => {
+            if (order) {
+                Toast.show({
+                    topOffset: 60,
+                    type: "success",
+                    text1: "Order status updated.",
+                    text2: "",
+                });
+            }
+            else {
+                Toast.show({
+                    topOffset: 60,
+                    type: "error",
+                    text1: "Something went wrong",
+                    text2: "Please try again",
+                });
+            }
         });
-      });
-  };
+    }
 
   return (
     <View style={[{ backgroundColor: cardColor }, styles.container]}>
       <View style={styles.container}>
-        <Text>Order Number: #{props.id}</Text>
+              <Text>{props.order.product.name}</Text>
+              <Text>Order Number: #{props.order.id}</Text>
       </View>
       <View style={{ marginTop: 10 }}>
-        <Text>
-          Status: {statusText} {orderStatus}
-        </Text>
-        <Text>
-          Address: {props.shippingAddress1} {props.shippingAddress2}
-        </Text>
-        <Text>City: {props.city}</Text>
-        <Text>Country: {props.country}</Text>
-        <Text>Date Ordered: {props.dateOrdered.split("T")[0]}</Text>
-        <View style={styles.priceContainer}>
-          <Text>Price: </Text>
-          <Text style={styles.price}>$ {props.totalPrice}</Text>
+              <Text>Status: {props.order.status.name} {orderStatus}</Text>
+            <Text>Date Ordered: {props.order.dateOrdered.split("T")[0]}</Text>
+            <Text>Total Cost: </Text>
+            <Text style={styles.price}>Rs {props.order.totalPrice}.00</Text>
         </View>
         {props.editMode ? (
-          <View>
-            <Picker
-              mode="dropdown"
-              iosIcon={<Icon color={"#007aff"} name="arrow-down" />}
-              style={{ width: undefined }}
-              selectedValue={statusChange}
-              placeholder="Change Status"
-              placeholderIconColor={{ color: "#007aff" }}
-              onValueChange={(e) => setStatusChange(e)}
-            >
-              {codes.map((c) => {
-                return (
-                  <Picker.Item key={c.code} label={c.name} value={c.code} />
-                );
-              })}
-            </Picker>
+              <View>
+                  <Select onValueChange={(e) => setStatusChange(e)} selectedValue={statusChange}>
+                      <SelectTrigger variant="outline" size="md" >
+                          <SelectInput placeholder="Change Status" />
+                          <SelectIcon mr="$3">
+                              <Icon as={ChevronDownIcon} />
+                          </SelectIcon>
+                      </SelectTrigger>
+                      <SelectPortal>
+                          <SelectBackdrop />
+                          <SelectContent>
+                              <SelectDragIndicatorWrapper>
+                                  <SelectDragIndicator />
+                              </SelectDragIndicatorWrapper>
+                              {orderStatuses.map((c) => {
+                                  return (
+                                      <SelectItem key={c.code} label={c.name} value={c.name} />
+                                  );
+                              })}
+                             
+                          </SelectContent>
+                      </SelectPortal>
+                  </Select>
+            
             <EasyButton secondary large onPress={() => updateOrder()}>
               <Text style={{ color: "white" }}>Update</Text>
             </EasyButton>
           </View>
-        ) : null}
+          ) : null}
+
+          <Button title="View Detail" onPress={() => props.navigation.navigate("Order Detail", {orderId: props.order.id})} />
       </View>
-    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {

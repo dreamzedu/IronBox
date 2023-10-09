@@ -4,6 +4,8 @@ import { View, StyleSheet, Dimensions, ScrollView, Button, Text } from "react-na
 import Toast from "react-native-toast-message";
 import axios from "axios";
 import baseURL from "../../assets/common/baseUrl";
+import { formatDate, formatTime } from '../../assets/common/formatters'
+import { saveUserOrder } from '../../Services/data-service';
 
 var { width, height } = Dimensions.get("window");
 
@@ -16,39 +18,30 @@ const ConfirmOrder = (props) => {
       
   }, []);
 
-  function formatTime(hours) {
-        var ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
-        var strTime = hours + ' ' + ampm;
-        return strTime;
-  }
-
-    function formatDate(date) {
-        var dt = new Date(date);
-        var options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-        
-        // Saturday, September 17, 2016
-        return dt.toLocaleDateString("en-US", options);
-    }
-
+  
   const placeOrder = () => {
-    
-    axios
-      .post(`${baseURL}orders`, order)
+
+      saveUserOrder(order)
       .then((res) => {
-        if (res.status == 200 || res.status == 201) {
-          Toast.show({
-            topOffset: 60,
-            type: "success",
-            text1: "Order Completed",
-            text2: "",
-          });
-          setTimeout(() => {
-            props.clearCart();
-            props.navigation.navigate("Cart");
-          }, 500);
-        }
+          if (res.success) {
+              Toast.show({
+                  type: "success",
+                  text1: "Order placed successfully.",
+                  text2: "",
+              });
+              setTimeout(() => {
+                  //props.clearCart();
+                  console.log("order placed" + res);
+                  props.navigation.navigate("Order Acknowledgement", { orderData: { ...order, id: res.data } });
+              }, 500);
+          }
+          else {
+              Toast.show({
+                  type: "error",
+                  text1: "Failed",
+                  text2: res.message
+              });
+          }
       })
       .catch((error) => {
         Toast.show({
@@ -72,7 +65,7 @@ const ConfirmOrder = (props) => {
                       <Text>City: {order.pickupAddress.city}</Text>
                       <Text>Zip Code: {order.pickupAddress.zip}</Text>
                     </View>
-            <Text style={styles.title}>Pickup slot:</Text>
+            <Text style={styles.title}>Pickup Schedule:</Text>
                       <View style={{ padding: 8 }}>
                       <Text>Pickup Date: {formatDate(order.pickupSlot.date)}</Text>
                       <Text>Pickup Time: {formatTime(order.pickupSlot.startTime) + " to " + formatTime(order.pickupSlot.endTime)}</Text>
@@ -80,7 +73,7 @@ const ConfirmOrder = (props) => {
                   <Text style={styles.title}>Item List:</Text>
                   <View>
                       {order.items.map((item) => {
-                          return (<View class={styles.itemContainer}><Text class={styles.item}>{item.name}</Text><Text class={styles.item}>{item.count}</Text></View>)
+                          return (<View class={styles.itemContainer} key={ item.id}><Text class={styles.item}>{item.name}</Text><Text class={styles.item}>{item.count}</Text></View>)
                       })}
                   </View>
 

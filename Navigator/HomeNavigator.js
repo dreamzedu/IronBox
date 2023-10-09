@@ -10,6 +10,9 @@ import RateCard from '../Screens/Checkout/RateCard';
 import AddItems from '../Screens/Checkout/AddItems';
 import ConfirmOrder from '../Screens/Checkout/ConfirmOrder';
 import Login from '../Screens/User/Login';
+import OrderDetail from '../Screens/Order/OrderDetail';
+import OrderAcknowledgement from "../Screens/Checkout/OrderAcknowledgement"
+import CancelOrder from '../Screens/Checkout/CancelOrder';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,7 +22,7 @@ const HomeNavigator = () => {
 		<Stack.Navigator>
 			
 			<Stack.Screen
-				name='Home'
+				name='Products'
 				component={ProductContainer}
 				options={{ headerShown: false }}
 			/>
@@ -51,6 +54,24 @@ const HomeNavigator = () => {
 				name="Confirm Order"
 				component={ConfirmOrder}
 				options={{ headerShown: true }} />
+			<Stack.Screen
+				name="Order Detail"
+				component={OrderDetail}
+				options={{ headerShown: true }} />
+			<Stack.Screen
+				name="Order Acknowledgement"
+				component={OrderAcknowledgement}
+				options={{
+					headerShown: false
+				}}
+			/>
+			<Stack.Screen
+				name="Cancel Order"
+				component={CancelOrder}
+				options={{
+					headerShown: false
+				}}
+			/>
 		</ Stack.Navigator>
 
 			);
