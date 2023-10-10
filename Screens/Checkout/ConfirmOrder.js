@@ -59,7 +59,7 @@ const ConfirmOrder = (props) => {
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>Confirm Order</Text>
           <View style={{ borderWidth: 1, borderColor: "orange" }}>
             <Text style={styles.title}>Pickup Address:</Text>
-                    <View style={{ padding: 8 }}>
+                  <View style={{ padding: 8 }}>                      
                       <Text>Address Line1: {order.pickupAddress.addressLine1}</Text>
                       <Text>Address Line2: {order.pickupAddress.addressLine2}</Text>
                       <Text>City: {order.pickupAddress.city}</Text>

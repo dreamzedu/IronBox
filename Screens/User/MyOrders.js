@@ -61,10 +61,7 @@ const MyOrders = (props) => {
                         {orders ? (
                             orders.map((x) => {
                                 return <View key={x.id}>
-                                    <OrderCard order={x} navigation={props.navigation} />
-                                    {x.status.name !== "Cancelled" ?
-                                        <Button title="Cancel Order" onPress={() => props.navigation.navigate("Cancel Order", { orderData: x })} ></Button>
-                                        : null}
+                                    <OrderCard order={x} navigation={props.navigation} />                                   
                                 </View>
                             })
                         ) : (

@@ -5,12 +5,20 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from '../Screens/User/Login'
 import Register from '../Screens/User/Register'
 import MyOrders from "../Screens/User/MyOrders";
+import UserProfile from "../Screens/User/UserProfile";
 
 const Stack = createNativeStackNavigator();
 
 function MyStack() {
     return (
         <Stack.Navigator>
+            <Stack.Screen
+                name="User Profile"
+                component={UserProfile}
+                options={{
+                    headerShown: false
+                }}
+            />
             <Stack.Screen 
                 name="Login"
                 component={Login}
@@ -25,6 +33,7 @@ function MyStack() {
                     headerShown: false
                 }}
             />
+          
             <Stack.Screen
                 name="MyOrders"
                 component={MyOrders}

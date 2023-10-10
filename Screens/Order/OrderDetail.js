@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Button } from "react-native";
 import { Heading, Spinner } from "@gluestack-ui/themed";
 import TrafficLight from "../../Shared/StyledComponents/TrafficLight";
 import { getOrderDetail, getOrderStatuses } from '../../Services/data-service';
-import { formatDate, formatDateLong, formatTime} from '../../assets/common/formatters'
-
+import { formatDate, formatDateLong, formatTime } from '../../assets/common/formatters'
+import AddressCard from "../../Shared/AddressCard"
 
 
 
@@ -88,6 +88,9 @@ const OrderDetail = (props) => {
                             <Text>Date Ordered: {order.dateOrdered.split("T")[0]}</Text>
                             <Text>Total Cost: </Text>
                             <Text style={styles.price}>Rs {order.totalPrice + order.cancelCharges}.00</Text>
+                            {order.status.name !== "Cancelled" ?
+                                <Button title="Cancel Order" onPress={() => props.navigation.navigate("Cancel Order", { orderData: order })} ></Button>
+                                : null}
                         </View>
                         <Heading style={{ marginTop: 10 }}>Pickup Schedule</Heading>
                         <View>
@@ -97,12 +100,7 @@ const OrderDetail = (props) => {
 
                         <Heading style={{ marginTop: 10 }}>Pickup Address</Heading>
                         <View >
-                            <Text>
-                                Address: {order.pickupAddress.addressLine1} {order.pickupAddress.addressLine2}
-                            </Text>
-                            <Text>City: {order.pickupAddress.city}</Text>
-                            <Text>Zipcode: {order.pickupAddress.zip}</Text>
-                            <Text>Country: {order.pickupAddress.country}</Text>
+                            <AddressCard address={order.pickupAddress} />                            
                         </View>
 
                         <Heading>Item List:</Heading>
