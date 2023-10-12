@@ -9,7 +9,6 @@ import SelectPickupAddress from '../Screens/Checkout/SelectPickupAddress';
 import RateCard from '../Screens/Checkout/RateCard';
 import AddItems from '../Screens/Checkout/AddItems';
 import ConfirmOrder from '../Screens/Checkout/ConfirmOrder';
-import Login from '../Screens/User/Login';
 import OrderDetail from '../Screens/Order/OrderDetail';
 import OrderAcknowledgement from "../Screens/Checkout/OrderAcknowledgement"
 import CancelOrder from '../Screens/Checkout/CancelOrder';
@@ -19,7 +18,7 @@ const Stack = createNativeStackNavigator();
 const HomeNavigator = () => {
 
 	return (
-		<Stack.Navigator>
+		<Stack.Navigator initialRouteName="Products">
 			
 			<Stack.Screen
 				name='Products'
@@ -29,7 +28,7 @@ const HomeNavigator = () => {
 				<Stack.Screen
 					name="Product Details"
 					component={ProductDetails}
-				options={{ headerShown: true }} />
+				options={{ headerShown: false }} />
 			<Stack.Screen
 				name="Schedule Pickup"
 				component={SchedulePickup}

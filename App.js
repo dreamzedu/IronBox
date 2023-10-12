@@ -4,8 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { GluestackUIProvider, config } from "@gluestack-ui/themed";
 import ProductContainer from './Screens/Products/ProductContainer';
 import { NavigationContainer } from "@react-navigation/native";
-import HomeNavigator from './Navigator/HomeNavigator';
 import Toast from "react-native-toast-message";
+import MainNavigator from "./Navigator/MainNavigator"
 
 // Redux
 import { Provider } from "react-redux";
@@ -13,7 +13,7 @@ import store from "./Redux/store";
 
 // Context API
 import Auth from "./Context/store/Auth";
-import Main from './Navigator/Main';
+//import BottomTabNavigator from './Navigator/BottomTabNavigator';
 
 export default function App() {
     return (
@@ -21,8 +21,7 @@ export default function App() {
             <Provider store={store}>
                 <GluestackUIProvider config={config.theme}>
                     <NavigationContainer>
-
-                        <Main />
+                        <MainNavigator />
                         <Toast ref={(ref) => Toast.setRef(ref)} />
                     </ NavigationContainer>
                 </GluestackUIProvider>

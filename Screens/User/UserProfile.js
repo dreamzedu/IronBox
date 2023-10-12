@@ -9,6 +9,7 @@ import { logoutUser } from "../../Context/actions/Auth.actions"
 import { Heading, Spinner } from "@gluestack-ui/themed";
 import AddressCard from '../../Shared/AddressCard';
 
+
 const UserProfile = (props) => {
     const context = useContext(AuthGlobal)
     const [userProfile, setUserProfile] = useState()
@@ -19,7 +20,8 @@ const UserProfile = (props) => {
     useFocusEffect(useCallback(() => {
 
         if (!context.stateUser || context.stateUser.isAuthenticated === null || context.stateUser.isAuthenticated === false) {
-            props.navigation.navigate("Login")
+            //props.navigation.navigate("LoginNavigator")
+            props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'User Profile', msg: "you must login for this" } });
         }
         else {
             const fetchOrders = async () => {
@@ -72,10 +74,7 @@ const UserProfile = (props) => {
                     </Text>
                </View>
                <View style={{ marginTop: 80 }}>
-                    <Button title={"Sign Out"} onPress={() => [
-                        AsyncStorage.removeItem("jwt"),
-                        logoutUser(context.dispatch)
-                    ]}/>
+                    <Button title={"Edit Profile"} onPress={() => props.navigation.navigate("Edit Profile") }/>
                 </View>
                 <View>
                     <Heading>

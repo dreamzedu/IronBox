@@ -2,13 +2,14 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, View, StyleSheet, Image } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, StyleSheet, Image, ActivityIndicator } from 'react-native';
+import AuthGlobal from "../Context/store/AuthGlobal";
 
 const SplashScreen = ({navigation}) => {
   //State for ActivityIndicator animation
   const [animating, setAnimating] = useState(true);
+    const context = useContext(AuthGlobal);
 
     useEffect(() => {
         setTimeout(() => {
@@ -16,11 +17,10 @@ const SplashScreen = ({navigation}) => {
             //Check if user_id is set or not
             //If not then send for Authentication
             //else send to Home Screen
-            AsyncStorage.getItem('userId').then((value) => {
-                console.log('getting value from cache: ' + value);
+           
                 //let value = AsyncStorage.getItem('user_id');
-                navigation.replace(value === null ? 'Auth' : 'DrawerNavigationRoutes');
-            });
+            navigation.replace('DrawerNavigator');
+            
             }, 5000);
         }, []);
 
@@ -29,13 +29,13 @@ const SplashScreen = ({navigation}) => {
       <Image
         source={require('../Image/aboutreact.png')}
         style={{width: '90%', resizeMode: 'contain', margin: 30}}
-      />
-      <ActivityIndicator
-        animating={animating}
-        color="#FFFFFF"
-        size="large"
-        style={styles.activityIndicator}
-      />
+          />
+          <ActivityIndicator
+              animating={animating}
+              color="#FFFFFF"
+              size="large"
+              style={styles.activityIndicator}
+          />
     </View>
   );
 };

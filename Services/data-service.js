@@ -150,3 +150,22 @@ export const saveUserOrder = async (order) => {
     }
     catch (error) { console.log(error); return null; }
 }
+
+export const updateUserProfile = async (userId, userProfile) => {
+    try {
+        let token = await AsyncStorage.getItem("jwt");
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        };
+
+        let result = await axios
+            .put(`${baseURL}users/${userId}`, userProfile, config);
+        return result.data;
+
+    }
+    catch (error) { console.log(error); return null; }
+
+};

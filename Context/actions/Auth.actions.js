@@ -69,10 +69,9 @@ export const setCurrentUser = (decoded, user) => {
     }
 }
 
-export const setUserProfile = (user) => {
-    console.log("setUserProfile" + user)
-    return {
+export const setUserProfile = (user, dispatch) => {
+    dispatch({
         type: SET_USER_PROFILE,
         userProfile: user
-    }
+    })
 }

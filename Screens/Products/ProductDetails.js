@@ -17,7 +17,7 @@ const ProductDetails = (props) => {
     const Checkout = () => {
         if (!context.stateUser.isAuthenticated) {
            // props.navigation.navigate("User", { screen: "Login", params: {source: "checkout"} });
-            props.navigation.navigate("User", { screen: "Login", params: {returnPage:'Products', msg: "you must login to checkout" } });
+            props.navigation.navigate("LoginNavigator", { screen: "Login", params: {returnPage:'Products', msg: "you must login to checkout" } });
         }
         else {            
             console.log(context.stateUser);

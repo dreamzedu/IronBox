@@ -1,17 +1,15 @@
 import React from "react"
 //import { createStackNavigator } from '@react-navigation/stack'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import Login from '../Screens/User/Login'
-import Register from '../Screens/User/Register'
 import MyOrders from "../Screens/User/MyOrders";
 import UserProfile from "../Screens/User/UserProfile";
+import UpdateUserProfile from '../Screens/User/UpdateUserProfile';
 
 const Stack = createNativeStackNavigator();
 
 function MyStack() {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName="User Profile">
             <Stack.Screen
                 name="User Profile"
                 component={UserProfile}
@@ -19,21 +17,13 @@ function MyStack() {
                     headerShown: false
                 }}
             />
-            <Stack.Screen 
-                name="Login"
-                component={Login}
+            <Stack.Screen
+                name="Edit Profile"
+                component={UpdateUserProfile}
                 options={{
                     headerShown: false
                 }}
             />
-             <Stack.Screen 
-                name="Register"
-                component={Register}
-                options={{
-                    headerShown: false
-                }}
-            />
-          
             <Stack.Screen
                 name="MyOrders"
                 component={MyOrders}

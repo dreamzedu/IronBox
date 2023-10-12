@@ -12,7 +12,7 @@ import AuthGlobal from "../Context/store/AuthGlobal";
 
 const Tab = createBottomTabNavigator();
 
-const Main = () => {
+const BottomTabNavigator = () => {
 
   const context = useContext(AuthGlobal)
 
@@ -20,6 +20,7 @@ const Main = () => {
     <Tab.Navigator
           initialRouteName="Home"          
           screenOptions={{
+              headerShown: false,
               tabBarHideOnKeyboard: true,
               tabBarActiveTintColor: "#e91e63",
               tabBarShowLabel: false,
@@ -78,4 +79,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default BottomTabNavigator;

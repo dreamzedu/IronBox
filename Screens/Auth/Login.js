@@ -38,14 +38,9 @@ const Login = (props) => {
   //}, [context.stateUser.isAuthenticated]);
 
     useFocusEffect(useCallback(() => {
-        if (context.stateUser.isAuthenticated === true) {
-            if (props.route.params && props.route.params.returnPage) {
-                props.navigation.navigate(props.route.params.returnPage);
-                props.route.params = null;
-            }
-            else {
-                props.navigation.navigate("User Profile");
-            }
+
+        if (context.stateUser.isAuthenticated) {
+            navigateBack();
         }
 
         if (props.route.params != null && props.route.params.msg !== null) {
@@ -57,6 +52,21 @@ const Login = (props) => {
         }
 
     }, [context.stateUser.isAuthenticated]));
+
+
+    const navigateBack = () => {        
+        if (props.route.params && props.route.params.returnPage) {
+            props.navigation.navigate(props.route.params.returnPage);
+            props.route.params = null;
+        }
+        else {
+            props.navigation.navigate("Home");
+        }
+    }
+
+    const cancelLogin = () => {        
+        props.navigation.replace('TabNavigator');
+    }
 
   const handleSubmit = () => {
     const user = {
@@ -99,7 +109,11 @@ const Login = (props) => {
         <Text style={styles.middleText}>Don't have an account yet?</Text>
         <Button
         title="Register"
-        onPress={() => props.navigation.navigate("Register")} />
+                  onPress={() => props.navigation.navigate("Register")} />
+
+              <Button
+                  title="Cancel"
+                  onPress={() => cancelLogin()} />
         
       </View>
     </FormContainer>

@@ -36,8 +36,8 @@ const Register = (props) => {
     let user = {
       name: name,
       email: email,
-        phone: phone,
-        password: password,
+      phone: phone,
+      password: password,
       isAdmin: false,
       isAgent:false
     };
