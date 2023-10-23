@@ -6,7 +6,7 @@ import ProductDetails from "../Screens/Products/ProductDetails"
 import SchedulePickup from "../Screens/Checkout/SchedulePickup"
 import AddPickupAddress from '../Screens/Checkout/AddPickupAddress';
 import SelectPickupAddress from '../Screens/Checkout/SelectPickupAddress';
-import RateCard from '../Screens/Checkout/RateCard';
+import RateCard from '../Screens/Products/RateCard';
 import AddItems from '../Screens/Checkout/AddItems';
 import ConfirmOrder from '../Screens/Checkout/ConfirmOrder';
 import OrderDetail from '../Screens/Order/OrderDetail';
@@ -44,7 +44,7 @@ const HomeNavigator = () => {
 			<Stack.Screen
 				name="Rate Card"
 				component={RateCard}
-				options={{ headerShown: false }} />
+				options={{ headerShown: true }} />
 			<Stack.Screen
 				name="Add Items"
 				component={AddItems}

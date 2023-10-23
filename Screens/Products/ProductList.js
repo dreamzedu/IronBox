@@ -7,8 +7,8 @@ const ProductList = (props) => {
 
     const { width } = Dimensions.get('window');
     return (
-        <TouchableOpacity style={{ width: '50%' }} onPress={() => props.navigation.navigate("Product Details", { product: props.product })}>
-            <View style={{ width: width / 2, backgroundColor: 'gainsboro' }}>
+        <TouchableOpacity  onPress={() => props.navigation.navigate("Product Details", { product: props.product })}>
+            <View style={{ backgroundColor: 'gainsboro' }}>
                 <ProductCard product={props.product} navigation={props.navigation} />
             </View>
         </TouchableOpacity>

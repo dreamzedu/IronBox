@@ -69,9 +69,10 @@ export const setCurrentUser = (decoded, user) => {
     }
 }
 
-export const setUserProfile = (user, dispatch) => {
+export const setUserProfile = (userProfile, dispatch) => {
+    AsyncStorage.setItem("userProfile", JSON.stringify(userProfile));
     dispatch({
         type: SET_USER_PROFILE,
-        userProfile: user
+        userProfile: userProfile
     })
 }

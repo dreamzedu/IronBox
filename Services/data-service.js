@@ -35,8 +35,23 @@ export const saveUserAddress = async (address) => {
     catch (error) { console.log(error); return null; }
 }
 
+export const updateUserAddress = async (addressId, address) => {
+    try {
+        let token = await AsyncStorage.getItem("jwt");
 
-export const getUserOrders = async (userId) => {
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        };
+        let result = await axios
+            .put(`${baseURL}addresses/${addressId}`, address, config);
+        return result.data;
+    }
+    catch (error) { console.log(error); return null; }
+}
+
+export const getUserOrders = async (userId, pageIndex, pageSize) => {
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -47,9 +62,27 @@ export const getUserOrders = async (userId) => {
         };
 
         let result = await axios
-            .get(`${baseURL}orders/user/${userId}`, config);
+            .get(`${baseURL}orders/user/${userId}/${pageIndex}/${pageSize}`, config);
         return result.data;
        
+    }
+    catch (error) { console.log(error); return null; }
+}
+
+export const getOrders = async (pageIndex, pageSize, statusFilter) => {
+    try {
+        let token = await AsyncStorage.getItem("jwt");
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        };
+
+        let result = await axios
+            .get(`${baseURL}orders/all/${pageIndex}/${pageSize}/${statusFilter}`, config);
+        return result.data;
+
     }
     catch (error) { console.log(error); return null; }
 }
@@ -71,6 +104,25 @@ export const updateOrderStatus = async (orderId, newStatus) => {
     }
     catch (error) { console.log(error); return null; }
    
+};
+
+export const updateUserOrderItems = async (orderId, items) => {
+    try {
+        let token = await AsyncStorage.getItem("jwt");
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        };
+
+        let result = await axios
+            .put(`${baseURL}orders/items/${orderId}`, { items: items }, config);
+        return result.data;
+
+    }
+    catch (error) { console.log(error); return null; }
+
 };
 
 export const getOrderDetail = async (orderId) => {
@@ -114,8 +166,8 @@ export const cancelUserOrder = async (orderId, message) => {
 
 export const getOrderStatuses = async () => {
     try {
-        let orderStatuses = await AsyncStorage.getItem("orderstatuses");
-        if (orderStatuses) return JSON.parse(orderStatuses);
+        var statusList = await AsyncStorage.getItem("orderstatuses");
+        if (statusList) return JSON.parse(statusList);
 
         let token = await AsyncStorage.getItem("jwt");
 
@@ -145,7 +197,7 @@ export const saveUserOrder = async (order) => {
         };
         let result = await axios
             .post(`${baseURL}orders`, order, config);
-        return result;
+        return result.data;
         //.then((address) => { return address; }).catch((error) => { console.log(error); return null; })
     }
     catch (error) { console.log(error); return null; }

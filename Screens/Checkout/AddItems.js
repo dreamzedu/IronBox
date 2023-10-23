@@ -1,10 +1,11 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, ScrollView, Text, FlatList, StyleSheet, Dimensions, Button } from 'react-native';
 import axios from 'axios'
 import baseUrl from '../../assets/common/baseUrl'
 import ServiceItem from './ServiceItem'
 import { HStack } from '@gluestack-ui/themed';
+import AuthGlobal from "../../Context/store/AuthGlobal"
 
 var { width } = Dimensions.get("window");
 
@@ -33,8 +34,17 @@ const AddItems = (props) => {
     const [serviceItems, setServiceItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [addedItems, setAddedItems] = useState([...order.items]);
+    const context = useContext(AuthGlobal)
 
     useEffect(() => {
+        let p = 0;
+        if (order?.items?.length > 0) {
+            order.items.map((item) => {
+                p += item.price * item.count;
+            });
+            setTotalPrice(p);
+        }
+
         axios.get(`${baseUrl}service-items/available`)
             .then((result) => {
                 var serviceItems = result.data;
@@ -81,11 +91,22 @@ const AddItems = (props) => {
     const confirmItemSelection = () => {
         order.items = addedItems;
         order.totalPrice = totalPrice;
-        props.navigation.navigate("Confirm Order", { order: order });
+
+        if (context.stateUser.user.isAdmin && props.flow === "admin") {
+            props.updateOrderItems(order) // updateOrderItems is coming from AdminUpdateOrderItems
+        }
+        else {
+            props.navigation.navigate("Confirm Order", { order: order });
+        }
     }
 
     const skipItemSelection = () => {
-        props.navigation.navigate("Confirm Order", { order: order });
+        if (context.stateUser.user.isAdmin && props.flow === "admin") {
+            props.navigation.navigate("OrderDetail", { order: order });
+        }
+        else {
+            props.navigation.navigate("Confirm Order", { order: order });
+        }
     }
 
     return (

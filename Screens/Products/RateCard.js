@@ -1,4 +1,4 @@
-import { Container } from '@gluestack-ui/themed';
+
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
 import axios from 'axios'
@@ -36,7 +36,7 @@ const RateCard = (props) => {
     }, []);
 
     return (
-        <Container style={styles.container}>
+        <View style={styles.container}>
             <FlatList
                 data={serviceItems}
                 ListHeaderComponent={ListHeader}
@@ -48,7 +48,7 @@ const RateCard = (props) => {
                 )}
                 keyExtractor={(item) => item.id}
             />
-        </Container>
+        </View>
     )
 }
 

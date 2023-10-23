@@ -9,7 +9,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUserProfile } from '../../Context/actions/Auth.actions'
 
 const UpdateUserProfile = (props) => {
@@ -71,13 +70,13 @@ const UpdateUserProfile = (props) => {
                         phone: phone
                     };
 
-                    AsyncStorage.setItem("userProfile", JSON.stringify(userProfile));
+                    
                     setUserProfile(userProfile, context.dispatch)
 
                     Toast.show({
                         type: "success",
-                        text1: "Registration Succeeded",
-                        text2: "Please Login into your account",
+                        text1: "Profile updated successfully.",
+                        text2: "",
                     });
                     setTimeout(() => {
                         setLoading(false);

@@ -63,10 +63,20 @@ const CustomSidebarMenu = (props) => {
                       label={({ color }) => <Text style={{ color: '#d8d8d8' }}>Login</Text>}
                       onPress={() => {
                           props.navigation.toggleDrawer();
-                          props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'Products', msg: "you must login for this" } });
+                          props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'Home', msg: "you must login for this" } });
                       }}
                   />
-                  }
+              }
+              {context.stateUser.isAuthenticated && context.stateUser.user.isAdmin ?
+                  <DrawerItem
+                      label={({ color }) => <Text style={{ color: '#d8d8d8' }}>Orders</Text>}
+                      onPress={() => {
+                          props.navigation.toggleDrawer();
+                          props.navigation.navigate("AdminNavigator", { screen: "Orders" });
+                      }}
+                  /> : null
+                  
+                }
       </DrawerContentScrollView>
     </View>
   );
@@ -78,13 +88,13 @@ const stylesSidebar = StyleSheet.create({
   sideMenuContainer: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#307ecc',
+        backgroundColor: '#f4511e',//'#307ecc',
     paddingTop: 40,
     color: 'white',
   },
   profileHeader: {
     flexDirection: 'row',
-    backgroundColor: '#307ecc',
+      backgroundColor: '#f4511e',//'#307ecc',
     padding: 15,
     textAlign: 'center',
   },

@@ -5,19 +5,19 @@ import { Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBac
 import TrafficLight from "./StyledComponents/TrafficLight";
 import EasyButton from "./StyledComponents/EasyButton";
 import Toast from "react-native-toast-message";
-import { updateOrderStatus, getOrderStatuses } from '../Services/data-service';
+import { updateOrderStatus } from '../Services/data-service';
 
 
-let orderStatuses = [];
+
 
 const OrderCard = (props) => {
     
     const [orderStatus, setOrderStatus] = useState();
     const [statusChange, setStatusChange] = useState();
     const [cardColor, setCardColor] = useState();
+    
 
-  useEffect(() => {
-      orderStatuses = getOrderStatuses();
+  useEffect(() => {          
 
       switch (props.order.status.code) {
           case 1:
@@ -73,50 +73,53 @@ const OrderCard = (props) => {
         });
     }
 
+    const onStatusChange=(e)=>
+    {
+        setStatusChange(e)
+    }
+
   return (
     <View style={[{ backgroundColor: cardColor }, styles.container]}>
-      <View style={styles.container}>
+      <View>
               <Text>{props.order.product.name}</Text>
               <Text>Order Number: #{props.order.id}</Text>
+              <Text>Date Ordered: {props.order.dateOrdered.split("T")[0]}</Text>
+              <Text style={styles.price}>Total Cost: Rs {props.order.totalPrice}.00</Text>
       </View>
       <View style={{ marginTop: 10 }}>
               <Text>Status: {props.order.status.name} {orderStatus}</Text>
-            <Text>Date Ordered: {props.order.dateOrdered.split("T")[0]}</Text>
-            <Text>Total Cost: </Text>
-            <Text style={styles.price}>Rs {props.order.totalPrice}.00</Text>
-        </View>
-        {props.editMode ? (
-              <View>
-                  <Select onValueChange={(e) => setStatusChange(e)} selectedValue={statusChange}>
-                      <SelectTrigger variant="outline" size="md" >
-                          <SelectInput placeholder="Change Status" />
-                          <SelectIcon mr="$3">
-                              <Icon as={ChevronDownIcon} />
-                          </SelectIcon>
-                      </SelectTrigger>
-                      <SelectPortal>
-                          <SelectBackdrop />
-                          <SelectContent>
-                              <SelectDragIndicatorWrapper>
-                                  <SelectDragIndicator />
-                              </SelectDragIndicatorWrapper>
-                              {orderStatuses.map((c) => {
-                                  return (
-                                      <SelectItem key={c.code} label={c.name} value={c.name} />
-                                  );
-                              })}
-                             
-                          </SelectContent>
-                      </SelectPortal>
-                  </Select>
-            
-            <EasyButton secondary large onPress={() => updateOrder()}>
-              <Text style={{ color: "white" }}>Update</Text>
-            </EasyButton>
-          </View>
-          ) : null}
+              {props.editMode ? (
+                  <View style={{ display: "flex", flexDirection: "row", alignContent: "stretch" }}>
+                      <Select onValueChange={(e) => onStatusChange(e)} selectedValue={statusChange}>
+                          <SelectTrigger variant="outline" size="md" >
+                              <SelectInput placeholder="Change Status" />
+                              <SelectIcon mr="$3">
+                                  <Icon as={ChevronDownIcon} />
+                              </SelectIcon>
+                          </SelectTrigger>
+                          <SelectPortal>
+                              <SelectBackdrop />
+                              <SelectContent>
+                                  <SelectDragIndicatorWrapper>
+                                      <SelectDragIndicator />
+                                  </SelectDragIndicatorWrapper>
+                                  {props.orderStatuses.map((c) => {
+                                      return (
+                                          <SelectItem key={c.code} label={c.name} value={c.id} />
+                                      );
+                                  })}
 
-          <Button title="View Detail" onPress={() => props.navigation.navigate("Order Detail", {orderId: props.order.id})} />
+                              </SelectContent>
+                          </SelectPortal>
+                      </Select>
+
+                      <EasyButton secondary large onPress={() => updateOrder()} >
+                          <Text style={{ color: "white" }}>Update</Text>
+                      </EasyButton>
+                  </View>
+              ) : null}            
+        </View>        
+          
       </View>
   );
 }

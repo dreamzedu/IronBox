@@ -7,7 +7,6 @@ import { saveUserAddress } from '../../Services/data-service';
 import AuthGlobal from '../../Context/store/AuthGlobal'
 import { Checkbox, CheckboxIndicator, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
 import { setUserProfile } from '../../Context/actions/Auth.actions'
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddPickupAddress = (props) => {    
 
@@ -39,7 +38,6 @@ const AddPickupAddress = (props) => {
         if (useAsDefaultAddress) {
             address = await saveUserAddress(address)
             let user = { ...context.stateUser.userProfile, address: address };
-            AsyncStorage.setItem("userProfile", JSON.stringify(user));
             setUserProfile(user, context.dispatch)
             
         }
@@ -54,10 +52,11 @@ const AddPickupAddress = (props) => {
             extraHeight={200}
             enableOnAndroid={true}
         >
-            <FormContainer title={"Pickup Address"}>
+            <FormContainer title={"Add Pickup Address"}>
                    <Input
                     placeholder={"Address Line 1"}
                     name={"AddressLine1"}
+                    id="1"
                     value={address1}
                     onChangeText={(text) => setAddress1(text)}
                 />
@@ -65,23 +64,26 @@ const AddPickupAddress = (props) => {
                     placeholder={"Address Line 2"}
                     name={"Address Line 2"}
                     value={address2}
+                    id="2"
                     onChangeText={(text) => setAddress2(text)}
                 />
                    <Input
                     placeholder={"City"}
                     name={"city"}
                     value={city}
+                    id="3"
                     onChangeText={(text) => setCity(text)}
                 />
                    <Input
                     placeholder={"Zip Code"}
                     name={"zip"}
                     value={zip}
+                    id="4"
                     keyboardType={"numeric"}
                     onChangeText={(text) => setZip(text)}
                 />
                 <View>
-                    <Checkbox size="md" isInvalid={false} isDisabled={false} value={useAsDefaultAddress} onChange={setUseAsDefaultAddress}>
+                    <Checkbox key="chk1" aria-label="setdeafault" size="md" isInvalid={false} isDisabled={false} value={useAsDefaultAddress} onChange={setUseAsDefaultAddress}>
                         <CheckboxIndicator mr="$2">
                             <CheckboxIcon as={CheckIcon} />
                         </CheckboxIndicator>

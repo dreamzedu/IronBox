@@ -4,8 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import SplashScreen from '../Screens/SplashScreen'
 import LoginNavigator from './LoginNavigator'
-import BottomTabNavigator from './BottomTabNavigator'
 import DrawerNavigator from "./DrawerNavigator"
+import AdminNavigator from "./AdminNavigator"
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +30,11 @@ function MyStack() {
                 name="DrawerNavigator"
                 component={DrawerNavigator}
                 // Hiding header for Navigation Drawer as we will use our custom header
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="AdminNavigator"
+                component={AdminNavigator}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>

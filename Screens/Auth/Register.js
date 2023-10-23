@@ -17,10 +17,6 @@ const Register = (props) => {
     const [password, setPassword] = useState("");
     const [repassword, setRePassword] = useState("");
 
-    const [address1, setAddress1] = useState();
-    const [address2, setAddress2] = useState();
-    const [city, setCity] = useState();
-    const [zip, setZip] = useState();
   const [error, setError] = useState("");
 
   const register = () => {
@@ -56,9 +52,9 @@ const Register = (props) => {
           }, 500);
         }
       })
-      .catch((error) => {
-        Toast.show({
-          topOffset: 60,
+        .catch((error) => {
+            console.log(error);
+          Toast.show({
           type: "error",
           text1: "Something went wrong",
           text2: "Please try again",

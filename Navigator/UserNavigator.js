@@ -4,6 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MyOrders from "../Screens/User/MyOrders";
 import UserProfile from "../Screens/User/UserProfile";
 import UpdateUserProfile from '../Screens/User/UpdateUserProfile';
+import AddressEditor from '../Screens/User/AddressEditor';
+import MyOrderDetail from '../Screens/User/MyOrderDetail'
 
 const Stack = createNativeStackNavigator();
 
@@ -25,13 +27,27 @@ function MyStack() {
                 }}
             />
             <Stack.Screen
+                name="AddressEditor"
+                component={AddressEditor}
+                options={{
+                    headerShown: false
+                }}
+            />
+            <Stack.Screen
                 name="MyOrders"
                 component={MyOrders}
                 options={{
                     headerShown: false
                 }}
             />
-           
+
+            <Stack.Screen
+                name="MyOrderDetail"
+                component={MyOrderDetail}
+                options={{
+                    headerShown: false
+                }}
+            />
             
         </Stack.Navigator>
     )

@@ -32,13 +32,13 @@ const ConfirmOrder = (props) => {
               setTimeout(() => {
                   //props.clearCart();
                   console.log("order placed" + res);
-                  props.navigation.navigate("Order Acknowledgement", { orderData: { ...order, id: res.data } });
+                  props.navigation.navigate("Order Acknowledgement", { orderData: { ...order, id: res.orderId } });
               }, 500);
           }
           else {
               Toast.show({
                   type: "error",
-                  text1: "Failed",
+                  text1: "Failed to place order.",
                   text2: res.message
               });
           }

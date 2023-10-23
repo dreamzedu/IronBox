@@ -10,10 +10,12 @@ const ProductCard = (props) => {
     return (
 
         <View style={styles.container}>
-            <Image resizeMode='contain' style={styles.image} source={{
-                uri: image != '' ? image : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png' }} />
-            <View style={ styles.card} ></View>
-            <Text style={styles.title}>{name.length > 15 ? name.substring(0, 12) + '...' : name}</Text>
+            
+                <Image resizeMode='contain' style={styles.image} source={{
+                    uri: image != '' ? image : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
+                }} />
+            
+            <Text style={styles.title}>{name.length > 45 ? name.substring(0, 42) + '...' : name}</Text>
         </View>
 
     );
@@ -23,39 +25,46 @@ const ProductCard = (props) => {
 const styles = StyleSheet.create({
     container:
     {
-        width: width / 2 -60,
-        height: width / 1.7,
+        width: width -20,
+        height: width / 2.7,
         padding: 10,
         borderRadius: 10,
-        marginTop: 55,
+        marginTop: 10,
         marginBottom: 5,
         marginLeft: 10,
-        alignItems: 'center',
         elevation: 8,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        display: "flex",
+        flexDirection: 'row',
+        alignContent: 'flex-start'
 
     },
     title:
     {
         fontWeight: 'bold',
         fontSize: 18,
-        textAlign: 'center'
+        flex: 0.7,
+        
+       
     },
     card:
     {
         marginBottom: 10,
-        height: width / 2 - 110,
         backgroundColor: 'transparent',
-        width: width/2-70
+       
+
     },
     image:
     {
-        width: width / 2 - 70,
-        height: width / 2 - 50,
-        position: 'absolute',
-        top: -45,
-        backgroundColor:'transparent'
-    }
+        flex: 0.3,
+        marginRight: 20,
+        alignContent: 'flex-start',
+        borderRadius: 10,
+        borderColor: 'red',
+        borderWidth: 1,
+        backgroundColor: 'transparent'
+    },
+    
 })
 
 export default ProductCard;

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, Text, StyleSheet, ScrollView, Button } from "react-native";
 import { Heading, Spinner } from "@gluestack-ui/themed";
 import TrafficLight from "../../Shared/StyledComponents/TrafficLight";
 import { getOrderDetail, getOrderStatuses } from '../../Services/data-service';
 import { formatDate, formatDateLong, formatTime } from '../../assets/common/formatters'
 import AddressCard from "../../Shared/AddressCard"
+import AuthGlobal from "../../Context/store/AuthGlobal"
 
 
 
@@ -12,7 +13,7 @@ import AddressCard from "../../Shared/AddressCard"
 const OrderDetail = (props) => {
     const [orderStatus, setOrderStatus] = useState();
     const [order, setOrder] = useState();
-   
+    const context = useContext(AuthGlobal)
 
 
     useEffect(() => {
@@ -103,7 +104,13 @@ const OrderDetail = (props) => {
                             <AddressCard address={order.pickupAddress} />                            
                         </View>
 
-                        <Heading>Item List:</Heading>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'stretch' }}>
+                            <Heading>Item List:</Heading>
+                            {context.stateUser.user.isAdmin ?
+                                <Button title="Update Items" onPress={() => { props.navigation.navigate("AdminUpdateOrderItems", { order: order }) }} />
+                                : null
+                            }
+                        </View>
                         <View>
                             {order.items.map((item) => {
                                 return (<View class={styles.itemContainer} key={item.id }><Text class={styles.item}>{item.name}</Text><Text class={styles.item}>{item.count}</Text></View>)

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback } from 'react';
-import { View, Text, ScrollView, Button, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from "@react-navigation/native"
 import OrderCard from "../../Shared/OrderCard";
 import { getUserOrders } from '../../Services/data-service';
@@ -11,6 +11,8 @@ const MyOrders = (props) => {
     const [orders, setOrders] = useState()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(true)
+    const pageSize = 50;
+    let pageIndex = 1;
 
     useFocusEffect(
         useCallback(() => {
@@ -23,7 +25,7 @@ const MyOrders = (props) => {
 
             const fetchOrders = async () => {
                 try {
-                    getUserOrders(context?.stateUser?.user?.userId)
+                    getUserOrders(context?.stateUser?.user?.userId, pageIndex, pageSize)
                         .then((orders) => {
                             setOrders(orders);
                             setError(false);
@@ -61,7 +63,9 @@ const MyOrders = (props) => {
                         {orders ? (
                             orders.map((x) => {
                                 return <View key={x.id}>
-                                    <OrderCard order={x} navigation={props.navigation} />                                   
+                                    <TouchableOpacity onPress={() => props.navigation.navigate("Order Detail", { orderId: x.id })}>
+                                        <OrderCard order={x} navigation={props.navigation} />
+                                    </TouchableOpacity>
                                 </View>
                             })
                         ) : (

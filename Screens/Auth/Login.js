@@ -65,7 +65,8 @@ const Login = (props) => {
     }
 
     const cancelLogin = () => {        
-        props.navigation.replace('TabNavigator');
+        //props.navigation.navigate(props.route.params.returnPage);
+        props.navigation.navigate("TabNavigator", { screen: "Home" });
     }
 
   const handleSubmit = () => {

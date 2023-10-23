@@ -16,7 +16,10 @@ const UserProfile = (props) => {
     const [loading, setLoading] = useState(true)
     const [orders, setOrders] = useState()
     const [error, setError] = useState(false)
+    const pageSize = 2;
+    const pageIndex = 1;
 
+  
     useFocusEffect(useCallback(() => {
 
         if (!context.stateUser || context.stateUser.isAuthenticated === null || context.stateUser.isAuthenticated === false) {
@@ -26,7 +29,7 @@ const UserProfile = (props) => {
         else {
             const fetchOrders = async () => {
                 try {
-                    getUserOrders(context.stateUser.user.userId)
+                    getUserOrders(context.stateUser.user.userId, pageIndex, pageSize)
                         .then((orders) => {
                             setOrders(orders);
                             setError(false);
@@ -46,7 +49,8 @@ const UserProfile = (props) => {
 
             setLoading(true);
             setUserProfile(context.stateUser.userProfile)
-            fetchOrders();
+            if (!orders)
+                fetchOrders();
         }
 
         return () => {
@@ -56,7 +60,7 @@ const UserProfile = (props) => {
             setError(false);
         }
 
-    }, [context.stateUser.isAuthenticated]));
+    }, [context.stateUser.isAuthenticated, context.stateUser.userProfile]));
 
     return (loading ? <Spinner size='small'></Spinner>
         :
@@ -73,25 +77,40 @@ const UserProfile = (props) => {
                         Phone: {userProfile ? userProfile.phone : "N/A"}
                     </Text>
                </View>
-               <View style={{ marginTop: 80 }}>
+               <View style={{ margin: 10 }}>
                     <Button title={"Edit Profile"} onPress={() => props.navigation.navigate("Edit Profile") }/>
                 </View>
                 <View>
                     <Heading>
                         Adress
                     </Heading>
-                    <AddressCard address={userProfile.address}/>
+                    {userProfile.address ?
+                        <>
+                        <AddressCard address={userProfile.address} />
+                        
+                    <View style={{ margin: 10 }}>
+                        <Button title={"Edit Address"} onPress={() => props.navigation.navigate("AddressEditor", {address : userProfile.address , mode:'edit'})} />
+                    </View>
+                            </>
+                        :
+                        <>
+                        <Text>N/A</Text>
+                        <View style={{ margin: 10 }}>
+                                <Button title={"Add Address"} onPress={() => props.navigation.navigate("AddressEditor", {address : userProfile.address, mode: 'add' })} />
+                        </View>
+                        </>
+                    }
                 </View>
-               <View style={styles.order}>
-                   <Text style={{ fontSize: 20 }}>My Orders</Text>
+                <View style={styles.order}>
+                    <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'stretch' }}>
+                        <Text style={{ fontSize: 20 }}>Recent Orders</Text>
+                        <Button title="View All" onPress={() => props.navigation.navigate("MyOrders")} ></Button>
+                    </View>
                     <View>
                         {orders ? (
                             orders.map((x) => {
                                 return <View key={x.id}>
-                                    <OrderCard order={x} navigation={props.navigation} />
-                                    {x.status.name !== "Cancelled" ?
-                                        <Button title="Cancel Order" onPress={() => props.navigation.navigate("Cancel Order", { orderData: x })} ></Button>
-                                        : null}
+                                    <OrderCard order={x} navigation={props.navigation} />                                  
                                 </View>
                             })
                         ) : (
