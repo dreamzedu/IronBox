@@ -2,10 +2,14 @@
 import axios from "axios";
 import baseURL from "../assets/common/baseUrl";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as offlineData from './offline-data-service';
 
+const offline = false;
 
 export const getUserAddress = (userId) =>
-    {
+{
+    if (offline) offlineData.offlinegetUserAddress(userId);
+
         AsyncStorage.getItem("jwt")
             .then((res) => {
                 axios
@@ -17,8 +21,8 @@ export const getUserAddress = (userId) =>
             .catch((error) => { console.log(error); return null;})
     }
 
-
 export const saveUserAddress = async (address) => {
+    if (offline) offlineData.offlinesaveUserAddress(address);
     try {
         let token = await AsyncStorage.getItem("jwt");
         
@@ -36,6 +40,7 @@ export const saveUserAddress = async (address) => {
 }
 
 export const updateUserAddress = async (addressId, address) => {
+    if (offline) offlineData.offlineupdateUserAddress(addressId, address)
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -52,6 +57,7 @@ export const updateUserAddress = async (addressId, address) => {
 }
 
 export const getUserOrders = async (userId, pageIndex, pageSize) => {
+    if (offline) { return await offlineData.offlineGetUserOrders(userId, pageIndex, pageSize); }
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -70,6 +76,7 @@ export const getUserOrders = async (userId, pageIndex, pageSize) => {
 }
 
 export const getOrders = async (pageIndex, pageSize, statusFilter) => {
+    if (offline) offlineData.offlinegetOrders(pageIndex, pageSize, statusFilter);
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -88,6 +95,7 @@ export const getOrders = async (pageIndex, pageSize, statusFilter) => {
 }
 
 export const updateOrderStatus = async (orderId, newStatus) => {
+    if (offline) offlineData.offlineupdateOrderStatus(orderId, newStatus);
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -107,6 +115,7 @@ export const updateOrderStatus = async (orderId, newStatus) => {
 };
 
 export const updateUserOrderItems = async (orderId, items) => {
+    if (offline) offlineData.offlineupdateUserOrderItems(orderId, items);
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -126,6 +135,7 @@ export const updateUserOrderItems = async (orderId, items) => {
 };
 
 export const getOrderDetail = async (orderId) => {
+    if (offline) offlineData.offlinegetOrderDetail(orderId);
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -144,6 +154,7 @@ export const getOrderDetail = async (orderId) => {
 }
 
 export const cancelUserOrder = async (orderId, message) => {
+    if (offline) offlineData.offlinecancelUserOrder(orderId, message);
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -163,8 +174,8 @@ export const cancelUserOrder = async (orderId, message) => {
 
 };
 
-
 export const getOrderStatuses = async () => {
+    if (offline) offlineData.offlinegetOrderStatuses();
     try {
         var statusList = await AsyncStorage.getItem("orderstatuses");
         if (statusList) return JSON.parse(statusList);
@@ -187,6 +198,7 @@ export const getOrderStatuses = async () => {
 }
 
 export const saveUserOrder = async (order) => {
+    if (offline) offlineData.offlinesaveUserOrder(order);
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -204,6 +216,7 @@ export const saveUserOrder = async (order) => {
 }
 
 export const updateUserProfile = async (userId, userProfile) => {
+    if (offline) offlineData.offlineupdateUserProfile(userId, userProfile);
     try {
         let token = await AsyncStorage.getItem("jwt");
 
@@ -221,3 +234,39 @@ export const updateUserProfile = async (userId, userProfile) => {
     catch (error) { console.log(error); return null; }
 
 };
+
+export const getProducts = async () => {
+    if (offline) { return offlineData.offlinegetProducts(); }
+    try {
+        var result = await axios.get(`${baseURL}products/available`)
+
+        return result.data;
+
+    }
+    catch(error) {
+        console.log("Api error: " + error);
+    }
+}
+
+export const getServiceItems = async () => {
+    try {
+            let result = await axios.get(`${baseURL}service-items/available`)
+            return result.data;
+    }
+    catch (error) {
+        console.log("Api error: " + error);
+    }
+}
+
+export const getServiceItemCategories = async () => {
+    try {
+        var result = await axios.get(`${baseURL}service-item-categories/available`)
+
+        return result.data;
+
+    }
+    catch (error) {
+        console.log("Api error: " + error);
+    }
+}
+

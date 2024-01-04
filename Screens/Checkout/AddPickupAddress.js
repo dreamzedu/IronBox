@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext} from 'react'
-import { Text, View, Button } from 'react-native'
+import { View, Button } from 'react-native'
 import FormContainer from '../../Shared/Form/FormContainer'
 import Input from '../../Shared/Form/Input'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { saveUserAddress } from '../../Services/data-service';
 import AuthGlobal from '../../Context/store/AuthGlobal'
-import { Checkbox, CheckboxIndicator, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
+import {Text, Checkbox, CheckboxIndicator, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
 import { setUserProfile } from '../../Context/actions/Auth.actions'
 
 const AddPickupAddress = (props) => {    
@@ -52,7 +52,8 @@ const AddPickupAddress = (props) => {
             extraHeight={200}
             enableOnAndroid={true}
         >
-            <FormContainer title={"Add Pickup Address"}>
+            <FormContainer title={"Pickup Address"}>
+                <View><Text>{ }</Text></View>
                    <Input
                     placeholder={"Address Line 1"}
                     name={"AddressLine1"}
@@ -89,8 +90,8 @@ const AddPickupAddress = (props) => {
                         </CheckboxIndicator>
                         <CheckboxLabel>Use this as default address</CheckboxLabel>
                     </Checkbox>
-                    </View>
-                <View style={{ width: '80%', alignItems: "center" }}>
+                </View>
+                <View style={{ width: '80%', alignItems: "center", marginTop:20 }}>
                     <Button title="Confirm" onPress={() => setPickupAddress()}/>
                 </View>
             </FormContainer>

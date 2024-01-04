@@ -1,4 +1,4 @@
-import { HStack } from "@gluestack-ui/themed";
+﻿import { HStack } from "@gluestack-ui/themed";
 import React, { useState } from "react";
 import { StyleSheet, Dimensions, View, Button, Text, TouchableOpacity} from "react-native";
 
@@ -14,13 +14,13 @@ const ServiceItem = (props) => {
     return (
         <View style={styles.container} key={ props.item.id}>
            
-            <Text style={styles.item}>{props.item.name}</Text>
-            <Text style={styles.item}>{props.item.price}</Text>
+            <Text style={[styles.col1, styles.itemPadding]}>{props.item.name}</Text>
+            <Text style={[styles.col2, styles.itemPadding]}>₹ {props.item.price}</Text>
 
             {counter === 0 ?
-                (<View style={{ flexDirection: 'row', alignSelf: "flex-end" }}><EasyButton secondary medium onPress={() => { setCounter(counter + 1), props.addItem(props.item) }}><Text>Add</Text></EasyButton></View>) : (
-                    <View style={styles.counter}>
-                
+                (<View style={[styles.col3, styles.itemPadding]}><EasyButton secondary medium onPress={() => { setCounter(counter + 1), props.addItem(props.item) }}><Text>Add</Text></EasyButton></View>) : (
+                    <View style={[styles.col3, styles.itemPadding]}>
+                        
                         <TouchableOpacity
                             style={styles.touchable}
                             onPress={() => { setCounter(counter - 1); counter === 1 ? props.removeItem(props.item):props.decrease(props.item); }}
@@ -40,8 +40,9 @@ const ServiceItem = (props) => {
                             onPress={() => { if (counter < 100) { setCounter(counter + 1), props.increase(props.item) } }}
                         >
                             <Icon style={styles.buttonText} color={"#007aff"} name="plus" />
-                        </TouchableOpacity>
-                    </View>
+                            </TouchableOpacity>
+                        </View>
+                    
                 )}
             </View>
   );
@@ -50,8 +51,9 @@ const ServiceItem = (props) => {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        padding:5,
-        width: width -20
+        padding:10,
+        width: width - 20,
+        
     },
     image: {
         borderRadius: 50,
@@ -59,13 +61,30 @@ const styles = StyleSheet.create({
         height: 20,
         margin: 2
     },
-    item: {
+    itemPadding:
+    {
+        paddingHorizontal:5
+    },
+    col1: {
         flexWrap: "wrap",
-        margin: 3,
-        width: (width-20) / 3 
+        width: (width - 20) / 3,
+        flexShrink: 1,
+        flex:1
+    },
+    col2: {
+        flexWrap: "wrap",        
+        width: 70,
+        flexShrink: 1,
     },
 
-    
+    col3: {
+        flexWrap: "wrap",
+        width: (width-20) / 3,
+        flexShrink: 1,
+        justifyContent: 'flex-end',
+        marginRight: 10,
+        flexDirection: 'row',
+    },
     countText: {
         fontSize: 16,
         paddingLeft: 15,
@@ -91,9 +110,6 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 12,
         color: '#27AAE1',
-    },
-    counter: {
-        flexDirection: 'row'
     },
   
 })

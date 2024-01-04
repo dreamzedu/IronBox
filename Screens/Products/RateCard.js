@@ -54,14 +54,14 @@ const RateCard = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        width: width,
+        width: width-20,
         margin: 10
     },
 
     listHeader: {
         flexDirection: 'row',
         padding: 5,
-        backgroundColor: 'gainsboro'
+        backgroundColor: '#66B3FF'
     },
     headerItem: {
         margin: 3,

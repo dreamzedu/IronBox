@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Button, TextInput } from 'react-native';
-import { Radio, RadioGroup, VStack, RadioIndicator, RadioLabel, RadioIcon, CircleIcon, Heading } from '@gluestack-ui/themed'
+import { View, ScrollView, TextInput, StyleSheet, Dimensions } from 'react-native';
+import { Text, Radio, RadioGroup, VStack, RadioIndicator, RadioLabel, RadioIcon, CircleIcon, Heading, Button, ButtonText } from '@gluestack-ui/themed'
 import Error from "../../Shared/Error";
 
-
+const { width, height } = Dimensions.get("window")
 
 const SchedulePickup = (props) => {
 
@@ -108,52 +108,74 @@ const SchedulePickup = (props) => {
         
 
     return (
-        < ScrollView >
-            <View>
-                <Heading size="sm">Choose the date for pickup</Heading>
-            </View>
-            <View>
+        <View style={styles.container}>
+            <ScrollView >
 
-                <RadioGroup value={selectedDateSlotIndex} onChange={(selectedIndex) => onDateSlotChanged(selectedIndex)}>
-                    <VStack space="sm">
-                        {dateSlots.map((slot, index) => {
-                            return(<Radio value={index} isDisabled={!slot.isAvailable }>
-                            <RadioIndicator mr="$2">
-                                <RadioIcon as={CircleIcon} />
-                            </RadioIndicator>
-                                <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)": "")}</RadioLabel>
-                            </Radio>)                           
-                        })}
-                    </VStack>
-                </RadioGroup>
-            </View>
-            <Heading size="sm">
-                <Text>Choose a time slot for pickup</Text>
-            </Heading>
-            <View>
-                <RadioGroup value={selectedTimeSlotIndex} onChange={(selectedIndex) => onTimeSlotChanged(selectedIndex)}>
-                    <VStack space="sm">
-                        {timeSlots.map((slot, index) => {
-                            return (<Radio value={index} isDisabled={!slot.isAvailable}>
+                <View >
+                    <Text style={styles.title}>Choose pickup date</Text>            
+                    <View style={{ paddingLeft: 10, paddingBottom: 10 }}>
+
+                    <RadioGroup value={selectedDateSlotIndex} onChange={(selectedIndex) => onDateSlotChanged(selectedIndex)}>
+                        <VStack space="md">
+                            {dateSlots.map((slot, index) => {
+                                return(<Radio value={index} isDisabled={!slot.isAvailable }>
                                 <RadioIndicator mr="$2">
                                     <RadioIcon as={CircleIcon} />
                                 </RadioIndicator>
-                                <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)" : "")}</RadioLabel>
-                            </Radio>)
-                        })}
-                    </VStack>
-                </RadioGroup>
+                                    <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)": "")}</RadioLabel>
+                                </Radio>)                           
+                            })}
+                        </VStack>
+                    </RadioGroup>
+                </View>
+                </View>
+                <View style={{ paddingTop: 10, paddingBottom:20 }}>
+                    <Text style={styles.title}>Choose pickup time-slot</Text>            
+                    <View style={{ paddingLeft: 10, paddingBottom: 10 }}>
+                    <RadioGroup value={selectedTimeSlotIndex} onChange={(selectedIndex) => onTimeSlotChanged(selectedIndex)}>
+                        <VStack space="md">
+                            {timeSlots.map((slot, index) => {
+                                return (<Radio value={index} isDisabled={!slot.isAvailable}>
+                                    <RadioIndicator mr="$2">
+                                        <RadioIcon as={CircleIcon} />
+                                    </RadioIndicator>
+                                    <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)" : "")}</RadioLabel>
+                                </Radio>)
+                            })}
+                        </VStack>
+                    </RadioGroup>
                 
-            </View>
-            <View><Text>Note: you can re-schedule the pick until one hour before the scheduled pickup. Any re-schedule or cancellation after that is chargable.</Text></View>
+                                </View>
+                </View>
+            {/*<View><Text>Note: you can re-schedule the pick until one hour before the scheduled pickup. Any re-schedule or cancellation after that is chargable.</Text></View>*/}
             {/*<TextInput value={testTime} onChangeText={(value) => setTestTime(value)} />*/}
-            <View style={{ width: '80%', alignItems: "center" }}>
-                <Button title="Confirm" onPress={() => setPickupslot()} />
+            <View style={{ alignItems: "center" }}>
+                    <Button onPress={() => setPickupslot()} >
+                        <ButtonText>Confirm
+                        </ButtonText>
+                    </Button>
             </View>
             <View>{error ? <Error message={error} /> : null}</View>
-        </ScrollView>
+            </ScrollView>
+        </View>
     )
 
 }
 
+const styles = StyleSheet.create({
+    container: {
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: 'white',
+        height:height,
+    },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        paddingBottom: 10,
+    }
+}
+)
+
 export default SchedulePickup;
+

@@ -1,9 +1,10 @@
 import React, { useEffect, useContext, useState, useCallback } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, StyleSheet } from "react-native";
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
 import { useFocusEffect } from "@react-navigation/native"
+import { Text, Spinner, Button, ButtonIcon, ButtonText, ArrowRightIcon, ArrowLeftIcon } from "@gluestack-ui/themed";
 
 
 // Context
@@ -103,19 +104,36 @@ const Login = (props) => {
       />
       <View style={styles.buttonGroup}>
               {error ? <Error message={error} /> : null}
-              <Button large primary onPress={() => handleSubmit()} title="Login" />
+              <Button
+                  size="md"
+                  variant="solid"
+                  action="primary"
+                  isDisabled={false}
+                  isFocusVisible={false}
+                  onPress={() => handleSubmit()}
+              >
+                  <ButtonText>Login </ButtonText>
+              </Button>
+              <Button variant="link" onPress={() => cancelLogin()}>
+                  <ButtonText
+                      fontWeight="$medium"
+                      fontSize="$sm"
+                  >
+                      Cancel
+                    </ButtonText>
+              </Button>
           
       </View>
-      <View style={[{ marginTop: 40 }, styles.buttonGroup]}>
-        <Text style={styles.middleText}>Don't have an account yet?</Text>
-        <Button
-        title="Register"
-                  onPress={() => props.navigation.navigate("Register")} />
-
-              <Button
-                  title="Cancel"
-                  onPress={() => cancelLogin()} />
-        
+      <View style={[{ marginTop: 46 }, styles.buttonGroup]}>
+              <Text style={styles.middleText}>Don't have an account yet?</Text>
+              <Button variant="link" onPress={() => props.navigation.navigate("Register")}>
+                  <ButtonText
+                      fontWeight="$medium"
+                      fontSize="$sm"
+                  >
+                      Register
+                    </ButtonText>
+              </Button>        
       </View>
     </FormContainer>
   );
@@ -127,7 +145,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   middleText: {
-    marginBottom: 20,
     alignSelf: "center",
   },
 });

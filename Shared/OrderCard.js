@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
-import { Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, ChevronDownIcon, Icon} from "@gluestack-ui/themed";
+﻿import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Button } from "react-native";
+import {Text, Heading, Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, ChevronDownIcon, Icon} from "@gluestack-ui/themed";
 
 import TrafficLight from "./StyledComponents/TrafficLight";
 import EasyButton from "./StyledComponents/EasyButton";
+import Title from "./StyledComponents/Title";
 import Toast from "react-native-toast-message";
 import { updateOrderStatus } from '../Services/data-service';
+import { formatDate, formatDateLong } from '../assets/common/formatters'
 
 
 
@@ -79,15 +81,15 @@ const OrderCard = (props) => {
     }
 
   return (
-    <View style={[{ backgroundColor: cardColor }, styles.container]}>
-      <View>
-              <Text>{props.order.product.name}</Text>
-              <Text>Order Number: #{props.order.id}</Text>
-              <Text>Date Ordered: {props.order.dateOrdered.split("T")[0]}</Text>
-              <Text style={styles.price}>Total Cost: Rs {props.order.totalPrice}.00</Text>
+    <View style={[{ backgroundColor: 'white' }]}>
+          <View style={styles.detailContainer}>
+              <View style={styles.row}><Text style={styles.title} size={"md"}>{props.order.product.name}</Text></View>
+              <View style={styles.row}><Text style={styles.alignLeft}>Order Number:</Text><Text> #{props.order.id}</Text></View>
+              <View style={styles.row}><Text style={styles.alignLeft}>Date Ordered:</Text><Text> {formatDate(props.order.dateOrdered.split("T")[0])}</Text></View>
+              <View style={styles.row}><Text style={styles.alignLeft}>Total Cost:</Text><Text> 	₹ {props.order.totalPrice}.00</Text></View>
       </View>
-      <View style={{ marginTop: 10 }}>
-              <Text>Status: {props.order.status.name} {orderStatus}</Text>
+          <View style={{ marginTop: 10 }}>
+              <View style={styles.row}><Text style={styles.alignLeft}>Status: </Text><Text>{orderStatus} {props.order.status.name} </Text></View>
               {props.editMode ? (
                   <View style={{ display: "flex", flexDirection: "row", alignContent: "stretch" }}>
                       <Select onValueChange={(e) => onStatusChange(e)} selectedValue={statusChange}>
@@ -112,10 +114,11 @@ const OrderCard = (props) => {
                               </SelectContent>
                           </SelectPortal>
                       </Select>
-
+                      <View style={{ paddingBottom: 10, paddingTop:5 }}>
                       <EasyButton secondary large onPress={() => updateOrder()} >
                           <Text style={{ color: "white" }}>Update</Text>
-                      </EasyButton>
+                          </EasyButton>
+                      </View>
                   </View>
               ) : null}            
         </View>        
@@ -125,24 +128,29 @@ const OrderCard = (props) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    margin: 10,
-    borderRadius: 10,
-  },
-  title: {
-    backgroundColor: "#62B1F6",
-    padding: 5,
-  },
-  priceContainer: {
-    marginTop: 10,
-    alignSelf: "flex-end",
-    flexDirection: "row",
-  },
-  price: {
-    color: "white",
-    fontWeight: "bold",
-  },
+ 
+    title: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        paddingBottom: 10,
+    },
+
+    detailContainer: {
+        display: 'flex',
+        flexDirection: "column",
+    },
+    row: {
+        display: 'flex',
+        flexDirection: "row",
+        alignSelf: 'stretch',
+        width: '100%',
+    },
+    alignLeft:
+    {
+        alignSelf: 'stretch',
+        flex:1
+    },      
+   
 });
 
 export default OrderCard;

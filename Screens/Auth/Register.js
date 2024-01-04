@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View,  StyleSheet } from "react-native";
 import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
 import Toast from "react-native-toast-message";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+import { Text, Spinner, Button, ButtonIcon, ButtonText, ArrowRightIcon, ArrowLeftIcon } from "@gluestack-ui/themed";
 
 import axios from "axios";
 import baseURL from "../../assets/common/baseUrl";
@@ -65,11 +65,10 @@ const Register = (props) => {
   return (
     <KeyboardAwareScrollView
       viewIsInsideTabBar={true}
-      extraHeight={200}
       enableOnAndroid={true}
     >
       <FormContainer title={"Register"}>
-        
+              <View><Text>{ }</Text></View>
         <Input
           placeholder={"Name"}
           name={"name"}
@@ -108,10 +107,24 @@ const Register = (props) => {
           {error ? <Error message={error} /> : null}
         </View>
         <View>
-                <Button large primary onPress={() => register()} title="Register" />
+                  <Button onPress={() => register()} >
+                      <ButtonText
+                          fontWeight="$medium"
+                          fontSize="$sm"
+                      >
+                          Register
+                    </ButtonText>
+                  </Button>
         </View>
-        <View>
-                <Button onPress={() => props.navigation.navigate("Login")} title="Back to Login" />
+              <View>
+                  <Button variant="link" onPress={() => props.navigation.navigate("Login")}>
+                      <ButtonText
+                          fontWeight="$medium"
+                          fontSize="$sm"
+                      >
+                          Back to Login
+                    </ButtonText>
+                  </Button>
         </View>
       </FormContainer>
     </KeyboardAwareScrollView>

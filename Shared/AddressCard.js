@@ -1,5 +1,6 @@
 
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
+import { Text } from "@gluestack-ui/themed";
 
 const AddressCard = (props) => {    
 
@@ -7,11 +8,13 @@ const AddressCard = (props) => {
         
         <View >
             <Text>
-                Address: {props.address.addressLine1} {props.address.addressLine2}
+                {props.address.addressLine1} 
             </Text>
-            <Text>City: {props.address.city}</Text>
-            <Text>Zipcode: {props.address.zip}</Text>
-            <Text>Country: {props.address.country}</Text>
+            <Text>
+                {props.address.addressLine2}
+            </Text>
+            <Text>{props.address.city}</Text>
+            <Text>{props.address.zip}</Text>
         </View>
     )
 }

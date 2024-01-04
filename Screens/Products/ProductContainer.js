@@ -6,7 +6,8 @@ import {
     ScrollView,
     Dimensions,
     Button,
-    TouchableOpacity
+    TouchableOpacity,
+    Image
 } from "react-native";
 import { Text, Heading, Spinner } from "@gluestack-ui/themed";
 import ProductList from "./ProductList";
@@ -14,10 +15,10 @@ import axios from 'axios';
 import baseUrl from '../../assets/common/baseUrl';
 import Banner from "../../Shared/Banner";
 import OrderCard from "../../Shared/OrderCard";
-import { getUserOrders } from '../../Services/data-service';
+import { getUserOrders, getProducts } from '../../Services/data-service';
 import AuthGlobal from "../../Context/store/AuthGlobal"
 
-var { height } = Dimensions.get('window')
+var { height, width } = Dimensions.get('window')
 
 const ProductContainer = (props) => {
     const [products, setProducts] = useState([]);
@@ -31,26 +32,36 @@ const ProductContainer = (props) => {
     const pageSize = 1;
     let pageIndex = 1;
 
+    let order = {
+        productId: null, userId: null, items: [], pickupAddress: null, pickupSlot: null, totalPrice: 0
+    };
+
     useEffect(() => {
+        setLoading(true);
         if (context?.stateUser?.isAuthenticated) {
             getUserOrders(context?.stateUser?.user.userId, pageIndex, pageSize).then((result) => {
+                console.log("user order: " + result[0]);
                 if (result?.length >0)
                 setLastOrder(result[0]);
             })
                 .catch((err) => { console.log(err) })
         }
 
-        setLoading(true);
-        axios.get(`${baseUrl}products/available`)
-            .then((result) => {
-                setProducts(result.data);
-                setProductsCtg(result.data);
+        console.log("getting products " );
+        
+        try {
+            getProducts().then((products) => {
+                console.log("products "+ products);
+                setProducts(products);
+                setProductsCtg(products);
                 setLoading(false);
-            })
-            .catch((error) => {
-                console.log("Api error: " + error);
-                setLoading(false);
-            })
+            });
+        }
+        catch
+        {
+            setLoading(false);
+            console.log('loading products failed');
+        }
 
 
     }, [])
@@ -112,6 +123,33 @@ const ProductContainer = (props) => {
 
     }
 
+   
+    const checkout = (productId) => {
+        if (!context.stateUser.isAuthenticated) {
+            // props.navigation.navigate("User", { screen: "Login", params: {source: "checkout"} });
+            props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'Products', msg: "you must login to proceed" } });
+        }
+        else {
+            order.userId = context.stateUser.user.userId;
+            order.pickupAddress = context.stateUser.userProfile.address;
+            order.productId = productId;
+            if (order.pickupAddress) {
+                SelectPickupAddress(order);
+            }
+            else {
+                AddPickupAddress(order);
+            }
+        }
+
+    }
+
+    const AddPickupAddress = (order) => {
+        props.navigation.navigate("Add Pickup Address", { order: order });
+    }
+
+    const SelectPickupAddress = (order) => {
+        props.navigation.navigate("Select Pickup Address", { order: order });
+    }
 
     return (
 
@@ -120,7 +158,7 @@ const ProductContainer = (props) => {
                 <View>
                     <Banner />
                 </View>
-                <Heading>
+                <Heading style={styles.heading}>
                     Our services
                 </Heading>
                 {loading ?
@@ -135,7 +173,7 @@ const ProductContainer = (props) => {
                                             <ProductList
                                                 product={item}
                                                 key={item.name}
-                                                navigation={props.navigation}
+                                                checkout={checkout}
                                             />
                                         )
                                     })}
@@ -147,28 +185,43 @@ const ProductContainer = (props) => {
                             )}
 
                         </View>
-                        <Heading>
+                        <Heading style={styles.heading}>
                             Our pricing
                         </Heading>
-                        <View>
-                            <Text>Our prices are most reasonable</Text>
-                            <Button title='Ckeck our peice list' onPress={() => { props.navigation.navigate("Rate Card") }} />
+                        <View style={styles.cardContainer}>
+                            <Image resizeMode='contain' style={styles.pricingImage} source={require('../../assets/savemoney1.png')} />
+
+                            <View style={styles.pricingTextContainer}>
+                                <Text style={styles.title}>Save more money</Text>
+                                <Text style={styles.pricingText}>Our most reasonable pricing lets you save more money and that too with no compromise on the quality.</Text>
+                                <Button title='Ckeck our peice list' onPress={() => { props.navigation.navigate("Rate Card") }} />
+                            </View>
                         </View>
                         {context?.stateUser?.isAuthenticated && lastOrder ?
                             <View>
-                                <Heading>
+                                <Heading style={styles.heading}>
                                     Your last order
                                 </Heading>
-                                <TouchableOpacity onPress={() => props.navigation.navigate("Order Detail", { orderId: lastOrder.id })}>
-                                    <OrderCard order={lastOrder} navigation={props.navigation} />
-                                </TouchableOpacity>
-                                <Button title='Repeat' onPress={() => placeOrder(lastOrder)} />
+                                <View style={styles.cardContainer}>
+                                    <View style={{flex:1}}>                                        
+                                            <OrderCard order={lastOrder} navigation={props.navigation} />
+                                        <View style={styles.buttonContainer}>
+                                            <View style={{ flex: 1, alignSelf: 'stretch' }}>
+                                                <Button title='View Detail'  onPress={() => props.navigation.navigate("Order Detail", { orderId: lastOrder.id })} />
+                                            </View>
+                                            <View style={{ flex: 1, alignSelf: 'stretch' }}>
+                                                <Button title='Repeat Order'  onPress={() => placeOrder(lastOrder)} />
+                                            </View>
+                                        </View>
+                                    </View>
+                                </View>
                             </View> :
                             null
                         }
                        
                     </View>
                 }
+                <View style={{ height:40 }}></View>
             </View>
         </ScrollView>
 
@@ -184,12 +237,63 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "flex-start",
         flexWrap: "wrap",
-        backgroundColor: "gainsboro",
+        //backgroundColor: "gainsboro",
+    },
+    cardContainer: 
+    {
+       
+        padding: 20,
+        borderRadius: 10,
+        marginTop: 10,
+        marginBottom: 5,
+        marginLeft: 10,
+        marginRight:10,
+        backgroundColor: 'white',
+        display: "flex",
+        flexDirection: "row",
+
     },
     center: {
         justifyContent: 'center',
         alignItems: 'center'
-    }
+    },
+
+    heading:
+    {
+        marginLeft: 10,
+        marginTop: 10
+    },
+    pricingImage:
+    {
+        height: "100%",
+        flex: 0.3,
+        backgroundColor: '#91C9BF',
+    },
+    pricingTextContainer:
+    {
+        flex: 0.7,
+        paddingLeft: 20,
+        marginTop:-5,
+    },
+    pricingText:
+    {        
+        paddingBottom: 10,
+    },
+    title:
+    {
+        fontWeight: 'bold',
+        fontSize: 18,
+        paddingBottom: 10,
+    },
+    buttonContainer:
+    {
+        display: "flex",
+        flexDirection: "row",
+        paddingTop: 15,
+        width: '100%',
+        alignItems: 'stretch',
+        alignContent: 'stretch'
+    },
 });
 
 export default ProductContainer;

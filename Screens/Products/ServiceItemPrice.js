@@ -7,7 +7,7 @@ const ServiceItemPrice = (props) => {
     
     return (
         <View style={[styles.container, {
-            backgroundColor: props.index % 2 == 0 ? "white" : "gainsboro"
+            backgroundColor: props.index % 2 == 0 ? "white" : "#CCE6FF"
         }]}>
             <Text style={styles.item}>{props.item.name}</Text>               
             <Text style={styles.item}>$ {props.item.price}</Text>

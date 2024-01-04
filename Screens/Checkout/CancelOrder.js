@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, StyleSheet, Dimensions, ScrollView, Button, Text } from "react-native";
-import { Heading, Spinner, Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, ChevronDownIcon, Icon, useToast,  VStack, ToastTitle, ToastDescription } from "@gluestack-ui/themed";
+import { View, StyleSheet, Dimensions, ScrollView, Button } from "react-native";
+import {Text, Heading, Spinner, Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, ChevronDownIcon, Icon, useToast,  VStack, ToastTitle, ToastDescription } from "@gluestack-ui/themed";
 import Toast from "react-native-toast-message";
 import OrderCard from "../../Shared/OrderCard";
 import { cancelUserOrder } from '../../Services/data-service';
@@ -105,10 +105,14 @@ const CancelOrder = (props) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.container}>
-              <OrderCard order={order} navigation={props.navigation} />
+              <View style={[styles.box, styles.roundBorder]}>
+                  <OrderCard order={order} navigation={props.navigation} />
+              </View>
               <View>
-                  <Text>Any cancellation until one hour prior to the pick slot is free of cost, but any cancellation done after that will be charged Rs 50.</Text>
-                  <Heading>Select a reason for cancellation</Heading>
+                  <View style={{ marginBottom: 10, marginLeft: 5 }}>
+                  <Text size="sm" ><Text style={{ fontWeight: "bold" }}>Note: </Text>Any cancellation until one hour prior to the pick slot is free of cost, but any cancellation done after that will be charged Rs 50.</Text>
+                  </View>
+                  <Text style={styles.title}>Select a reason for cancellation</Text>
                   <Select onValueChange={(e) => cancellationReasonChanged(e)} selectedValue={cancelReason}>
                       <SelectTrigger variant="outline" size="md" >
                           <SelectInput placeholder="Select Reason" />
@@ -156,9 +160,8 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   title: {
-    alignSelf: "center",
-    margin: 8,
-    fontSize: 16,
+    marginTop: 10,
+    fontSize: 18,
     fontWeight: "bold",
   },
   body: {
@@ -176,6 +179,23 @@ const styles = StyleSheet.create({
         alignSelf: "flex-end",
         flexDirection: "row"
     },
+
+    box: {
+        display: 'flex',
+        flexDirection: "column",
+        backgroundColor: "white",
+        marginBottom: 10,
+    },
+    roundBorder:
+    {
+        borderRadius: 8,
+        borderColor: "gainsboro",
+        borderWidth: 1,
+        padding: 10
+    },
+    note: {
+        
+    }
 });
 
 export default CancelOrder;
