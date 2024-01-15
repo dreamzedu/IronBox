@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Dimensions, ScrollView, Button, Text } from "react-native";
 
 import Toast from "react-native-toast-message";
@@ -9,7 +9,7 @@ import { saveUserOrder } from '../../Services/data-service';
 
 var { width, height } = Dimensions.get("window");
 
-const ConfirmOrder = (props) => {
+const ReviewOrder = (props) => {
   const order = props.route.params.order;
 
   // Add this
@@ -55,25 +55,27 @@ const ConfirmOrder = (props) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Confirm Order</Text>
-          <View style={{ borderWidth: 1, borderColor: "orange" }}>
-            <Text style={styles.title}>Pickup Address:</Text>
-                  <View style={{ padding: 8 }}>                      
+      <View style={styles.subContainer}>
+              <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 10, }}>Review Order Details</Text>
+              <View style={{
+                  borderTopWidth: 1, borderTopColor: "silver", alignSelf: "stretch",
+                  }}>
+                  <Text style={styles.title}>Pickup Address:</Text>
+                  <View style={styles.blockContainer}>
                       <Text>Address Line1: {order.pickupAddress.addressLine1}</Text>
                       <Text>Address Line2: {order.pickupAddress.addressLine2}</Text>
                       <Text>City: {order.pickupAddress.city}</Text>
                       <Text>Zip Code: {order.pickupAddress.zip}</Text>
                     </View>
-            <Text style={styles.title}>Pickup Schedule:</Text>
-                      <View style={{ padding: 8 }}>
+                  <Text style={styles.title}>Pickup Schedule:</Text>
+                  <View style={styles.blockContainer}>
                       <Text>Pickup Date: {formatDate(order.pickupSlot.date)}</Text>
                       <Text>Pickup Time: {formatTime(order.pickupSlot.startTime) + " to " + formatTime(order.pickupSlot.endTime)}</Text>
                   </View>
                   <Text style={styles.title}>Item List:</Text>
-                  <View>
-                      {order.items.map((item) => {
-                          return (<View class={styles.itemContainer} key={ item.id}><Text class={styles.item}>{item.name}</Text><Text class={styles.item}>{item.count}</Text></View>)
+                  <View style={[styles.blockContainer]}>
+                      {order.items.map((item) => {console.log(order.items)
+                          return (<View style={styles.itemContainer} key={item.id}><View style={styles.item}><Text>{item.name}</Text></View><View style={styles.item}><Text>{item.count}</Text></View><View style={styles.item}><Text>₹ {item.price}</Text></View></View>)
                       })}
                   </View>
 
@@ -89,37 +91,39 @@ const ConfirmOrder = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: height,
     padding: 8,
-    alignContent: "center",
-    backgroundColor: "white",
+        backgroundColor: "white",
   },
-  titleContainer: {
-    justifyContent: "center",
+  subContainer: {
     alignItems: "center",
-    margin: 8,
-  },
+      margin: 8,
+    },
+    blockContainer:
+    {
+        padding: 8,
+        alignItems: 'center',
+        borderColor: 'silver',
+        borderBottomWidth: 1,
+        marginBottom: 10,
+        paddingBottom:10,
+    },
   title: {
     alignSelf: "center",
     margin: 8,
     fontSize: 16,
     fontWeight: "bold",
   },
-  body: {
-    margin: 10,
-    alignItems: "center",
-    flexDirection: "row",
-    },
+
 
     itemContainer: {
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "row"
+        flexDirection: 'row',
+        padding: 10,
+        alignSelf: 'stretch',
     },
     item: {
-        alignSelf: "flex-end",
-        flexDirection: "row"
+        flex:1,
+        flexDirection: 'row',
     },
 });
 
-export default ConfirmOrder;
+export default ReviewOrder;

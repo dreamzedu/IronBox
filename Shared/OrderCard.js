@@ -84,7 +84,7 @@ const OrderCard = (props) => {
     <View style={[{ backgroundColor: 'white' }]}>
           <View style={styles.detailContainer}>
               <View style={styles.row}><Text style={styles.title} size={"md"}>{props.order.product.name}</Text></View>
-              <View style={styles.row}><Text style={styles.alignLeft}>Order Number:</Text><Text> #{props.order.id}</Text></View>
+              <View style={styles.row}><Text style={styles.alignLeft}>Order Number:</Text><Text> #{props.order.UUID}</Text></View>
               <View style={styles.row}><Text style={styles.alignLeft}>Date Ordered:</Text><Text> {formatDate(props.order.dateOrdered.split("T")[0])}</Text></View>
               <View style={styles.row}><Text style={styles.alignLeft}>Total Cost:</Text><Text> 	₹ {props.order.totalPrice}.00</Text></View>
       </View>

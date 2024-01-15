@@ -109,10 +109,10 @@ const CancelOrder = (props) => {
                   <OrderCard order={order} navigation={props.navigation} />
               </View>
               <View>
-                  <View style={{ marginBottom: 10, marginLeft: 5 }}>
+                  <View style={[ styles.info, { marginBottom: 10, marginLeft: 5 }]}>
                   <Text size="sm" ><Text style={{ fontWeight: "bold" }}>Note: </Text>Any cancellation until one hour prior to the pick slot is free of cost, but any cancellation done after that will be charged Rs 50.</Text>
                   </View>
-                  <Text style={styles.title}>Select a reason for cancellation</Text>
+                  <Text style={styles.title}>Select reason for cancellation</Text>
                   <Select onValueChange={(e) => cancellationReasonChanged(e)} selectedValue={cancelReason}>
                       <SelectTrigger variant="outline" size="md" >
                           <SelectInput placeholder="Select Reason" />
@@ -193,8 +193,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10
     },
-    note: {
-        
+     info:
+    {
+        backgroundColor: '#fafad2',
+        margin: 10,
+        elevation: 2,
+        padding: 10
     }
 });
 

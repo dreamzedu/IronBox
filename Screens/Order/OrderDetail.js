@@ -68,7 +68,7 @@ const OrderDetail = (props) => {
                         <Heading>Oredr Detail</Heading>
                         <View style={[styles.box, styles.roundBorder]}>
                             <View style={styles.row}><Text style={styles.center} size={"md"}>{order.product.name}</Text></View>
-                            <View style={styles.row}><Text style={styles.alignLeft}>Order Number:</Text><Text> #{order.id}</Text></View>
+                            <View style={styles.row}><Text style={styles.alignLeft}>Order Number:</Text><Text> #{order.UUID}</Text></View>
                             <View style={styles.row}><Text style={styles.alignLeft}>Date Ordered:</Text><Text> {formatDate(order.dateOrdered.split("T")[0])}</Text></View>
                             <View style={styles.row}><Text style={styles.alignLeft}>Total Cost: </Text><Text>₹ {order.totalPrice + order.cancelCharges}.00</Text></View>
                         </View>
@@ -110,7 +110,8 @@ const OrderDetail = (props) => {
 
                         <View style={styles.row}>
                             <Heading style={styles.alignLeft}>Item Summary</Heading>
-                            {context.stateUser.user.isAdmin || order.status.code < 3 ?
+                            {//order status 2 is not pickedup and 4 is in progress and 5 is complete
+                                (context.stateUser.user.isAdmin && order.status.code < 5) || order.status.code < 3 ?
                                 <View style={styles.alignRight}>
                                     <Button style={{ marginBottom: -10 }} variant="link" onPress={() => { props.navigation.navigate("AdminUpdateOrderItems", { order: order }) }}>
                                         <ButtonText fontWeight="$medium" fontSize="$md">Update Items</ButtonText>

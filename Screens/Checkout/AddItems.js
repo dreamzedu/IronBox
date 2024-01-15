@@ -111,7 +111,7 @@ const AddItems = (props) => {
 
     const addItem = (item) => {
         let list = [...addedItems];
-        list.push({ id: item.id, name: item.name, count: 1 });
+        list.push({ id: item.id, name: item.name, price:item.price, count: 1 });
         setAddedItems(list);
         setTotalPrice(totalPrice + item.price);
         console.log(addedItems);
@@ -139,7 +139,7 @@ const AddItems = (props) => {
             props.updateOrderItems(order) // updateOrderItems is coming from AdminUpdateOrderItems
         }
         else {
-            props.navigation.navigate("Confirm Order", { order: order });
+            props.navigation.navigate("Review Order", { order: order });
         }
     }
 
@@ -148,7 +148,7 @@ const AddItems = (props) => {
             props.navigation.navigate("OrderDetail", { order: order });
         }
         else {
-            props.navigation.navigate("Confirm Order", { order: order });
+            props.navigation.navigate("Review Order", { order: order });
         }
     }
 
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     {
         backgroundColor: '#fafad2',
         margin: 10,
-        elevation: 2,
+        elevation: 1,
         padding: 10
     },
     row: {

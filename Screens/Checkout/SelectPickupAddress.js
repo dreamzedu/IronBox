@@ -1,6 +1,6 @@
 import React, { useEffect, useContext} from 'react'
-import { View, Button, StyleSheet } from 'react-native'
-import { Text } from "@gluestack-ui/themed";
+import { View, StyleSheet } from 'react-native'
+import { Text, Button, ButtonText } from "@gluestack-ui/themed";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AuthGlobal from '../../Context/store/AuthGlobal'
 import AddressCard from '../../Shared/AddressCard'
@@ -32,19 +32,22 @@ const SelectPickupAddress = (props) => {
             viewIsInsideTabBar={true}
             extraHeight={200}
             enableOnAndroid={true}
-            style={{ backgroundColor:"white" }}
-        >
+            style={{ backgroundColor:"white" }} >
             <View style={styles.container}>
                 <Text style={styles.title}>Pickup Address</Text>
                 <View style={[styles.box, styles.margin]}>
                     <AddressCard address={address} />
                 </View>
-                <View style={styles.row}>
-                    <View style={{ flex: 1, marginRight: 2, }}>
-                        <Button title="Confirm" onPress={() => confirmPickupAddress()} />
+                <View style={styles.center}>
+                    <View style={{ marginTop: 5, marginBottom: 10 }}>
+                        <Button onPress={() => confirmPickupAddress()} >
+                            <ButtonText fontWeight="$medium" fontSize="$md">Confirm</ButtonText>
+                        </Button>
                     </View>
-                    <View style={{ marginLeft: 2 }}>
-                        <Button  title="Use A Different Address" onPress={() => useDifferentPickupAddress()} />
+                    <View >
+                        <Button variant="link" onPress={() => useDifferentPickupAddress()} >
+                            <ButtonText fontWeight="$medium" fontSize="$md">Use Different Address</ButtonText>
+                        </Button>
                     </View>
                 </View>
 
@@ -92,7 +95,15 @@ const styles = StyleSheet.create({
     },
     margin:
     {
-        marginLeft: 10,
+        padding: 10,
+        marginBottom: 20,
+        borderColor: 'silver',
+        borderBottomWidth: 1,
+        
+    },
+    center:
+    {
+        alignItems: 'center'
     }
    
 });

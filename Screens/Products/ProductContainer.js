@@ -33,7 +33,7 @@ const ProductContainer = (props) => {
     let pageIndex = 1;
 
     let order = {
-        productId: null, userId: null, items: [], pickupAddress: null, pickupSlot: null, totalPrice: 0
+        productId: null, productName:null, productCode:null, userId: null, items: [], pickupAddress: null, pickupSlot: null, totalPrice: 0
     };
 
     useEffect(() => {
@@ -124,7 +124,7 @@ const ProductContainer = (props) => {
     }
 
    
-    const checkout = (productId) => {
+    const checkout = (productId, productName, productCode) => {
         if (!context.stateUser.isAuthenticated) {
             // props.navigation.navigate("User", { screen: "Login", params: {source: "checkout"} });
             props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'Products', msg: "you must login to proceed" } });
@@ -133,6 +133,8 @@ const ProductContainer = (props) => {
             order.userId = context.stateUser.user.userId;
             order.pickupAddress = context.stateUser.userProfile.address;
             order.productId = productId;
+            order.productName = productName;
+            order.productCode = productCode;
             if (order.pickupAddress) {
                 SelectPickupAddress(order);
             }
@@ -206,10 +208,10 @@ const ProductContainer = (props) => {
                                     <View style={{flex:1}}>                                        
                                             <OrderCard order={lastOrder} navigation={props.navigation} />
                                         <View style={styles.buttonContainer}>
-                                            <View style={{ flex: 1, alignSelf: 'stretch' }}>
+                                            <View style={{ flex: 1, alignSelf: 'stretch', padding:1 }}>
                                                 <Button title='View Detail'  onPress={() => props.navigation.navigate("Order Detail", { orderId: lastOrder.id })} />
                                             </View>
-                                            <View style={{ flex: 1, alignSelf: 'stretch' }}>
+                                            <View style={{ flex: 1, alignSelf: 'stretch', padding: 1 }}>
                                                 <Button title='Repeat Order'  onPress={() => placeOrder(lastOrder)} />
                                             </View>
                                         </View>

@@ -8,7 +8,7 @@ import AddPickupAddress from '../Screens/Checkout/AddPickupAddress';
 import SelectPickupAddress from '../Screens/Checkout/SelectPickupAddress';
 import RateCard from '../Screens/Products/RateCard';
 import AddItems from '../Screens/Checkout/AddItems';
-import ConfirmOrder from '../Screens/Checkout/ConfirmOrder';
+import ReviewOrder from '../Screens/Checkout/ReviewOrder';
 import OrderDetail from '../Screens/Order/OrderDetail';
 import OrderAcknowledgement from "../Screens/Checkout/OrderAcknowledgement"
 import CancelOrder from '../Screens/Checkout/CancelOrder';
@@ -50,8 +50,8 @@ const HomeNavigator = () => {
 				component={AddItems}
 				options={{ headerShown: true }} />
 			<Stack.Screen
-				name="Confirm Order"
-				component={ConfirmOrder}
+				name="Review Order"
+				component={ReviewOrder}
 				options={{ headerShown: true }} />
 			<Stack.Screen
 				name="Order Detail"
