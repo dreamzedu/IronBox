@@ -89,13 +89,13 @@ const ReviewOrder = (props) => {
                         <View style={[styles.box, styles.roundBorder]}>
                             {order.items.length <= 0 ? <View><Text>No items added.</Text></View> :
                                 <>
-                                    <View style={styles.row} ><Text style={[styles.col1, styles.listHeader]}>Item name</Text><Text style={[styles.col2, styles.listHeader]} >Count</Text><Text style={[styles.col3, styles.listHeader]}>Price</Text></View>
+                                    <View style={[styles.row, styles.borderBottom]} ><Text style={[styles.col1, styles.listHeader]}>Item name</Text><Text style={[styles.col2, styles.listHeader]} >Count</Text><Text style={[styles.col3, styles.listHeader]}>Price</Text></View>
 
                                   {order.items.map((item) => {
                                       return (<View style={[styles.row, { paddingVertical: 5 }]} key={item.id}><Text style={styles.col1}>{item.name}</Text><Text style={styles.col2} >{item.count}</Text><Text style={styles.col3}>₹ {item.count * item.price}.0</Text></View>)
                                     })}
 
-                                  <View style={[styles.row, { marginTop: 5 }]} ><Text style={[styles.col1, styles.listHeader]}>Total</Text><Text style={[styles.col2, styles.listHeader]} >{order.items.length}</Text><Text style={[styles.col3, styles.listHeader]}>₹ {order.totalPrice}.0</Text></View>
+                                  <View style={[styles.row, styles.borderTop, { marginTop: 5 }]} ><Text style={[styles.col1, styles.listHeader]}>Total</Text><Text style={[styles.col2, styles.listHeader]} >{order.items.length}</Text><Text style={[styles.col3, styles.listHeader]}>₹ {order.totalPrice}.0</Text></View>
                                 </>
                             }
 
@@ -177,8 +177,8 @@ const styles = StyleSheet.create({
     {
         borderRadius: 8,
         borderColor: "gainsboro",
-        borderWidth: 1,
-        padding: 10
+        //borderWidth: 1,
+        padding: 10,
     },
     center:
     {
@@ -191,6 +191,16 @@ const styles = StyleSheet.create({
     {
         fontWeight: "bold",
         marginBottom: 3
+    },
+    borderTop:
+    {
+        borderColor: 'silver',
+        borderTopWidth: 1,
+    },
+    borderBottom:
+    {
+        borderColor: 'silver',
+        borderBottomWidth: 1,
     }
 
 });

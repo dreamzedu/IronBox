@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, ScrollView, TextInput, StyleSheet, Dimensions } from 'react-native';
 import { Text, Radio, RadioGroup, VStack, RadioIndicator, RadioLabel, RadioIcon, CircleIcon, Heading, Button, ButtonText } from '@gluestack-ui/themed'
 import Error from "../../Shared/Error";
+import AuthGlobal from "../../Context/store/AuthGlobal"
 
 const { width, height } = Dimensions.get("window")
 
 const SchedulePickup = (props) => {
 
+    const context = useContext(AuthGlobal);
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     let order = props.route.params.order;
 
@@ -35,32 +37,35 @@ const SchedulePickup = (props) => {
     
     
     useEffect(() => {
-
-        var currentHours = date.getHours();
-        if (currentHours >= timeSlots[timeSlots.length - 1].startTime - 2) {
-            let slots = [...dateSlots]; // making a copy of array as the state should be treated as immutable if we use the same array then the change detection does not work because it compares the reference
-            slots[0].isAvailable = false
-            setDateSlots(slots);
-        }
-
-        // Set date time in case editing or reviewing the screen
-        if (order.pickupSlot !== null) {
-            var dt = Date(order.pickupSlot?.date);
-            for (var i = 0; i < dateSlots.length; i++) {
-                if (dt?.getDate() === dateSlots[i]?.date?.getDate()) {
-                    setSelectedDateSlotIndex(i);
-                    break;
-                }
+        try {
+            var currentHours = date.getHours();
+            if (currentHours >= timeSlots[timeSlots.length - 1].startTime - 2) {
+                let slots = [...dateSlots]; // making a copy of array as the state should be treated as immutable if we use the same array then the change detection does not work because it compares the reference
+                slots[0].isAvailable = false
+                setDateSlots(slots);
             }
 
-            for (var i = 0; i < timeSlots.length; i++) {
-                if (order?.pickupSlot?.startTime === timeSlots[i].startTime && order?.pickupSlot?.endTime === timeSlots[i].endTime) {
-                    setSelectedTimeSlotIndex(i);
-                    break;
+            // Set date time in case editing or reviewing the screen
+            if (order.pickupSlot !== null) {
+                var dt = new Date(order.pickupSlot?.date);
+                for (var i = 0; i < dateSlots.length; i++) {
+                    if (dt?.getDate() === dateSlots[i]?.date?.getDate() && dateSlots[i].isAvailable) {
+                        setSelectedDateSlotIndex(i);
+                        break;
+                    }
+                }
+
+                for (var i = 0; i < timeSlots.length; i++) {
+                    if (order?.pickupSlot?.startTime === timeSlots[i].startTime && order?.pickupSlot?.endTime === timeSlots[i].endTime && timeSlots[i].isAvailable) {
+                        setSelectedTimeSlotIndex(i);
+                        break;
+                    }
                 }
             }
         }
-
+        catch (e) {
+            console.log(e)
+        }
     }, [])
 
     function setPickupslot()
@@ -70,8 +75,13 @@ const SchedulePickup = (props) => {
         else {
             let pickupSlot = { date: dateSlots[selectedDateSlotIndex].date.toString(), startTime: timeSlots[selectedTimeSlotIndex].startTime, endTime: timeSlots[selectedTimeSlotIndex].endTime }
             order = { ...order, pickupSlot: pickupSlot};
-            console.log(order);
-            props.navigation.navigate("Add Items", { order: order });
+
+            if (context.stateUser.user.isAdmin && props.flow === "admin") {
+                props.updatePickupSchedule(order) // updatePickupSchedule is coming from AdminUpdatePickupSchedule
+            }
+            else {
+                props.navigation.navigate("Add Items", { order: order });
+            }
         }
     }
 

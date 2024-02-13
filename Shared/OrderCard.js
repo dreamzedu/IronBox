@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Button } from "react-native";
-import {Text, Heading, Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, ChevronDownIcon, Icon} from "@gluestack-ui/themed";
+import { View, StyleSheet } from "react-native";
+import { Text, Button, ButtonText, Heading, Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, ChevronDownIcon, Icon } from "@gluestack-ui/themed";
 
 import TrafficLight from "./StyledComponents/TrafficLight";
 import EasyButton from "./StyledComponents/EasyButton";
@@ -84,7 +84,7 @@ const OrderCard = (props) => {
     <View style={[{ backgroundColor: 'white' }]}>
           <View style={styles.detailContainer}>
               <View style={styles.row}><Text style={styles.title} size={"md"}>{props.order.product.name}</Text></View>
-              <View style={styles.row}><Text style={styles.alignLeft}>Order Number:</Text><Text> #{props.order.UUID}</Text></View>
+              <View style={styles.row}><Text style={styles.alignLeft}>Order Number#:</Text><Text> {props.order.UUID}</Text></View>
               <View style={styles.row}><Text style={styles.alignLeft}>Date Ordered:</Text><Text> {formatDate(props.order.dateOrdered.split("T")[0])}</Text></View>
               <View style={styles.row}><Text style={styles.alignLeft}>Total Cost:</Text><Text> 	₹ {props.order.totalPrice}.00</Text></View>
       </View>
@@ -92,7 +92,8 @@ const OrderCard = (props) => {
               <View style={styles.row}><Text style={styles.alignLeft}>Status: </Text><Text>{orderStatus} {props.order.status.name} </Text></View>
               {props.editMode ? (
                   <View style={{ display: "flex", flexDirection: "row", alignContent: "stretch" }}>
-                      <Select onValueChange={(e) => onStatusChange(e)} selectedValue={statusChange}>
+                      <View style={{flex:1}}>
+                            <Select onValueChange={(e) => onStatusChange(e)} selectedValue={statusChange}>
                           <SelectTrigger variant="outline" size="md" >
                               <SelectInput placeholder="Change Status" />
                               <SelectIcon mr="$3">
@@ -113,11 +114,12 @@ const OrderCard = (props) => {
 
                               </SelectContent>
                           </SelectPortal>
-                      </Select>
-                      <View style={{ paddingBottom: 10, paddingTop:5 }}>
-                      <EasyButton secondary large onPress={() => updateOrder()} >
-                          <Text style={{ color: "white" }}>Update</Text>
-                          </EasyButton>
+                          </Select>
+                      </View>
+                      <View style={{ paddingBottom: 10,  flex:1 }}>
+                      <Button onPress={() => updateOrder()} >
+                              <ButtonText >Update</ButtonText>
+                          </Button>
                       </View>
                   </View>
               ) : null}            

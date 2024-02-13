@@ -97,7 +97,16 @@ const OrderDetail = (props) => {
                             
                            
                         </View>
-                        <Heading>Pickup Schedule</Heading>
+                        <View style={styles.row}>
+                            <Heading style={styles.alignLeft}>Pickup Slot</Heading>
+                            {//admin flow for updating pick schedule before the order is picked up
+                                (context.stateUser.user.isAdmin && order.status.code < 3) ?
+                                    <View style={styles.alignRight}>
+                                        <Button style={{ marginBottom: -10 }} variant="link" onPress={() => { props.navigation.navigate("AdminNavigator", { screen: "Admin - Update Pickup Schedule", params: { order: order } }) }}>
+                                            <ButtonText fontWeight="$medium" fontSize="$md">Update Pickup</ButtonText>
+                                        </Button></View>
+                                    : null}
+                        </View>
                         <View style={[styles.box, styles.roundBorder]}>
                             <View style={styles.row}><Text style={styles.alignLeft}>Pickup Date: </Text><Text>{formatDate(order.pickupSlot.date)}</Text></View>
                             <View style={styles.row}><Text style={styles.alignLeft}>Pickup Time: </Text><Text>{formatTime(order.pickupSlot.startTime) + " to " + formatTime(order.pickupSlot.endTime)}</Text></View>
@@ -113,7 +122,7 @@ const OrderDetail = (props) => {
                             {//order status 2 is not pickedup and 4 is in progress and 5 is complete
                                 (context.stateUser.user.isAdmin && order.status.code < 5) || order.status.code < 3 ?
                                 <View style={styles.alignRight}>
-                                    <Button style={{ marginBottom: -10 }} variant="link" onPress={() => { props.navigation.navigate("AdminUpdateOrderItems", { order: order }) }}>
+                                        <Button style={{ marginBottom: -10 }} variant="link" onPress={() => { props.navigation.navigate("AdminNavigator", { screen: "Admin - Update Order Items", params: { order: order } }) }}>
                                         <ButtonText fontWeight="$medium" fontSize="$md">Update Items</ButtonText>
                                     </Button></View>
                                 : null}
@@ -121,14 +130,14 @@ const OrderDetail = (props) => {
                         
                         <View style={[styles.box, styles.roundBorder]}>
                             {order.items.length <= 0 ? <View><Text>No items selected.</Text></View> :
-                                 <>
-                                    <View style={styles.row} ><Text style={[styles.col1, styles.listHeader]}>Item name</Text><Text style={[styles.col2, styles.listHeader]} >Count</Text><Text style={[styles.col3, styles.listHeader]}>Price</Text></View>
+                                <>
+                                    <View style={[styles.row, styles.borderBottom]} ><Text style={[styles.col1, styles.listHeader]}>Item name</Text><Text style={[styles.col2, styles.listHeader]} >Count</Text><Text style={[styles.col3, styles.listHeader]}>Price</Text></View>
                            
                                     {order.items.map((item) => {
                                         return (<View style={styles.row} key={item.id}><Text style={styles.col1}>{item.name}</Text><Text style={styles.col2} >{item.count}</Text><Text style={styles.col3}>{item.count*item.price}.0</Text></View>)
                                     })}
                             
-                                    <View style={[styles.row, {marginTop:5}]} ><Text style={[styles.col1, styles.listHeader]}>Total</Text><Text style={[styles.col2, styles.listHeader]} >{order.items.length}</Text><Text style={[styles.col3, styles.listHeader]}>{order.totalPrice}.0</Text></View>
+                                    <View style={[styles.row, styles.borderTop, {marginTop:5}]} ><Text style={[styles.col1, styles.listHeader]}>Total</Text><Text style={[styles.col2, styles.listHeader]} >{order.items.length}</Text><Text style={[styles.col3, styles.listHeader]}>{order.totalPrice}.0</Text></View>
                                 </>
                             }
 
@@ -195,6 +204,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignSelf: 'stretch',
         width: '100%',
+        marginTop:5,
     },
     alignLeft:
     {
@@ -205,7 +215,7 @@ const styles = StyleSheet.create({
     {
         borderRadius: 8,
         borderColor: "gainsboro",
-        borderWidth: 1,
+        
         padding:10
     },
     center:
@@ -219,6 +229,16 @@ const styles = StyleSheet.create({
     {
         fontWeight: "bold",
         marginBottom:3
+    },
+    borderTop:
+    {
+        borderColor: 'silver',
+        borderTopWidth: 1,
+    },
+    borderBottom:
+    {
+        borderColor: 'silver',
+        borderBottomWidth: 1,
     }
 
 });

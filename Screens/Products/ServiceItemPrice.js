@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { StyleSheet, Text, Dimensions,View } from "react-native";
 
 var { width } = Dimensions.get("window");
@@ -10,7 +10,7 @@ const ServiceItemPrice = (props) => {
             backgroundColor: props.index % 2 == 0 ? "white" : "#CCE6FF"
         }]}>
             <Text style={styles.item}>{props.item.name}</Text>               
-            <Text style={styles.item}>$ {props.item.price}</Text>
+            <Text style={styles.item}>₹ {props.item.price}</Text>
         </View>
   );
 };

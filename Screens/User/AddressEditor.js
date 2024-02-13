@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Text, View, Button } from 'react-native'
+import { View } from 'react-native'
 import FormContainer from '../../Shared/Form/FormContainer'
 import Input from '../../Shared/Form/Input'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { updateUserAddress, saveUserAddress } from '../../Services/data-service';
 import AuthGlobal from '../../Context/store/AuthGlobal'
 import { setUserProfile } from '../../Context/actions/Auth.actions'
+
+import { Text, Button, ButtonText } from "@gluestack-ui/themed";
 
 const AddressEditor = (props) => {
 
@@ -51,7 +53,8 @@ const AddressEditor = (props) => {
             extraHeight={200}
             enableOnAndroid={true}
         >
-            <FormContainer title={mode==="edit"? "Edit Address": "Add Address"} class={{ alignContent: 'start', justifyContent: 'start' }}>
+            <FormContainer title={mode === "edit" ? "Edit Address" : "Add Address"} style={{ alignContent: 'start', justifyContent: 'start' }}>
+                <View style={{ margin:10 }}></View>
                 <Text>Address Line 1:</Text>
                 <Input
                     placeholder={"Address Line 1"}
@@ -85,9 +88,11 @@ const AddressEditor = (props) => {
                     keyboardType={"numeric"}
                     onChangeText={(text) => setZip(text)}
                 />
-                
-                <View style={{ width: '80%', alignItems: "center" }}>
-                    <Button title="Save" onPress={() => updateAddress()} />
+
+                <View style={{ width: '80%', alignItems: "center", margin:10 }}>
+                    <Button onPress={() => updateAddress()} >
+                        <ButtonText>Save</ButtonText>
+                    </Button>
                 </View>
             </FormContainer>
 

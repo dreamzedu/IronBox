@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useEffect } from 'react';
-import { View, Text, ScrollView, Button, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useFocusEffect } from "@react-navigation/native"
 import AuthGlobal from "../../Context/store/AuthGlobal"
 import { Heading, Spinner } from "@gluestack-ui/themed";
@@ -10,6 +10,8 @@ import FormContainer from "../../Shared/Form/FormContainer";
 import Input from "../../Shared/Form/Input";
 import Error from "../../Shared/Error";
 import { setUserProfile } from '../../Context/actions/Auth.actions'
+
+import { Text, Button, ButtonText } from "@gluestack-ui/themed";
 
 const UpdateUserProfile = (props) => {
     const context = useContext(AuthGlobal)
@@ -147,8 +149,10 @@ const UpdateUserProfile = (props) => {
                     <View style={styles.buttonGroup}>
                         {error ? <Error message={error} /> : null}
                     </View>
-                    <View>
-                        <Button large primary onPress={() => updateProfile()} title="Update" />
+                <View>
+                    <Button style={{ margin: 10 }} onPress={() => updateProfile()} >
+                        <ButtonText>Update</ButtonText>
+                    </Button>
                     </View>
 
                 </FormContainer>

@@ -1,12 +1,12 @@
 import React, { useContext, useState, useCallback, useEffect } from 'react';
-import { View, Text, ScrollView, Button, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useFocusEffect } from "@react-navigation/native"
 import OrderCard from "../../Shared/OrderCard"
 import { getUserOrders } from '../../Services/data-service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthGlobal from "../../Context/store/AuthGlobal"
 import { logoutUser } from "../../Context/actions/Auth.actions"
-import { Heading, Spinner } from "@gluestack-ui/themed";
+import { Heading, Spinner,Text, Button, ButtonText } from "@gluestack-ui/themed";
 import AddressCard from '../../Shared/AddressCard';
 
 
@@ -44,13 +44,16 @@ const UserProfile = (props) => {
                     //setOrders(res);
                 } catch (e) {
                     console.log(e)
+                    setLoading(false);
                 }
             };
-
-            setLoading(true);
+                        
             setUserProfile(context.stateUser.userProfile)
-            if (!orders)
+            setLoading(true);
+            if (!orders) {
                 fetchOrders();
+                setLoading(false);
+            }
         }
 
         return () => {
@@ -64,85 +67,117 @@ const UserProfile = (props) => {
 
     return (loading ? <Spinner size='small'></Spinner>
         :
-       <View style={styles.container}>
-           <ScrollView contentContainerStyle={styles.subContainer}>
-               <Text style={{ fontSize: 30 }}>
+        
+        <ScrollView>
+            <View style={styles.container}>
+            <Text style={{ fontSize: 22, textAlign: 'center', marginBottom:10 }}>
                    {userProfile ? userProfile.name : "" }
-               </Text>
-               <View style={{ marginTop: 20 }}>
-                    <Text style={{ margin: 10 }}>
-                        Email: {userProfile ? userProfile.email : "N/A"}
-                    </Text>
-                    <Text style={{ margin: 10 }}>
-                        Phone: {userProfile ? userProfile.phone : "N/A"}
-                    </Text>
-               </View>
-               <View style={{ margin: 10 }}>
-                    <Button title={"Edit Profile"} onPress={() => props.navigation.navigate("Edit Profile") }/>
+            </Text>
+            <View style={styles.borderTop}></View>
+            <View style={[styles.box, { marginTop: 10 }]}>
+                <Text style={[styles.title, { textAlign: 'center'}]}>
+                Profile Details
+                </Text>
+                <Text style={{ margin: 10 }}>
+                    Email: {userProfile ? userProfile.email : "N/A"}
+                </Text>
+                <Text style={{ margin: 10 }}>
+                    Phone: {userProfile ? userProfile.phone : "N/A"}
+                </Text>               
+                <View style={{ margin: 10 }}>
+                        <Button onPress={() => props.navigation.navigate("Edit Profile")}>
+                            <ButtonText fontWeight="$medium" fontSize="$md">Edit Profile</ButtonText>
+                        </Button>
                 </View>
-                <View>
-                    <Heading>
+            </View>
+            <View style={ styles.box}>
+                <Text style={[styles.title, { textAlign: 'center' }]}>
                         Adress
-                    </Heading>
+                    </Text>
                     {userProfile.address ?
-                        <>
+                    <View style={{margin:10}}>
                         <AddressCard address={userProfile.address} />
                         
-                    <View style={{ margin: 10 }}>
-                        <Button title={"Edit Address"} onPress={() => props.navigation.navigate("AddressEditor", {address : userProfile.address , mode:'edit'})} />
+                    <View style={{ marginTop: 10 }}>
+                                <Button onPress={() => props.navigation.navigate("AddressEditor", { address: userProfile.address, mode: 'edit' })}>
+                                    <ButtonText fontWeight="$medium" fontSize="$md">Edit Address</ButtonText>
+                        </Button>
                     </View>
-                            </>
+                            </View>
                         :
                         <>
                         <Text>N/A</Text>
-                        <View style={{ margin: 10 }}>
-                                <Button title={"Add Address"} onPress={() => props.navigation.navigate("AddressEditor", {address : userProfile.address, mode: 'add' })} />
+                        <View style={{ marginTop: 10 }}>
+                                <Button onPress={() => props.navigation.navigate("AddressEditor", { address: userProfile.address, mode: 'add' })}>
+                                    <ButtonText fontWeight="$medium" fontSize="$md">Add Address</ButtonText>
+                             </Button>
                         </View>
                         </>
                     }
                 </View>
-                <View style={styles.order}>
-                    <View style={{ display: 'flex', flexDirection: 'row', alignContent: 'stretch' }}>
-                        <Text style={{ fontSize: 20 }}>Recent Orders</Text>
-                        <Button title="View All" onPress={() => props.navigation.navigate("MyOrders")} ></Button>
+                <View style={styles.box}>
+                    <View >
+                    <Text style={[styles.title, { textAlign: 'center' }]}>Recent Orders</Text>
+                        
                     </View>
                     <View>
                         {orders ? (
-                            orders.map((x) => {
-                                return <View key={x.id}>
+                        orders.map((x) => {
+                            return <View key={x.id} style={[styles.borderTop, { padding:10 }]}>
                                     <OrderCard order={x} navigation={props.navigation} />                                  
                                 </View>
-                            })
+                        })
+
                         ) : (
                             error ? <Text style={styles.error}>Something went wrong.</Text>
-                                :
-                                <View style={styles.order}>
-                                    <Text>You have no orders</Text>
+                            :
+                            <View style={styles.order}>
+                                <Text>You have no orders</Text>
 
-                                    <Button title="Place your first order" onPress={() => props.navigation.navigate("Products")} />
-                                </View>
+                                        <Button style={{ margin: 10 }} onPress={() => props.navigation.navigate("Products")} >
+                                            <ButtonText fontWeight="$medium" fontSize="$md">Place your first order</ButtonText>
+                                        </Button>
+                            </View>
                         )}
+                        
                     </View>
-               </View>
+                    {orders ? <View style={[styles.borderTop, { padding: 10 }]}><Button onPress={() => props.navigation.navigate("MyOrders")}><ButtonText fontWeight="$medium" fontSize="$md">View All</ButtonText></Button></View> : null
+                    }
+                </View>
+            </View>
             </ScrollView>
-        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: "center"
-    },
-    subContainer: {
-        alignItems: "center",
-        marginTop: 60
-    },
-    order: {
         marginTop: 20,
-        alignItems: "center",
-        marginBottom: 60
-    }
+        paddingHorizontal: 10,
+        marginBottom:10,
+    },
+    box: {
+        display: 'flex',
+        flexDirection: "column",
+        backgroundColor: "white",
+        marginBottom: 10,
+        padding:10,
+    },
+    borderTop:
+    {
+        borderColor: 'silver',
+        borderTopWidth: 1,
+    },
+    borderBottom:
+    {
+        borderColor: 'silver',
+        borderBottomWidth: 1,
+    },
+    title:
+    {
+        fontWeight: 'bold',
+        fontSize: 20,
+        paddingBottom: 10,
+    },
 })
 
 export default UserProfile;

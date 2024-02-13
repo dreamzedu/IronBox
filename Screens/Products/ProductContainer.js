@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useContext } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
     View,
     StyleSheet,
@@ -15,7 +16,7 @@ import axios from 'axios';
 import baseUrl from '../../assets/common/baseUrl';
 import Banner from "../../Shared/Banner";
 import OrderCard from "../../Shared/OrderCard";
-import { getUserOrders, getProducts } from '../../Services/data-service';
+import { getUserOrders, getProducts, getOrderDetail } from '../../Services/data-service';
 import AuthGlobal from "../../Context/store/AuthGlobal"
 
 var { height, width } = Dimensions.get('window')
@@ -36,81 +37,73 @@ const ProductContainer = (props) => {
         productId: null, productName:null, productCode:null, userId: null, items: [], pickupAddress: null, pickupSlot: null, totalPrice: 0
     };
 
-    useEffect(() => {
-        setLoading(true);
-        if (context?.stateUser?.isAuthenticated) {
-            getUserOrders(context?.stateUser?.user.userId, pageIndex, pageSize).then((result) => {
-                console.log("user order: " + result[0]);
-                if (result?.length >0)
-                setLastOrder(result[0]);
-            })
-                .catch((err) => { console.log(err) })
-        }
+    //useEffect(() => {
+    //    setLoading(true);
+    //    //if (context?.stateUser?.isAuthenticated) {
+    //    //    getUserOrders(context?.stateUser?.user.userId, pageIndex, pageSize).then((result) => {
+    //    //        console.log("user order: " + result[0]);
+    //    //        if (result?.length >0)
+    //    //        setLastOrder(result[0]);
+    //    //    })
+    //    //        .catch((err) => { console.log(err) })
+    //    //}
 
-        console.log("getting products " );
-        
-        try {
-            getProducts().then((products) => {
-                console.log("products "+ products);
-                setProducts(products);
-                setProductsCtg(products);
-                setLoading(false);
-            });
-        }
-        catch
-        {
-            setLoading(false);
-            console.log('loading products failed');
-        }
+    //    console.log("getting products ");
+
+    //    try {
+    //        getProducts().then((products) => {
+    //            console.log("products " + products);
+    //            setProducts(products);
+    //            setProductsCtg(products);
+    //            setLoading(false);
+    //        });
+    //    }
+    //    catch
+    //    {
+    //        setLoading(false);
+    //        console.log('loading products failed');
+    //    }
 
 
-    }, [])
+    //}, []);
 
-    /*
+    
     useFocusEffect((
         useCallback(
             () => {
-                setFocus(false);
-                setActive(-1);
+                setLoading(true);
+                if (context?.stateUser?.isAuthenticated) {
+                    getUserOrders(context?.stateUser?.user.userId, pageIndex, pageSize).then((result) => {
+                        console.log("user order: " + result[0]);
+                        if (result?.length > 0)
+                            setLastOrder(result[0]);
+                    })
+                        .catch((err) => { console.log(err) })
+                }
 
-                // Products
-                axios
-                    .get(`${baseURL}products`)
-                    .then((res) => {
-                        setProducts(res.data);
-                        setProductsFiltered(res.data);
-                        setProductsCtg(res.data);
-                        setInitialState(res.data);
-                        setLoading(false)
-                    })
-                    .catch((error) => {
-                        console.log('Api call error')
-                    })
-
-                // Categories
-                axios
-                    .get(`${baseURL}categories`)
-                    .then((res) => {
-                        setCategories(res.data)
-                    })
-                    .catch((error) => {
-                        console.log('Api call error')
-                    })
+                try {
+                    getProducts().then((products) => {
+                        console.log("products " + products);
+                        setProducts(products);
+                        setProductsCtg(products);
+                        setLoading(false);
+                    });
+                }
+                catch
+                {
+                    setLoading(false);
+                    console.log('loading products failed');
+                }
 
                 return () => {
-                    setProducts([]);
-                    setProductsFiltered([]);
-                    setFocus();
-                    setCategories([]);
-                    setActive();
-                    setInitialState();
+                    setLoading(false)
                 };
                 
             },
             [],
         )
     ))
-*/
+
 
     const searchProduct = (text) => {
 
@@ -119,8 +112,33 @@ const ProductContainer = (props) => {
     const onBlur = () => {
     }
 
-    const placeOrder = (templateOrder) => {
-
+    const repeatOrder = (templateOrder) => {
+        try {
+            setLoading(true);
+            if (context?.stateUser?.isAuthenticated) {
+                getOrderDetail(templateOrder.id).then((result) => {
+                    if (result !== null) {
+                        order = {
+                            productId: result.product.id,
+                            productName: result.product.name,
+                            productCode: result.product.code,
+                            userId: context?.stateUser?.user.userId,
+                            items: result.items,
+                            pickupAddress: result.pickupAddress,
+                            //pickupSlot: result.pickupSlot, // Pickup slot should be recent
+                            
+                        };
+                        props.navigation.navigate("Schedule Pickup", { order: order });
+                    }
+                })
+                    .catch((err) => { console.log(err); setLoading(false); })
+            }
+            setLoading(false);
+        }
+        catch (e) {
+            console.log(e);
+            setLoading(false);
+        }
     }
 
    
@@ -212,7 +230,7 @@ const ProductContainer = (props) => {
                                                 <Button title='View Detail'  onPress={() => props.navigation.navigate("Order Detail", { orderId: lastOrder.id })} />
                                             </View>
                                             <View style={{ flex: 1, alignSelf: 'stretch', padding: 1 }}>
-                                                <Button title='Repeat Order'  onPress={() => placeOrder(lastOrder)} />
+                                                <Button title='Repeat Order'  onPress={() => repeatOrder(lastOrder)} />
                                             </View>
                                         </View>
                                     </View>

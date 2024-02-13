@@ -134,6 +134,26 @@ export const updateUserOrderItems = async (orderId, items) => {
 
 };
 
+export const updateOrderPickupSchedule = async (orderId, newSlot) => {
+    if (offline) offlineData.offlineUpdatePickupSchedule(orderId, newSlot);
+    try {
+        let token = await AsyncStorage.getItem("jwt");
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        };
+
+        let result = await axios
+            .put(`${baseURL}orders/pickupschedule/${orderId}`, { pickupSlot: newSlot }, config);
+        return result.data;
+
+    }
+    catch (error) { console.log(error); return null; }
+
+};
+
 export const getOrderDetail = async (orderId) => {
     if (offline) offlineData.offlinegetOrderDetail(orderId);
     try {

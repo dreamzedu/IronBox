@@ -1,21 +1,21 @@
 import React, {  useState  } from "react";
 import { View, Dimensions, StyleSheet, ActivityIndicator } from 'react-native';
-import AddItems from '../Checkout/AddItems';
-import { updateUserOrderItems } from '../../Services/data-service';
+import SchedulePickup from '../Checkout/SchedulePickup';
+import { updateOrderPickupSchedule } from '../../Services/data-service';
 import Toast from "react-native-toast-message";
 
 var { height, width } = Dimensions.get("window")
 
 
-const AdminUpdateOrderItems = (props) => {
+const AdminUpdatePickupSchedule = (props) => {
 
     const [loading, setLoading] = useState(false);
 
-    const updateOrderItems = (order) => {
+    const updatePickupSchedule = (order) => {
         //console.log(order );
         try {
             setLoading(true);
-            updateUserOrderItems(order.id, order.items).then((res) => {
+            updateOrderPickupSchedule(order.id, order.pickupSlot).then((res) => {
                 setLoading(false);
                 Toast.show({
                     type: "success",
@@ -43,7 +43,7 @@ const AdminUpdateOrderItems = (props) => {
 
     return (
         <>
-            <AddItems {...props} updateOrderItems={updateOrderItems} flow="admin" />
+            <SchedulePickup {...props} updatePickupSchedule={updatePickupSchedule} flow="admin" />
             {loading ?
                 <View style={styles.spinner}>
                     <ActivityIndicator size="large" color="red" />
@@ -65,4 +65,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AdminUpdateOrderItems
+export default AdminUpdatePickupSchedule

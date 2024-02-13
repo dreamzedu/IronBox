@@ -32,7 +32,6 @@ const ListHeader = () => {
 const AddItems = (props) => {
 
     let order = props.route.params.order;
-
     const [serviceItems, setServiceItems] = useState([]);
     const [sectionListFormatData, setSectionListFormatData] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -77,7 +76,7 @@ const AddItems = (props) => {
                 setSectionListFormatData(getSectionListFormatData(serviceItems));
                 setLoading(false);
             })
-            .catch((error) => { console.log(error); setLoading(false)})
+            .catch((error) => { console.log(error); setLoading(false) })
     }, []);
 
 
@@ -111,7 +110,7 @@ const AddItems = (props) => {
 
     const addItem = (item) => {
         let list = [...addedItems];
-        list.push({ id: item.id, name: item.name, price:item.price, count: 1 });
+        list.push({ id: item.id, name: item.name, price: item.price, count: 1 });
         setAddedItems(list);
         setTotalPrice(totalPrice + item.price);
         console.log(addedItems);
@@ -153,31 +152,37 @@ const AddItems = (props) => {
     }
 
     return (
-        !loading?
+        !loading ?
             <>
-                <View style={styles.info}>
-                <Text>You can add the items or skip it for now and our pickup agent will add this for you at the time of pickup.</Text>
-            </View>
-                
-                    <SectionList style={[styles.list, styles.container]}
-                    sections={sectionListFormatData}
+                {props.flow !== "admin" ?
+                    <View style={styles.info}>
 
-                    renderItem={({ item, index }) => (
-                        <ServiceItem
-                            item={item}
-                            index={index}
-                            increase={increase}
-                            decrease={decrease}
-                            addItem={addItem}
-                            count={item.count}
-                            removeItem={removeItem}
-                            key={item.id}
-                        />
-                    )}
-                    renderSectionHeader={({ section: { title } }) => (
-                        <View style={{ paddingTop: 10, borderBottomWidth: 1, borderBottomColor:"silver" }}><Text style={styles.header}>{title}</Text></View>
-                    )}
-                    keyExtractor={(item) => item.id}
+                        < Text > You can add the items or skip it for now and our pickup agent will add this for you at the time of pickup.</Text>
+                    </View> :
+                    <View>
+                        <Text style={{ margin: 10, fontSize: 18, fontWeight: 'bold' }}>Add or remove items for</Text>
+                        <Text style={{ margin: 10, fontSize: 18, fontWeight: 'bold' }}>Order# {order.UUID}</Text>
+                    </View>
+                }
+                    <SectionList style={[styles.list, styles.container]}
+                        sections={sectionListFormatData}
+
+                        renderItem={({ item, index }) => (
+                            <ServiceItem
+                                item={item}
+                                index={index}
+                                increase={increase}
+                                decrease={decrease}
+                                addItem={addItem}
+                                count={item.count}
+                                removeItem={removeItem}
+                                key={item.id}
+                            />
+                        )}
+                        renderSectionHeader={({ section: { title } }) => (
+                            <View style={{ paddingTop: 10, borderBottomWidth: 1, borderBottomColor: "silver" }}><Text style={styles.header}>{title}</Text></View>
+                        )}
+                        keyExtractor={(item) => item.id}
                     />
                 
                 {
@@ -201,7 +206,7 @@ const AddItems = (props) => {
                 }
                 <View style={[styles.row, { paddingLeft: 10, paddingRight: 10, marginBottom:10 }]} >
                     <Button style={[styles.alignLeft, styles.buttonMargin]} onPress={() => skipItemSelection()}>
-                        <ButtonText fontWeight="$medium" fontSize="$md">Skip Selection</ButtonText>
+                        <ButtonText fontWeight="$medium" fontSize="$md">{props.flow === "admin" ? "Cancel" : "Skip Selection"}</ButtonText>
                     </Button>
                     <Button style={[styles.alignLeft, styles.buttonMargin]} onPress={() => confirmItemSelection()}>
                         <ButtonText fontWeight="$medium" fontSize="$md">Confirm Selection</ButtonText>

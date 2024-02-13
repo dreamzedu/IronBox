@@ -83,7 +83,7 @@ const Orders = (props) => {
     }
 
     return (
-        <View style={styles.container} >
+        <View >
             <View style={styles.buttonContainer}>
                 <EasyButton
                     secondary
@@ -133,11 +133,10 @@ const Orders = (props) => {
                     :
                     <ScrollView contentContainerStyle={styles.subContainer}>
                         <View style={styles.order}>
-                            <Text style={{ fontSize: 20 }}>Orders</Text>
                             <View>
                                 {filteredOrders && filteredOrders.length > 0 ? (
                                     filteredOrders.map((x) => {
-                                        return <View key={x.id}>
+                                        return <View key={x.id} style={ styles.box }>
                                             <OrderCard order={x} navigation={props.navigation} editMode={true} orderStatuses={ orderStatuses} />
                                             <Button title="View Detail" onPress={() => props.navigation.navigate("AdminOrderDetail", { orderId: x.id })} />
                                         </View>
@@ -166,18 +165,12 @@ const Orders = (props) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: "center"
-    },
+   
     subContainer: {
-        alignItems: "center",
-        marginTop: 60
+        margin:10,
     },
     order: {
-        marginTop: 20,
-        alignItems: "center",
-        marginBottom: 60
+        marginBottom: 100
     },
     error:
     {
@@ -210,6 +203,16 @@ const styles = StyleSheet.create({
     buttonText: {
         marginLeft: 4,
         color: 'white'
+    },
+    
+    box: {
+        display: 'flex',
+        flexDirection: "column",
+        backgroundColor: "white",
+        marginBottom: 10,
+        padding: 10,
+        borderRadius: 8,
+        paddingBottom:20,
     }
 })
 
