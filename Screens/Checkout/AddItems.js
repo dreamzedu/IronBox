@@ -36,6 +36,7 @@ const AddItems = (props) => {
     const [sectionListFormatData, setSectionListFormatData] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [addedItems, setAddedItems] = useState([...order.items]);
+    const [confirmBtnDisabled, setConfirmBtnDisable] = useState(true);
     const context = useContext(AuthGlobal)
     var [loading, setLoading] = useState(true);
 
@@ -103,9 +104,13 @@ const AddItems = (props) => {
     }
 
     const removeItem = (item) => {
+        if (addedItems === null || addedItems.length === 1) {
+            setConfirmBtnDisable(true);
+        }
         setAddedItems(addedItems.filter(x => x.id !== item.id));
         setTotalPrice(totalPrice - item.price);
         console.log(addedItems);
+        
     }
 
     const addItem = (item) => {
@@ -114,6 +119,9 @@ const AddItems = (props) => {
         setAddedItems(list);
         setTotalPrice(totalPrice + item.price);
         console.log(addedItems);
+        if (list && list.length > 0) {
+            setConfirmBtnDisable(false);
+        }
     }
 
     const increase = (item) => {
@@ -154,15 +162,11 @@ const AddItems = (props) => {
     return (
         !loading ?
             <>
-                {props.flow !== "admin" ?
-                    <View style={styles.info}>
-
-                        < Text > You can add the items or skip it for now and our pickup agent will add this for you at the time of pickup.</Text>
-                    </View> :
+                {props.flow === "admin" ?                    
                     <View>
                         <Text style={{ margin: 10, fontSize: 18, fontWeight: 'bold' }}>Add or remove items for</Text>
                         <Text style={{ margin: 10, fontSize: 18, fontWeight: 'bold' }}>Order# {order.UUID}</Text>
-                    </View>
+                    </View>: null
                 }
                     <SectionList style={[styles.list, styles.container]}
                         sections={sectionListFormatData}
@@ -204,11 +208,15 @@ const AddItems = (props) => {
             //    keyExtractor={(item) => item.id}
                     ///>
                 }
+                <View style={styles.info}>
+
+                    < Text >You can add the items or skip it for now and our pickup agent will add this for you at the time of pickup.</Text>
+                </View>
                 <View style={[styles.row, { paddingLeft: 10, paddingRight: 10, marginBottom:10 }]} >
                     <Button style={[styles.alignLeft, styles.buttonMargin]} onPress={() => skipItemSelection()}>
                         <ButtonText fontWeight="$medium" fontSize="$md">{props.flow === "admin" ? "Cancel" : "Skip Selection"}</ButtonText>
                     </Button>
-                    <Button style={[styles.alignLeft, styles.buttonMargin]} onPress={() => confirmItemSelection()}>
+                    <Button style={[styles.alignLeft, styles.buttonMargin]} onPress={() => confirmItemSelection()} isDisabled={confirmBtnDisabled}>
                         <ButtonText fontWeight="$medium" fontSize="$md">Confirm Selection</ButtonText>
                     </Button>
 
@@ -249,6 +257,7 @@ const styles = StyleSheet.create({
     {
         backgroundColor: '#fafad2',
         margin: 10,
+        marginTop:0,
         elevation: 1,
         padding: 10
     },

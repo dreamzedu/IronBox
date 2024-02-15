@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 // Stacks
 import HomeNavigator from "./HomeNavigator";
 import UserNavigator from "./UserNavigator";
+import CartNavigator from "./CartNavigator";
 
 import CartIcon from "../Shared/CartIcon";
 import AuthGlobal from "../Context/store/AuthGlobal";
@@ -41,18 +42,18 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-      {/*<Tab.Screen*/}
-      {/*  name="Cart"*/}
-      {/*  component={CartNavigator}*/}
-      {/*  options={{*/}
-      {/*    tabBarIcon: ({ color }) => (*/}
-      {/*      <View>*/}
-      {/*        <Icon name="shopping-cart" color={color} size={30} />*/}
-      {/*        <CartIcon />*/}
-      {/*      </View>*/}
-      {/*    ),*/}
-      {/*  }}*/}
-      {/*/>*/}
+      <Tab.Screen
+        name="CartNavigator"
+        component={CartNavigator}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <View>
+                    <Icon name="shopping-basket" color={color} size={26} />
+              <CartIcon />
+            </View>
+          ),
+        }}
+      />
       
       {/*{context.stateUser.user.isAdmin == true ? (*/}
       {/*//  <Tab.Screen*/}

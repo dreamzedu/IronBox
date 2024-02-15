@@ -12,8 +12,6 @@ import {
 } from "react-native";
 import { Text, Heading, Spinner } from "@gluestack-ui/themed";
 import ProductList from "./ProductList";
-import axios from 'axios';
-import baseUrl from '../../assets/common/baseUrl';
 import Banner from "../../Shared/Banner";
 import OrderCard from "../../Shared/OrderCard";
 import { getUserOrders, getProducts, getOrderDetail } from '../../Services/data-service';
@@ -128,7 +126,7 @@ const ProductContainer = (props) => {
                             //pickupSlot: result.pickupSlot, // Pickup slot should be recent
                             
                         };
-                        props.navigation.navigate("Schedule Pickup", { order: order });
+                        props.navigation.navigate("CartNavigator", { screen: "Schedule Pickup", params: { order: order } });
                     }
                 })
                     .catch((err) => { console.log(err); setLoading(false); })
@@ -164,11 +162,11 @@ const ProductContainer = (props) => {
     }
 
     const AddPickupAddress = (order) => {
-        props.navigation.navigate("Add Pickup Address", { order: order });
+        props.navigation.navigate("CartNavigator", { screen: "Add Pickup Address", params: { order: order } });
     }
 
     const SelectPickupAddress = (order) => {
-        props.navigation.navigate("Select Pickup Address", { order: order });
+        props.navigation.navigate("CartNavigator", { screen: "Select Pickup Address", params: { order: order } });
     }
 
     return (
