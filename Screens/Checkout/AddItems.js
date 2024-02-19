@@ -8,6 +8,8 @@ import ItemsFilter from '../Products/ItemsFilter';
 import { getServiceItemCategories, getServiceItems } from '../../Services/data-service'
 import axios from "axios";
 import baseUrl from "../../assets/common/baseUrl";
+import { connect } from "react-redux";
+import * as actions from "../../Redux/Actions/cartActions";
 
 var { width, height } = Dimensions.get("window");
 
@@ -35,7 +37,7 @@ const AddItems = (props) => {
     const [serviceItems, setServiceItems] = useState([]);
     const [sectionListFormatData, setSectionListFormatData] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [addedItems, setAddedItems] = useState([...order.items]);
+    //const [addedItems, setAddedItems] = useState([...order.items]);
     const [confirmBtnDisabled, setConfirmBtnDisable] = useState(true);
     const context = useContext(AuthGlobal)
     var [loading, setLoading] = useState(true);
@@ -62,23 +64,25 @@ const AddItems = (props) => {
         //})
         //    .error((err) => { console.log(err); setLoading(false) })
 
-        axios.get(`${baseUrl}service-items/available`)
-            .then((result) => {
-                var serviceItems = result.data;
-                if (serviceItems && addedItems?.length > 0) {
-                    for (var i = 0; i < addedItems.length; i++) {
-                        var serviceItem = serviceItems.find(x => { if (x.id === addedItems[i].id) { x.count = addedItems[i].count; return; } });
+        if (serviceItems === null || serviceItems.length===0) {
+            axios.get(`${baseUrl}service-items/available`)
+                .then((result) => {
+                    var serviceItems = result.data;
+                    if (serviceItems && props.cartItems?.length > 0) {
+                        for (var i = 0; i < props.cartItems.length; i++) {
+                            var serviceItem = serviceItems.find(x => { if (x.id === props.cartItems[i].id) { x.count = props.cartItems[i].count; return; } });
 
+                        }
                     }
-                }
-                //console.log(serviceItems);
-                //console.log(this.groupBy(serviceItems, "serviceitemcategory.name"))
-                setServiceItems(serviceItems);
-                setSectionListFormatData(getSectionListFormatData(serviceItems));
-                setLoading(false);
-            })
-            .catch((error) => { console.log(error); setLoading(false) })
-    }, []);
+                    //console.log(serviceItems);
+                    //console.log(this.groupBy(serviceItems, "serviceitemcategory.name"))
+                    setServiceItems(serviceItems);
+                    setSectionListFormatData(getSectionListFormatData(serviceItems));
+                    setLoading(false);
+                })
+                .catch((error) => { console.log(error); setLoading(false) })
+        }
+    }, [props]);
 
 
     var groupBy = function (xs, key) {
@@ -104,42 +108,46 @@ const AddItems = (props) => {
     }
 
     const removeItem = (item) => {
-        if (addedItems === null || addedItems.length === 1) {
+        if (props.cartItems === null || props.cartItems.length === 1) {
             setConfirmBtnDisable(true);
         }
-        setAddedItems(addedItems.filter(x => x.id !== item.id));
+        //setAddedItems(addedItems.filter(x => x.id !== item.id));
+        props.removeFromCart(item);
         setTotalPrice(totalPrice - item.price);
-        console.log(addedItems);
+        //console.log(addedItems);
         
     }
 
     const addItem = (item) => {
-        let list = [...addedItems];
-        list.push({ id: item.id, name: item.name, price: item.price, count: 1 });
-        setAddedItems(list);
+        //let list = [...props.cartItems];
+        //list.push({ id: item.id, name: item.name, price: item.price, count: 1 });
+        //setAddedItems(list);
+        props.addToCart({ id: item.id, name: item.name, price: item.price, count: 1 });
         setTotalPrice(totalPrice + item.price);
-        console.log(addedItems);
-        if (list && list.length > 0) {
+        //console.log(addedItems);
+        //if (list && list.length > 0) {
             setConfirmBtnDisable(false);
-        }
+        //}
     }
 
     const increase = (item) => {
-        let addedItem = addedItems.find(x => x.id === item.id);
-        addedItem.count = addedItem.count + 1;
+        props.addToCart({ id: item.id, name: item.name, price: item.price, count: 1 });
+        //let addedItem = addedItems.find(x => x.id === item.id);
+        //addedItem.count = addedItem.count + 1;
         setTotalPrice(totalPrice + item.price);
-        console.log(addedItems);
+        //console.log(addedItems);
     }
 
     const decrease = (item) => {
-        let addedItem = addedItems.find(x => x.id === item.id);
-        addedItem.count = addedItem.count - 1;
-        setTotalPrice(totalPrice - item.price);
-        console.log(addedItems);
+        props.removeFromCart({ id: item.id, name: item.name, price: item.price, count: 1 });
+        //let addedItem = addedItems.find(x => x.id === item.id);
+        //addedItem.count = addedItem.count - 1;
+        //setTotalPrice(totalPrice - item.price);
+        //console.log(addedItems);
     }
 
     const confirmItemSelection = () => {
-        order.items = addedItems;
+        order.items = props.cartItems;
         order.totalPrice = totalPrice;
 
         if (context.stateUser.user.isAdmin && props.flow === "admin") {
@@ -227,6 +235,21 @@ const AddItems = (props) => {
     )
 }
 
+const mapStateToProps = (state) => {
+    const { cartItems } = state;
+    return {
+        cartItems: cartItems,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        clearCart: () => dispatch(actions.clearCart()),
+        removeFromCart: (item) => dispatch(actions.removeFromCart(item)),
+        addToCart: (item) => dispatch(actions.addToCart(item))
+    }
+}
+
 const styles = StyleSheet.create({
     container: {
         width: width - 20,
@@ -278,5 +301,6 @@ const styles = StyleSheet.create({
     }
 })
 
-export default AddItems;
+//export default AddItems;
+export default connect(mapStateToProps, mapDispatchToProps)(AddItems);
 
