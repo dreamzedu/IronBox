@@ -2,7 +2,9 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, ScrollView, TextInput, StyleSheet, Dimensions } from 'react-native';
 import { Text, Radio, RadioGroup, VStack, RadioIndicator, RadioLabel, RadioIcon, CircleIcon, Heading, Button, ButtonText } from '@gluestack-ui/themed'
 import Error from "../../Shared/Error";
-import AuthGlobal from "../../Context/store/AuthGlobal"
+import AuthGlobal from "../../Context/store/AuthGlobal";
+import { connect } from "react-redux";
+import * as actions from "../../Redux/Actions/orderActions";
 
 const { width, height } = Dimensions.get("window")
 
@@ -10,7 +12,8 @@ const SchedulePickup = (props) => {
 
     const context = useContext(AuthGlobal);
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    let order = props.route.params.order;
+    //let order = props.route.params.order;
+    let order = props.order;
 
     let date = new Date();
     let today = new Date();
@@ -38,12 +41,15 @@ const SchedulePickup = (props) => {
     
     useEffect(() => {
         try {
+            
             var currentHours = date.getHours();
             if (currentHours >= timeSlots[timeSlots.length - 1].startTime - 2) {
                 let slots = [...dateSlots]; // making a copy of array as the state should be treated as immutable if we use the same array then the change detection does not work because it compares the reference
                 slots[0].isAvailable = false
                 setDateSlots(slots);
             }
+
+            setDefaultPickupSlot();
 
             // Set date time in case editing or reviewing the screen
             if (order.pickupSlot !== null) {
@@ -66,7 +72,26 @@ const SchedulePickup = (props) => {
         catch (e) {
             console.log(e)
         }
-    }, [])
+    }, [props.order?.pickupSlot])
+
+   
+    setDefaultPickupSlot = () => {
+        for (var i = 0; i < dateSlots.length; i++) {
+            if (dateSlots[i].isAvailable) {
+                setSelectedDateSlotIndex(i);
+                onDateSlotChanged(i)
+                break;
+            }
+        }
+
+        for (var i = 0; i < timeSlots.length; i++) {
+            if (timeSlots[i].isAvailable) {
+                setSelectedTimeSlotIndex(i);
+                onTimeSlotChanged(i);
+                break;
+            }
+        }
+    }
 
     function setPickupslot()
     {
@@ -76,11 +101,14 @@ const SchedulePickup = (props) => {
             let pickupSlot = { date: dateSlots[selectedDateSlotIndex].date.toString(), startTime: timeSlots[selectedTimeSlotIndex].startTime, endTime: timeSlots[selectedTimeSlotIndex].endTime }
             order = { ...order, pickupSlot: pickupSlot};
 
+            props.updateOrder(order);
+
             if (context.stateUser.user.isAdmin && props.flow === "admin") {
                 props.updatePickupSchedule(order) // updatePickupSchedule is coming from AdminUpdatePickupSchedule
             }
             else {
-                props.navigation.navigate("Add Items", { order: order });
+                //props.navigation.navigate("Add Items", { order: order });
+                props.navigation.navigate("Add Items");
             }
         }
     }
@@ -118,8 +146,9 @@ const SchedulePickup = (props) => {
         
 
     return (
+        <ScrollView style={{ backgroundColor: 'white' }}>
         <View style={styles.container}>
-            <ScrollView >
+            
 
                 <View >
                     <Text style={styles.title}>Choose pickup date</Text>            
@@ -128,7 +157,7 @@ const SchedulePickup = (props) => {
                     <RadioGroup value={selectedDateSlotIndex} onChange={(selectedIndex) => onDateSlotChanged(selectedIndex)}>
                         <VStack space="md">
                             {dateSlots.map((slot, index) => {
-                                return(<Radio value={index} isDisabled={!slot.isAvailable }>
+                                return (<Radio value={index} isDisabled={!slot.isAvailable} key={ 'date'+ index}>
                                 <RadioIndicator mr="$2">
                                     <RadioIcon as={CircleIcon} />
                                 </RadioIndicator>
@@ -139,13 +168,13 @@ const SchedulePickup = (props) => {
                     </RadioGroup>
                 </View>
                 </View>
-                <View style={{ paddingTop: 10, paddingBottom:20 }}>
+                <View style={{ paddingTop: 20, paddingBottom:20 }}>
                     <Text style={styles.title}>Choose pickup time-slot</Text>            
                     <View style={{ paddingLeft: 10, paddingBottom: 10 }}>
                     <RadioGroup value={selectedTimeSlotIndex} onChange={(selectedIndex) => onTimeSlotChanged(selectedIndex)}>
                         <VStack space="md">
                             {timeSlots.map((slot, index) => {
-                                return (<Radio value={index} isDisabled={!slot.isAvailable}>
+                                return (<Radio value={index} isDisabled={!slot.isAvailable} key={'time' + index}>
                                     <RadioIndicator mr="$2">
                                         <RadioIcon as={CircleIcon} />
                                     </RadioIndicator>
@@ -161,23 +190,37 @@ const SchedulePickup = (props) => {
             {/*<TextInput value={testTime} onChangeText={(value) => setTestTime(value)} />*/}
             <View style={{ alignItems: "center" }}>
                     <Button onPress={() => setPickupslot()} >
-                        <ButtonText>Confirm
+                        <ButtonText fontWeight="$medium" fontSize="$md">Confirm
                         </ButtonText>
                     </Button>
             </View>
             <View>{error ? <Error message={error} /> : null}</View>
-            </ScrollView>
-        </View>
+          
+            </View>
+        </ScrollView>
     )
 
+}
+
+const mapStateToProps = (state) => {
+    const { order } = state.order;
+    return {
+        order: state.order,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateOrder: (order) => dispatch(actions.updateOrder(order)),
+    }
 }
 
 const styles = StyleSheet.create({
     container: {
         padding: 10,
+        margin:10,
         borderRadius: 10,
-        backgroundColor: 'white',
-        height:height,
+        backgroundColor:'white',
     },
     title: {
         fontWeight: 'bold',
@@ -187,5 +230,6 @@ const styles = StyleSheet.create({
 }
 )
 
-export default SchedulePickup;
+//export default SchedulePickup;
+export default connect(mapStateToProps, mapDispatchToProps)(SchedulePickup);
 

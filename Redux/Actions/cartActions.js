@@ -1,8 +1,16 @@
 import {
     ADD_TO_CART,
     REMOVE_FROM_CART,
-    CLEAR_CART
+    CLEAR_CART,
+    SET_CART_ITEMS,
 } from '../constants';
+
+export const setCartItems = (payload) => {
+    return {
+        type: SET_CART_ITEMS,
+        payload
+    }
+}
 
 export const addToCart = (payload) => {
     return {
@@ -23,3 +31,4 @@ export const clearCart = () => {
         type: CLEAR_CART
     }
 }
+

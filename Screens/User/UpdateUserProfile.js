@@ -99,9 +99,10 @@ const UpdateUserProfile = (props) => {
 
     return (
         <KeyboardAwareScrollView
-        viewIsInsideTabBar={true}
-        extraHeight={200}
-        enableOnAndroid={true}
+            viewIsInsideTabBar={true}
+            extraHeight={200}
+            enableOnAndroid={true}
+            style={{ backgroundColor:'white' }}
         >
             {loading ? <Spinner size='small'></Spinner> : null}
 
@@ -166,15 +167,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center"
     },
-    subContainer: {
-        alignItems: "center",
-        marginTop: 60
-    },
-    order: {
-        marginTop: 20,
-        alignItems: "center",
-        marginBottom: 60
-    }
+     
 })
 
 export default UpdateUserProfile;

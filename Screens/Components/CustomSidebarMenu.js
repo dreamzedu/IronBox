@@ -50,7 +50,7 @@ const CustomSidebarMenu = (props) => {
                                       text: 'Confirm',
                                       onPress: () => {
                                           logoutUser(context.dispatch)
-                                          props.navigation.replace('Products');
+                                          props.navigation.replace('HomeScreen');
                                       },
                                   },
                               ],

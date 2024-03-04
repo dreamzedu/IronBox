@@ -19,21 +19,27 @@ function MyStack() {
                 name="Checkout"
                 component={CheckoutHome}
                 options={{
-                    headerShown: false
+                    headerShown: true
                 }}
             />
             <Stack.Screen
                 name="Add Pickup Address"
                 component={AddPickupAddress}
-                options={{ headerShown: true }} />            
+                options={{
+                    headerShown: true,
+                    title: 'Add Pickup Address'
+                }}
+            />
             <Stack.Screen
                 name="Select Pickup Address"
                 component={SelectPickupAddress}
-                options={{ headerShown: true }} />
+                options={{ headerShown: true, title: "Confirm Pickup Address" }} />
             <Stack.Screen
                 name="Schedule Pickup"
                 component={SchedulePickup}
-                options={{ headerShown: true }} />
+                options={{
+                    headerShown: true,  
+                }}/>
             <Stack.Screen
                 name="Add Items"
                 component={AddItems}
@@ -59,6 +65,7 @@ function MyStack() {
                     headerShown: false
                 }}
             />
+            
         </Stack.Navigator>
     )
 }

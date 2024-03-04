@@ -9,35 +9,43 @@ import { formatDate, formatTime } from '../../assets/common/formatters'
 import { saveUserOrder } from '../../Services/data-service';
 import AddressCard from "../../Shared/AddressCard";
 import AuthGlobal from "../../Context/store/AuthGlobal";
+import { connect } from "react-redux";
+import * as actions from "../../Redux/Actions/orderActions";
 
 var { width, height } = Dimensions.get("window");
 
 const ReviewOrder = (props) => {
-    const order = props.route.params.order;
+    //const order = props.route.params.order;
+    const order = props.order;
     const context = useContext(AuthGlobal)
 
   // Add this
-  const [productUpdate, setProductUpdate] = useState();
+    const [productUpdate, setProductUpdate] = useState();
+    const [processing, setProcessing] = useState(false);
   useEffect(() => {
       
-  }, []);
+  }, [props]);
 
   
-  const placeOrder = () => {
-
-      saveUserOrder(order)
-      .then((res) => {
-          if (res.success) {
-              Toast.show({
-                  type: "success",
-                  text1: "Order placed successfully.",
-                  text2: "",
-              });
-              setTimeout(() => {
-                  //props.clearCart();
-                  console.log("order placed" + res);
-                  props.navigation.navigate("Order Acknowledgement", { orderData: { ...order, id: res.orderId, UUID: res.UUID } });
-              }, 500);
+    const placeOrder = () => {
+        setProcessing(true);
+        saveUserOrder(order)
+            .then((res) => {
+                if (res.success) {
+                    Toast.show({
+                        type: "success",
+                        text1: "Order placed successfully.",
+                        text2: "",
+                    });
+                    setTimeout(() => {
+                        //props.clearCart();
+                        //console.log("order placed" + res);
+                        let newOrder = { ...order, id: res.orderId, UUID: res.UUID };
+                        props.updateOrder(newOrder);
+                        props.setLatestOrder(newOrder);
+                        props.navigation.navigate("Order Acknowledgement" );
+                        setProcessing(false);
+              }, 50);
           }
           else {
               Toast.show({
@@ -45,6 +53,7 @@ const ReviewOrder = (props) => {
                   text1: "Failed to place order.",
                   text2: res.message
               });
+                    setProcessing(false);
           }
       })
       .catch((error) => {
@@ -54,6 +63,7 @@ const ReviewOrder = (props) => {
           text1: "Something went wrong",
           text2: "Please try again",
         });
+          setProcessing(false);
       });
   };
 
@@ -101,9 +111,10 @@ const ReviewOrder = (props) => {
 
                       </View>
                       <View style={{ alignItems: "center", margin: 20 }}>
-                          <Button onPress={() => placeOrder()}>
+                          <Button onPress={() => placeOrder()} isDisabled={processing}>
                               <ButtonText fontWeight="$medium" fontSize="$md">Place Order</ButtonText>
                           </Button>
+                          {processing ? <Spinner size='small'></Spinner> : null}
                       </View>
                     </View>)
                     :
@@ -114,10 +125,24 @@ const ReviewOrder = (props) => {
     );
 }
 
+const mapStateToProps = (state) => {
+    const { order } = state;
+    return {
+        order: order,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateOrder: (order) => dispatch(actions.updateOrder(order)),
+        setLatestOrder: (order) => dispatch(actions.setLatestOrder(order)),
+    }
+}
+
 const styles = StyleSheet.create({
     container: {
         padding: 10,
-        margin: 10,
+        //margin: 10,
         borderRadius: 10,
     },
     //title: {
@@ -155,7 +180,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: "column",
         backgroundColor: "white",
-        marginBottom: 10,
+        marginBottom: 20,
     },
     title: {
         fontWeight: 'bold',
@@ -205,4 +230,5 @@ const styles = StyleSheet.create({
 
 });
 
-export default ReviewOrder;
+//export default ReviewOrder;
+export default connect(mapStateToProps, mapDispatchToProps)(ReviewOrder);

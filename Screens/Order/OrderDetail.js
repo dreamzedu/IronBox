@@ -65,7 +65,6 @@ const OrderDetail = (props) => {
             {
                 order ?
                     (<View style={styles.container}>
-                        <Heading>Oredr Detail</Heading>
                         <View style={[styles.box, styles.roundBorder]}>
                             <View style={styles.row}><Text style={styles.center} size={"md"}>{order.product.name}</Text></View>
                             <View style={styles.row}><Text style={styles.alignLeft}>Order Number:</Text><Text> #{order.UUID}</Text></View>
@@ -78,7 +77,8 @@ const OrderDetail = (props) => {
                         {order.status.name !== "Cancelled" ?
                                 <View style={styles.alignRight}>
                                     <Button style={{ marginBottom:-10 }} variant="link" onPress={() => props.navigation.navigate("Cancel Order", { orderData: order })}>
-                                <ButtonText fontWeight="$medium" fontSize="$md">Cancel Order</ButtonText>
+                                    {/*<Button style={{ marginBottom: -10 }} variant="link" onPress={() => props.cancelOrder(order)}>*/}
+                                    <ButtonText fontWeight="$medium" fontSize="$md">Cancel Order</ButtonText>
                             </Button></View>
                                 : null}
                         </View>

@@ -10,6 +10,7 @@ import axios from "axios";
 import baseUrl from "../../assets/common/baseUrl";
 import { connect } from "react-redux";
 import * as actions from "../../Redux/Actions/cartActions";
+import * as orderActions from "../../Redux/Actions/orderActions";
 
 var { width, height } = Dimensions.get("window");
 
@@ -33,7 +34,8 @@ const ListHeader = () => {
 
 const AddItems = (props) => {
 
-    let order = props.route.params.order;
+    //let order = props.route.params.order;
+    let order = props.order;
     const [serviceItems, setServiceItems] = useState([]);
     const [sectionListFormatData, setSectionListFormatData] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -49,6 +51,7 @@ const AddItems = (props) => {
                 p += item.price * item.count;
             });
             setTotalPrice(p);
+            setConfirmBtnDisable(false);
         }
 
         //getServiceItems().then((data) => {
@@ -82,7 +85,7 @@ const AddItems = (props) => {
                 })
                 .catch((error) => { console.log(error); setLoading(false) })
         }
-    }, [props]);
+    }, [props.cartItems]);
 
 
     var groupBy = function (xs, key) {
@@ -150,11 +153,13 @@ const AddItems = (props) => {
         order.items = props.cartItems;
         order.totalPrice = totalPrice;
 
+        props.updateOrder(order);
+
         if (context.stateUser.user.isAdmin && props.flow === "admin") {
             props.updateOrderItems(order) // updateOrderItems is coming from AdminUpdateOrderItems
         }
         else {
-            props.navigation.navigate("Review Order", { order: order });
+            props.navigation.navigate("Review Order");
         }
     }
 
@@ -163,7 +168,7 @@ const AddItems = (props) => {
             props.navigation.navigate("OrderDetail", { order: order });
         }
         else {
-            props.navigation.navigate("Review Order", { order: order });
+            props.navigation.navigate("Review Order");
         }
     }
 
@@ -236,9 +241,10 @@ const AddItems = (props) => {
 }
 
 const mapStateToProps = (state) => {
-    const { cartItems } = state;
+    const { cartItems, order } = state;
     return {
         cartItems: cartItems,
+        order:order,
     };
 };
 
@@ -246,7 +252,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         clearCart: () => dispatch(actions.clearCart()),
         removeFromCart: (item) => dispatch(actions.removeFromCart(item)),
-        addToCart: (item) => dispatch(actions.addToCart(item))
+        addToCart: (item) => dispatch(actions.addToCart(item)),
+        updateOrder: (order) => dispatch(orderActions.updateOrder(order))
     }
 }
 

@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useContext} from 'react'
-import { View, Button } from 'react-native'
+import { View } from 'react-native'
 import FormContainer from '../../Shared/Form/FormContainer'
 import Input from '../../Shared/Form/Input'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { saveUserAddress } from '../../Services/data-service';
 import AuthGlobal from '../../Context/store/AuthGlobal'
-import {Text, Checkbox, CheckboxIndicator, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
+import {Text, Checkbox, CheckboxIndicator, Button, ButtonText, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
 import { setUserProfile } from '../../Context/actions/Auth.actions'
+import { connect } from "react-redux";
+import * as actions from "../../Redux/Actions/orderActions";
 
 const AddPickupAddress = (props) => {    
 
@@ -41,9 +43,10 @@ const AddPickupAddress = (props) => {
             setUserProfile(user, context.dispatch)
             
         }
-        let order = props.route.params.order;
+        let order = props.order;
         order.pickupAddress = address;
-        props.navigation.navigate("Schedule Pickup", { order: order }) 
+        props.updateOrder(order);
+        props.navigation.navigate("Schedule Pickup") 
     }
 
     return (
@@ -51,9 +54,11 @@ const AddPickupAddress = (props) => {
             viewIsInsideTabBar={true}
             extraHeight={200}
             enableOnAndroid={true}
+            style={{ backgroundColor: 'white' }}
         >
-            <FormContainer title={"Pickup Address"}>
-                <View><Text>{ }</Text></View>
+            <View >
+            <FormContainer >
+                
                    <Input
                     placeholder={"Address Line 1"}
                     name={"AddressLine1"}
@@ -92,12 +97,29 @@ const AddPickupAddress = (props) => {
                     </Checkbox>
                 </View>
                 <View style={{ width: '80%', alignItems: "center", marginTop:20 }}>
-                    <Button title="Confirm" onPress={() => setPickupAddress()}/>
-                </View>
+                    <Button onPress={() => setPickupAddress()} >
+                        <ButtonText fontWeight="$medium" fontSize="$md">Confirm</ButtonText>
+                    </Button>
+                    </View>
+                
             </FormContainer>
-            
+            </View>
         </KeyboardAwareScrollView>
     )
 }
 
-export default AddPickupAddress
+const mapStateToProps = (state) => {
+    const { order } = state.order;
+    return {
+        order: state.order,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateOrder: (order) => dispatch(actions.updateOrder(order)),
+    }
+}
+
+//export default AddPickupAddress
+export default connect(mapStateToProps, mapDispatchToProps)(AddPickupAddress);

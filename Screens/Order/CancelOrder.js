@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, StyleSheet, Dimensions, ScrollView, Button } from "react-native";
-import {Text, Heading, Spinner, Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, ChevronDownIcon, Icon, useToast,  VStack, ToastTitle, ToastDescription } from "@gluestack-ui/themed";
+import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
+import { Text, Button, ButtonText, Heading, Spinner, Select, SelectTrigger, SelectInput, SelectIcon, SelectPortal, SelectBackdrop, SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper, SelectItem, ChevronDownIcon, Icon, useToast,  VStack, ToastTitle, ToastDescription } from "@gluestack-ui/themed";
 import Toast from "react-native-toast-message";
 import OrderCard from "../../Shared/OrderCard";
 import { cancelUserOrder } from '../../Services/data-service';
@@ -15,6 +15,7 @@ const CancelOrder = (props) => {
     const reasons = [{ code: 1, name: "Placed by mistake" }, { code: 2, name: "Chose wrong pickup date" }, { code: 3, name: "Chose wrong pickup time slot" }, { code: 4, name: "Chose wrong items" }, { code: 5, name: "Other" }];
     const [cancelReason, setCancelReason] = useState();
     const [error, setError] = useState();
+    const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
       
@@ -27,7 +28,6 @@ const CancelOrder = (props) => {
     }
 
     const cancelOrder = () => {
-
         if (
             context?.stateUser?.isAuthenticated === false ||
             context?.stateUser?.isAuthenticated === null
@@ -38,7 +38,8 @@ const CancelOrder = (props) => {
       if (!cancelReason || cancelReason === '') {
           setError("Please select a cancellation reason to proceed.");
       }
-      else {          
+      else {
+          setProcessing(true);
           cancelUserOrder(order.id, cancelReason)
               .then((res) => {
                   if (res.success) {
@@ -58,10 +59,16 @@ const CancelOrder = (props) => {
                       setTimeout(() => {
                           //props.clearCart();
                           console.log("order cancelled" + res.message);
-                          props.navigation.navigate("Products");
-                      }, 1000);
+                          //props.navigation.pop(2).push("Order Detail", { orderId: order.id });
+                          props.navigation.pop();
+                          props.navigation.replace("Order Detail", {orderId: order.id});
+                         // props.orderCancelled('success', order) // this is the parent view cancelOrder method injected into props
+
+                          setProcessing(false);
+                      }, 500);
                   }
                   else {
+                      setProcessing(false);
                       Toast.show({
                           type: "error",
                           text1: "Faild!",
@@ -85,6 +92,7 @@ const CancelOrder = (props) => {
 
               })
               .catch((error) => {
+                  setProcessing(false);
                   toast.show({
                       placement: "top",
                       render: ({ id }) => {
@@ -102,9 +110,10 @@ const CancelOrder = (props) => {
       }
   };
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-          <View style={styles.container}>
+    return (
+        <View style={styles.container}>
+        <ScrollView style={{ backgroundColor:'white' }}>
+          
               <View style={[styles.box, styles.roundBorder]}>
                   <OrderCard order={order} navigation={props.navigation} />
               </View>
@@ -135,24 +144,31 @@ const CancelOrder = (props) => {
                       </SelectPortal>
                   </Select>
               </View>
-              <View style={{ alignItems: "center", margin: 20 }}>
-                  <Button title={"Cancel Order"} onPress={cancelOrder} />
+                <View style={{ alignItems: "center", margin: 20 }}>
+                    
+                    <Button onPress={() => cancelOrder()} isDisabled={ processing} >
+                        <ButtonText fontWeight="$medium" fontSize="$md">Cancel Order</ButtonText>
+                        
+                    </Button>
+                    {processing ? <Spinner size='large'></Spinner> : null}
               </View>
               <View style={{ alignItems: "center", margin: 20 }}>
                   <Text style={{color:'red'}}>{error}</Text>
               </View>
-      </View>
-    </ScrollView>
+      
+            </ScrollView>
+        </View>
   );
 };
 
 
 const styles = StyleSheet.create({
   container: {
-    height: height,
-    padding: 8,
+        padding: 10,
+      margin:0,
     alignContent: "center",
-    backgroundColor: "white",
+        backgroundColor: "white",
+    height:height,
   },
   titleContainer: {
     justifyContent: "center",
@@ -164,11 +180,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  body: {
-    margin: 10,
-    alignItems: "center",
-    flexDirection: "row",
-    },
+ 
 
     itemContainer: {
         justifyContent: "center",

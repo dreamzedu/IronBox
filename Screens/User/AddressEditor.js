@@ -24,6 +24,12 @@ const AddressEditor = (props) => {
 
             props.navigation.navigate("Login", { msg: "You must login to perform this action." });
         }
+        if (mode === 'edit') {
+            props.navigation.setOptions({ title: 'Edit Address' })
+        }
+        else {
+            props.navigation.setOptions({ title: 'Add Address' })
+        }
     }, []);
 
     const updateAddress = async () => {
@@ -36,11 +42,12 @@ const AddressEditor = (props) => {
             user: context.stateUser.user.userId
         }
 
-       if(mode==='edit')
-           newAddress = await updateUserAddress(address.id, newAddress)
-       else
+        if (mode === 'edit') {
+            newAddress = await updateUserAddress(address.id, newAddress)
+        }
+        else {
             newAddress = await saveUserAddress(address.id, newAddress)
-
+        }
         let user = { ...context.stateUser.userProfile, address: newAddress };
         setUserProfile(user, context.dispatch)
         
@@ -52,9 +59,10 @@ const AddressEditor = (props) => {
             viewIsInsideTabBar={true}
             extraHeight={200}
             enableOnAndroid={true}
+            style={{ backgroundColor:'white' }}
         >
-            <FormContainer title={mode === "edit" ? "Edit Address" : "Add Address"} style={{ alignContent: 'start', justifyContent: 'start' }}>
-                <View style={{ margin:10 }}></View>
+            <FormContainer style={{ alignContent: 'start', justifyContent: 'start' }}>
+                
                 <Text>Address Line 1:</Text>
                 <Input
                     placeholder={"Address Line 1"}

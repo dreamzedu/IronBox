@@ -6,9 +6,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 // Stacks
 import HomeNavigator from "./HomeNavigator";
 import UserNavigator from "./UserNavigator";
-import CartNavigator from "./CartNavigator";
 
-import CartIcon from "../Shared/CartIcon";
+//import CartIcon from "../Shared/CartIcon";
 import AuthGlobal from "../Context/store/AuthGlobal";
 
 const Tab = createBottomTabNavigator();
@@ -34,7 +33,7 @@ const BottomTabNavigator = () => {
           }}
     >
       <Tab.Screen
-        name="Home"
+        name="HomeNavigator"
         component={HomeNavigator}
         options={{
           tabBarIcon: ({ color }) => (
@@ -42,18 +41,19 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen
-        name="CartNavigator"
-        component={CartNavigator}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <View>
-                    <Icon name="shopping-basket" color={color} size={26} />
-              <CartIcon />
-            </View>
-          ),
-        }}
-      />
+      {/*<Tab.Screen*/}
+      {/*  name="CartNavigator"*/}
+      {/*  component={CartNavigator}*/}
+      {/*        options={{*/}
+            
+      {/*    tabBarIcon: ({ color }) => (*/}
+      {/*      <View>*/}
+      {/*              <Icon name="shopping-basket" color={color} size={26} />*/}
+      {/*        <CartIcon />*/}
+      {/*      </View>*/}
+      {/*    ),*/}
+      {/*  }}*/}
+      {/*/>*/}
       
       {/*{context.stateUser.user.isAdmin == true ? (*/}
       {/*//  <Tab.Screen*/}
@@ -70,7 +70,9 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="User"
         component={UserNavigator}
-        options={{
+              options={{
+                  title:"User",
+                  headerShown:false,
           tabBarIcon: ({ color }) => (
             <Icon name="user" color={color} size={30} />
           ),

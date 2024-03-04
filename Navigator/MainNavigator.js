@@ -6,6 +6,19 @@ import SplashScreen from '../Screens/SplashScreen'
 import LoginNavigator from './LoginNavigator'
 import DrawerNavigator from "./DrawerNavigator"
 import AdminNavigator from "./AdminNavigator"
+import CartNavigator from "./CartNavigator";
+import RateCard from '../Screens/Products/RateCard';
+import OrderDetail from '../Screens/Order/OrderDetail';
+import BottomTabNavigator from "./BottomTabNavigator";
+import OrderNavigator from "./OrderNavigator";
+
+import MyOrderDetail from '../Screens/User/MyOrderDetail';
+import MyCancelOrder from '../Screens/User/MyCancelOrder';
+import UpdateUserProfile from '../Screens/User/UpdateUserProfile';
+import AddressEditor from '../Screens/User/AddressEditor';
+import CancelOrder from '../Screens/Order/CancelOrder';
+
+import MyOrders from "../Screens/User/MyOrders";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,9 +39,15 @@ function MyStack() {
                 options={{ headerShown: false }}
             />
             {/* Navigation Drawer as a landing page */}
+            {/*<Stack.Screen*/}
+            {/*    name="DrawerNavigator"*/}
+            {/*    component={DrawerNavigator}*/}
+            {/*    // Hiding header for Navigation Drawer as we will use our custom header*/}
+            {/*    options={{ headerShown: false }}*/}
+            {/*/>*/}
             <Stack.Screen
-                name="DrawerNavigator"
-                component={DrawerNavigator}
+                name="BottomTabNavigator"
+                component={BottomTabNavigator}
                 // Hiding header for Navigation Drawer as we will use our custom header
                 options={{ headerShown: false }}
             />
@@ -36,6 +55,66 @@ function MyStack() {
                 name="AdminNavigator"
                 component={AdminNavigator}
                 options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="CartNavigator"
+                component={CartNavigator}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Rate Card"
+                component={RateCard}
+                options={{ headerShown: true }} />
+            <Stack.Screen
+                name="Order Detail"
+                component={OrderDetail}
+                options={{ headerShown: true }} />
+            <Stack.Screen
+                name="My Order Detail"
+                component={MyOrderDetail}                
+                options={{
+                    headerShown: true,
+                    title: 'Order Detail'
+                }} />
+            <Stack.Screen
+                name="My Cancel Order"
+                component={MyCancelOrder}
+                options={{
+                    headerShown: true,
+                    title: 'Cancel Order'
+                }} />
+            <Stack.Screen
+                name="Cancel Order"
+                component={CancelOrder}
+                options={{
+                    headerShown: true,
+                }} />
+
+            {/*<Stack.Screen*/}
+            {/*    name="OrderNavigator"*/}
+            {/*    component={OrderNavigator}*/}
+            {/*    options={{ headerShown: false }} />*/}
+            <Stack.Screen
+                name="MyOrders"
+                component={MyOrders}
+                options={{
+                    title: 'My Orders',
+                    headerShown: true,
+                }}
+            />
+            <Stack.Screen
+                name="Edit Profile"
+                component={UpdateUserProfile}
+                options={{
+                    headerShown: true
+                }}
+            />
+            <Stack.Screen
+                name="AddressEditor"
+                component={AddressEditor}
+                options={{
+                    headerShown: true
+                }}
             />
         </Stack.Navigator>
     )

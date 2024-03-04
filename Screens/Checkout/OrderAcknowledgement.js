@@ -1,14 +1,20 @@
 ﻿
 import React, { useContext, useEffect } from 'react';
-import { View,  ScrollView, StyleSheet, Image } from 'react-native';
+import { View, ScrollView, StyleSheet, Image, Dimensions } from 'react-native';
 import { Heading, Spinner, Text, Button, ButtonText } from "@gluestack-ui/themed";
 import AuthGlobal from "../../Context/store/AuthGlobal";
 import { formatDate, formatTime } from '../../assets/common/formatters';
+import { StackActions } from '@react-navigation/native';
+import * as orderActions from "../../Redux/Actions/orderActions";
+import * as actions from "../../Redux/Actions/cartActions";
+import { connect } from "react-redux";
+
+var { height, width } = Dimensions.get('window')
 
 const OrderAcknowledgement = (props) => {
     const context = useContext(AuthGlobal)
-    const order = props.route.params.orderData;
-
+    const order = props.order;
+    
     useEffect(() => {
             if (
                 context?.stateUser?.isAuthenticated === false ||
@@ -17,11 +23,17 @@ const OrderAcknowledgement = (props) => {
                 props.navigation.navigate("Login")
             }
 
-        }, [context.stateUser.isAuthenticated])
+        }, [])
 
     const cancelOrder = ()=>
     {
         props.navigation.navigate("Cancel Order", { order: order });    
+    }
+
+    const goToCheckout = () => {       
+        props.navigation.dispatch(StackActions.popToTop());
+        props.navigation.replace("Checkout");
+        
     }
 
     return (
@@ -37,11 +49,14 @@ const OrderAcknowledgement = (props) => {
                 <View >
                     
 
-                    <Button onPress={() => props.navigation.navigate("Products")} style={styles.buttonSpacing} >
+                    <Button onPress={() => goToCheckout()} style={styles.buttonSpacing} >
                         <ButtonText fontWeight="$medium" fontSize="$md">Place another order</ButtonText>
                     </Button>
                     <Button onPress={() => props.navigation.navigate("Order Detail", { orderId: order.id })}  style={styles.buttonSpacing}>
                         <ButtonText fontWeight="$medium" fontSize="$md">View order detail</ButtonText>
+                    </Button>
+                    <Button onPress={() => { props.navigation.dispatch(StackActions.popToTop()); props.navigation.navigate("Home"); }}>
+                        <ButtonText fontWeight="$medium" fontSize="$md">Home</ButtonText>
                     </Button>
                     
                 </View>
@@ -50,20 +65,34 @@ const OrderAcknowledgement = (props) => {
     )
 }
 
+const mapStateToProps = (state) => {
+    const { order } = state;
+    return {
+        order: order,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        clearOrder: () => dispatch(orderActions.clearOrder()),
+        clearCart: () => dispatch(actions.clearCart()),
+    }
+}
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
-        margin:10,
+        margin: 0,
+        
     },
-    subContainer: {
-        alignItems: "center",
-        marginTop: 60
-    },
+   
     order: {
         alignItems: "center",
         marginBottom: 60,
-        padding:10,
+        padding: 10,
+        height: height,
+        paddingTop: 40,
     },
     error:
     {
@@ -93,4 +122,5 @@ const styles = StyleSheet.create({
     }
 })
 
-export default OrderAcknowledgement;
+//export default OrderAcknowledgement;
+export default connect(mapStateToProps, mapDispatchToProps)(OrderAcknowledgement);

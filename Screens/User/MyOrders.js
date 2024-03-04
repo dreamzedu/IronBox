@@ -48,6 +48,7 @@ const MyOrders = (props) => {
             
             return () => {
                 setOrders();
+                setLoading(true);
             }
 
         }, [context.stateUser.isAuthenticated]))
@@ -57,7 +58,7 @@ const MyOrders = (props) => {
         :
         <ScrollView >
             <View style={styles.container}>
-                <Text style={[styles.title,{ textAlign: 'center' }]}>My Orders</Text>
+                {/*<Text style={[styles.title,{ textAlign: 'center' }]}>My Orders</Text>*/}
                     <View>
                         {orders ? (
                         orders.map((x) => {
@@ -73,7 +74,7 @@ const MyOrders = (props) => {
                             <View style={styles.order}>
                                 <Text>You have no orders</Text>
 
-                                        <Button onPress={() => props.navigation.navigate("Products")} >
+                                        <Button onPress={() => props.navigation.navigate("HomeScreen")} >
                                             <ButtonText>Place your first order</ButtonText>
                                         </Button>
                             </View>

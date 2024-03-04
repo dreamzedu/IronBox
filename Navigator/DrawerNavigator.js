@@ -20,12 +20,12 @@ const Drawer = createDrawerNavigator();
 
 const HomeScreenStack = ({navigation}) => {
   return (
-      <Stack.Navigator initialRouteName="TabNavigator" screenOptions={{ headerShown: true }}>
+      <Stack.Navigator initialRouteName="TabNavigator" screenOptions={{ headerShown: false }}>
       <Stack.Screen
               name="TabNavigator"
               component={BottomTabNavigator}
         options={{
-          title: 'My Home', //Set Header Title
+          title: 'Home', //Set Header Title
           headerLeft: () => (
            <NavigationDrawerHeader navigationProps={navigation} />
           ),
@@ -75,7 +75,7 @@ const DrawerNavigator = (props) => {
     <Drawer.Navigator
      
           screenOptions={{
-              headerShown: false,
+              headerShown: true,
               //headerStyle: {
               //    backgroundColor: '#f4511e', //Set Header color
               //},

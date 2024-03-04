@@ -3,7 +3,10 @@ import { View, StyleSheet, ScrollView } from 'react-native'
 import { getProducts } from '../../Services/data-service';
 import AuthGlobal from '../../Context/store/AuthGlobal'
 import ProductList from "../Products/ProductList";
-import {Text, Heading, Spinner, CheckboxIndicator, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
+import { Text, Heading, Spinner, CheckboxIndicator, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
+import { connect } from "react-redux";
+import * as orderActions from "../../Redux/Actions/orderActions";
+import * as actions from "../../Redux/Actions/cartActions";
 
 
 const CheckoutHome = (props) => {    
@@ -15,10 +18,7 @@ const CheckoutHome = (props) => {
 
     const context = useContext(AuthGlobal)
    
-    let order = {
-        productId: null, productName: null, productCode: null, userId: null, items: [], pickupAddress: null, pickupSlot: null, totalPrice: 0
-    };
-   
+      
     useEffect(() => {
         if (context.stateUser.isAuthenticated !== true) {            
            
@@ -37,42 +37,49 @@ const CheckoutHome = (props) => {
             setLoading(false);
             console.log('loading products failed');
         }
+                
     }, []);
 
     const checkout = (productId, productName, productCode) => {
         if (!context.stateUser.isAuthenticated) {
             // props.navigation.navigate("User", { screen: "Login", params: {source: "checkout"} });
-            props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'Products', msg: "you must login to proceed" } });
+            props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'HomeScreen', msg: "you must login to proceed" } });
         }
         else {
-            order.userId = context.stateUser.user.userId;
-            order.pickupAddress = context.stateUser.userProfile.address;
-            order.productId = productId;
-            order.productName = productName;
-            order.productCode = productCode;
-            if (order.pickupAddress) {
-                SelectPickupAddress(order);
+            let orderDetail = {
+                userId: context.stateUser.user.userId,
+                pickupAddress: context.stateUser.userProfile.address,
+                productId: productId,
+                productName: productName,
+                productCode: productCode,
+            }
+            props.clearOrder(); // When landing on home page, any newly created order data should be cleared.
+            props.clearCart(); // any added items should also be cleared.
+            props.createOrder(orderDetail)
+
+            if (orderDetail.pickupAddress) {
+                SelectPickupAddress();
             }
             else {
-                AddPickupAddress(order);
+                AddPickupAddress();
             }
         }
 
     }
 
-    const AddPickupAddress = (order) => {
-        props.navigation.navigate("Add Pickup Address", { order: order });
+    const AddPickupAddress = () => {
+        props.navigation.navigate("Add Pickup Address" );
     }
 
-    const SelectPickupAddress = (order) => {
-        props.navigation.navigate("Select Pickup Address", { order: order });
+    const SelectPickupAddress = () => {
+        props.navigation.navigate("Select Pickup Address" );
     }
 
     return (
         <ScrollView>
             <View >
                 <View style={styles.cardContainer}>
-                    <Text style={ styles.title}>Your basket is empty!</Text>
+                    <Text style={ styles.title}>Placing order with IronBox is super easy! It just needs few clicks and you are done.</Text>
                     <Text>Choose from our services to place an order.</Text>
                 </View>
                 <Heading style={styles.heading}>
@@ -112,6 +119,21 @@ const CheckoutHome = (props) => {
 
     );
 };
+
+const mapStateToProps = (state) => {
+    const { order } = state;
+    return {
+        order: order,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        createOrder: (orderDetail) => dispatch(orderActions.createOrder(orderDetail)),
+        clearOrder: () => dispatch(orderActions.clearOrder()),
+        clearCart: () => dispatch(actions.clearCart()),
+    }
+}
 
 const styles = StyleSheet.create({
 
@@ -155,4 +177,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CheckoutHome
+//export default CheckoutHome
+export default connect(mapStateToProps, mapDispatchToProps)(CheckoutHome);

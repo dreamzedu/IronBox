@@ -1,43 +1,48 @@
 import React from 'react'
 //import { createStackNavigator } from "@react-navigation/stack"
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ProductContainer from "../Screens/Products/ProductContainer";
+import HomeScreen from "../Screens/HomeScreen";
 import ProductDetails from "../Screens/Products/ProductDetails"
-import RateCard from '../Screens/Products/RateCard';
-import CancelOrder from '../Screens/Checkout/CancelOrder';
+import CheckoutHome from "../Screens/Checkout/CheckoutHome"
+import { StyleSheet } from 'react-native'
+
 
 const Stack = createNativeStackNavigator();
 
 const HomeNavigator = () => {
 
 	return (
-		<Stack.Navigator initialRouteName="Products">
+		<Stack.Navigator initialRouteName="HomeScreen">
 			
 			<Stack.Screen
-				name='Products'
-				component={ProductContainer}
-				options={{ headerShown: false }}
+				name='Home'
+				component={HomeScreen}
+				options={{
+					//headerStyle: styles.header,
+					//headerTitleStyle: styles.headerTitle,
+					headerShown: true
+				}}
 			/>
 				<Stack.Screen
 					name="Product Details"
 					component={ProductDetails}
-				options={{ headerShown: false }} />		
+				options={{ headerShown: false }} />
+
 			
-			<Stack.Screen
-				name="Rate Card"
-				component={RateCard}
-				options={{ headerShown: true }} />			
-			
-			<Stack.Screen
-				name="Cancel Order"
-				component={CancelOrder}
-				options={{
-					headerShown: false
-				}}
-			/>
+						
 		</ Stack.Navigator>
 
 			);
 }
+
+const styles = StyleSheet.create({
+	header: {
+		backgroundColor: '#3f51b5',
+	},
+	headerTitle: {
+		fontWeight: 'bold',
+		fontSize: 20,
+	},
+})
 
 export default HomeNavigator;

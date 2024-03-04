@@ -258,8 +258,13 @@ export const updateUserProfile = async (userId, userProfile) => {
 export const getProducts = async () => {
     if (offline) { return offlineData.offlinegetProducts(); }
     try {
+        var products = await AsyncStorage.getItem("products");
+        if (products) return JSON.parse(products);
+
         var result = await axios.get(`${baseURL}products/available`)
 
+        await AsyncStorage.setItem("products", JSON.stringify(result.data));
+        
         return result.data;
 
     }
@@ -270,8 +275,13 @@ export const getProducts = async () => {
 
 export const getServiceItems = async () => {
     try {
-            let result = await axios.get(`${baseURL}service-items/available`)
-            return result.data;
+        var serviceItems = await AsyncStorage.getItem("serviceItems");
+        if (serviceItems) return JSON.parse(products);
+
+        let result = await axios.get(`${baseURL}service-items/available`)
+
+        await AsyncStorage.setItem("serviceItems", JSON.stringify(result.data));
+        return result.data;
     }
     catch (error) {
         console.log("Api error: " + error);

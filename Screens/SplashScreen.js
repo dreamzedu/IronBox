@@ -19,7 +19,8 @@ const SplashScreen = ({navigation}) => {
             //else send to Home Screen
            
                 //let value = AsyncStorage.getItem('user_id');
-            navigation.replace('DrawerNavigator');
+            //navigation.replace('DrawerNavigator');
+            navigation.replace('BottomTabNavigator');
             
             }, 5000);
         }, []);

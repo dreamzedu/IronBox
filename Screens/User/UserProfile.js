@@ -27,6 +27,7 @@ const UserProfile = (props) => {
             props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'User Profile', msg: "you must login for this" } });
         }
         else {
+            setLoading(true);
             const fetchOrders = async () => {
                 try {
                     getUserOrders(context.stateUser.user.userId, pageIndex, pageSize)
@@ -49,10 +50,10 @@ const UserProfile = (props) => {
             };
                         
             setUserProfile(context.stateUser.userProfile)
-            setLoading(true);
+            props.navigation.setOptions({ title: context.stateUser.userProfile.name })
+            
             if (!orders) {
                 fetchOrders();
-                setLoading(false);
             }
         }
 
@@ -70,11 +71,11 @@ const UserProfile = (props) => {
         
         <ScrollView>
             <View style={styles.container}>
-            <Text style={{ fontSize: 22, textAlign: 'center', marginBottom:10 }}>
-                   {userProfile ? userProfile.name : "" }
-            </Text>
-            <View style={styles.borderTop}></View>
-            <View style={[styles.box, { marginTop: 10 }]}>
+            {/*<Text style={{ fontSize: 22, textAlign: 'center', marginBottom:10 }}>*/}
+            {/*       {userProfile ? userProfile.name : "" }*/}
+            {/*</Text>*/}
+            {/*<View style={styles.borderTop}></View>*/}
+            <View style={[styles.box]}>
                 <Text style={[styles.title, { textAlign: 'center'}]}>
                 Profile Details
                 </Text>
@@ -134,7 +135,7 @@ const UserProfile = (props) => {
                             <View style={styles.order}>
                                 <Text>You have no orders</Text>
 
-                                        <Button style={{ margin: 10 }} onPress={() => props.navigation.navigate("Products")} >
+                                        <Button style={{ margin: 10 }} onPress={() => props.navigation.navigate("HomeScreen")} >
                                             <ButtonText fontWeight="$medium" fontSize="$md">Place your first order</ButtonText>
                                         </Button>
                             </View>
@@ -143,6 +144,8 @@ const UserProfile = (props) => {
                     </View>
                     {orders ? <View style={[styles.borderTop, { padding: 10 }]}><Button onPress={() => props.navigation.navigate("MyOrders")}><ButtonText fontWeight="$medium" fontSize="$md">View All</ButtonText></Button></View> : null
                     }
+                    {/*{orders ? <View style={[styles.borderTop, { padding: 10 }]}><Button onPress={() => props.navigation.navigate("OrderNavigator", {Screen:'MyOrders'})}><ButtonText fontWeight="$medium" fontSize="$md">View All</ButtonText></Button></View> : null*/}
+                    {/*}*/}
                 </View>
             </View>
             </ScrollView>
@@ -159,7 +162,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: "column",
         backgroundColor: "white",
-        marginBottom: 10,
+        marginBottom: 20,
         padding:10,
     },
     borderTop:

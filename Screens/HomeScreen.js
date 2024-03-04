@@ -6,34 +6,38 @@ import {
     ActivityIndicator,
     ScrollView,
     Dimensions,
-    Button,
+    
     TouchableOpacity,
     Image
 } from "react-native";
-import { Text, Heading, Spinner } from "@gluestack-ui/themed";
-import ProductList from "./ProductList";
-import Banner from "../../Shared/Banner";
-import OrderCard from "../../Shared/OrderCard";
-import { getUserOrders, getProducts, getOrderDetail } from '../../Services/data-service';
-import AuthGlobal from "../../Context/store/AuthGlobal"
+import { Text, Heading, Spinner, Button, ButtonText } from "@gluestack-ui/themed";
+import ProductList from "./Products/ProductList";
+import Banner from "../Shared/Banner";
+import OrderCard from "../Shared/OrderCard";
+import { getUserOrders, getProducts, getOrderDetail } from '../Services/data-service';
+import AuthGlobal from "../Context/store/AuthGlobal";
+import { connect } from "react-redux";
+import * as orderActions from "../Redux/Actions/orderActions";
+import * as actions from "../Redux/Actions/cartActions";
 
 var { height, width } = Dimensions.get('window')
 
-const ProductContainer = (props) => {
+const HomeScreen = (props) => {
     const [products, setProducts] = useState([]);
     const [productsCtg, setProductsCtg] = useState([]);
     const [focus, setFocus] = useState(false);
     const [lastOrder, setLastOrder] = useState();   
     const [loading, setLoading] = useState(true)
+    const [processing, setProcessing] = useState(false)
     const [error, setError] = useState(true);
 
     const context = useContext(AuthGlobal)
     const pageSize = 1;
     let pageIndex = 1;
 
-    let order = {
-        productId: null, productName:null, productCode:null, userId: null, items: [], pickupAddress: null, pickupSlot: null, totalPrice: 0
-    };
+    //let order = {
+    //    productId: null, productName:null, productCode:null, userId: null, items: [], pickupAddress: null, pickupSlot: null, totalPrice: 0
+    //};
 
     //useEffect(() => {
     //    setLoading(true);
@@ -93,6 +97,8 @@ const ProductContainer = (props) => {
                     console.log('loading products failed');
                 }
 
+                props.clearOrder(); // When landing on home page, any newly created order data should be cleared.
+                props.clearCart(); // any added items should also be cleared.
                 return () => {
                     setLoading(false)
                 };
@@ -112,7 +118,7 @@ const ProductContainer = (props) => {
 
     const repeatOrder = (templateOrder) => {
         try {
-            setLoading(true);
+            setProcessing(true);
             if (context?.stateUser?.isAuthenticated) {
                 getOrderDetail(templateOrder.id).then((result) => {
                     if (result !== null) {
@@ -126,16 +132,18 @@ const ProductContainer = (props) => {
                             //pickupSlot: result.pickupSlot, // Pickup slot should be recent
                             
                         };
-                        props.navigation.navigate("CartNavigator", { screen: "Schedule Pickup", params: { order: order } });
+                        props.createOrder(order);
+                        props.setCartItems(order.items);
+                        setProcessing(false);
+                        props.navigation.navigate("CartNavigator", { screen: "Schedule Pickup" });
                     }
                 })
-                    .catch((err) => { console.log(err); setLoading(false); })
+                    .catch((err) => { console.log(err); setProcessing(false); })
             }
-            setLoading(false);
         }
         catch (e) {
             console.log(e);
-            setLoading(false);
+            setProcessing(false);
         }
     }
 
@@ -143,30 +151,43 @@ const ProductContainer = (props) => {
     const checkout = (productId, productName, productCode) => {
         if (!context.stateUser.isAuthenticated) {
             // props.navigation.navigate("User", { screen: "Login", params: {source: "checkout"} });
-            props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'Products', msg: "you must login to proceed" } });
+            props.navigation.navigate("LoginNavigator", { screen: "Login", params: { returnPage: 'HomeScreen', msg: "you must login to proceed" } });
         }
         else {
-            order.userId = context.stateUser.user.userId;
-            order.pickupAddress = context.stateUser.userProfile.address;
-            order.productId = productId;
-            order.productName = productName;
-            order.productCode = productCode;
-            if (order.pickupAddress) {
-                SelectPickupAddress(order);
+            
+            let orderDetail = {
+                userId : context.stateUser.user.userId,
+                pickupAddress: context.stateUser.userProfile.address,
+                productId: productId,
+                productName: productName,
+                productCode: productCode,
+                items:[],
+            }
+            props.createOrder(orderDetail)
+            if (orderDetail.pickupAddress) {
+                SelectPickupAddress();
             }
             else {
-                AddPickupAddress(order);
+                AddPickupAddress();
             }
         }
 
     }
 
-    const AddPickupAddress = (order) => {
-        props.navigation.navigate("CartNavigator", { screen: "Add Pickup Address", params: { order: order } });
+    //const AddPickupAddress = (order) => {
+    //    props.navigation.navigate("CartNavigator", { screen: "Add Pickup Address", params: { order: order } });
+    //}
+
+    //const SelectPickupAddress = (order) => {
+    //    props.navigation.navigate("CartNavigator", { screen: "Select Pickup Address", params: { order: order } });
+    //}
+
+    const AddPickupAddress = () => {
+        props.navigation.navigate("CartNavigator", { screen: "Add Pickup Address" });
     }
 
-    const SelectPickupAddress = (order) => {
-        props.navigation.navigate("CartNavigator", { screen: "Select Pickup Address", params: { order: order } });
+    const SelectPickupAddress = () => {
+        props.navigation.navigate("CartNavigator", { screen: "Select Pickup Address" });
     }
 
     return (
@@ -207,12 +228,14 @@ const ProductContainer = (props) => {
                             Our pricing
                         </Heading>
                         <View style={styles.cardContainer}>
-                            <Image resizeMode='contain' style={styles.pricingImage} source={require('../../assets/savemoney1.png')} />
+                            <Image resizeMode='contain' style={styles.pricingImage} source={require('../assets/savemoney1.png')} />
 
                             <View style={styles.pricingTextContainer}>
                                 <Text style={styles.title}>Save more money</Text>
                                 <Text style={styles.pricingText}>Our most reasonable pricing lets you save more money and that too with no compromise on the quality.</Text>
-                                <Button title='Ckeck our peice list' onPress={() => { props.navigation.navigate("Rate Card") }} />
+                                <Button onPress={() => { props.navigation.navigate("Rate Card") }} >
+                                    <ButtonText fontWeight="$medium" fontSize="$md">Ckeck our peice list</ButtonText>
+                                </Button>
                             </View>
                         </View>
                         {context?.stateUser?.isAuthenticated && lastOrder ?
@@ -225,10 +248,17 @@ const ProductContainer = (props) => {
                                             <OrderCard order={lastOrder} navigation={props.navigation} />
                                         <View style={styles.buttonContainer}>
                                             <View style={{ flex: 1, alignSelf: 'stretch', padding:1 }}>
-                                                <Button title='View Detail'  onPress={() => props.navigation.navigate("Order Detail", { orderId: lastOrder.id })} />
+                                                <Button onPress={() => props.navigation.navigate("Order Detail", { orderId: lastOrder.id })}  >
+                                                    <ButtonText fontWeight="$medium" fontSize="$md">View Detail
+                                                    </ButtonText>
+                                                </Button>
                                             </View>
                                             <View style={{ flex: 1, alignSelf: 'stretch', padding: 1 }}>
-                                                <Button title='Repeat Order'  onPress={() => repeatOrder(lastOrder)} />
+                                                <Button onPress={() => repeatOrder(lastOrder)} isDisabled={ processing } >
+                                                    <ButtonText fontWeight="$medium" fontSize="$md">Repeat Order</ButtonText>
+                                                </Button>
+                                                {processing ?
+                                                    <Spinner size='large' style={{top: -20}}></Spinner> : null}
                                             </View>
                                         </View>
                                     </View>
@@ -247,6 +277,22 @@ const ProductContainer = (props) => {
 
     );
 };
+
+const mapStateToProps = (state) => {
+    const { order } = state;
+    return {
+        order: order,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        createOrder: (orderDetail) => dispatch(orderActions.createOrder(orderDetail)),
+        clearOrder: () => dispatch(orderActions.clearOrder()),
+        clearCart: () => dispatch(actions.clearCart()),
+        setCartItems: (cartItems) => dispatch(actions.setCartItems(cartItems)),
+    }
+}
 
 const styles = StyleSheet.create({
     
@@ -314,4 +360,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ProductContainer;
+//export default HomeScreen;
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
