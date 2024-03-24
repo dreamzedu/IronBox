@@ -25,16 +25,16 @@ const OrderCard = (props) => {
           case 1:
           case 2:
               setOrderStatus(<TrafficLight unavailable></TrafficLight>);
-              setCardColor("#E74C3C");
+              setCardColor("#009933");
               break;
           case 3:
           case 4:    
               setOrderStatus(<TrafficLight limited></TrafficLight>);
-              setCardColor("#F1C40F");
+              setCardColor("#ffcc00");
               break;
           case 5:
               setOrderStatus(<TrafficLight available></TrafficLight>);
-              setCardColor("#2ECC71");
+              setCardColor("#0066ff");
               break;
           case 6:
           case 7:

@@ -7,19 +7,26 @@ import { saveUserAddress } from '../../Services/data-service';
 import AuthGlobal from '../../Context/store/AuthGlobal'
 import {Text, Checkbox, CheckboxIndicator, Button, ButtonText, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
 import { setUserProfile } from '../../Context/actions/Auth.actions'
+import Error from "../../Shared/Error";
 import { connect } from "react-redux";
 import * as actions from "../../Redux/Actions/orderActions";
+import * as commonstyles from "../../common-styles";
 
 const AddPickupAddress = (props) => {    
 
-    const [ address1, setAddress1 ] = useState();
-    const [ address2, setAddress2 ] = useState();
-    const [ city, setCity ] = useState();
-    const [zip, setZip] = useState();
+    const [ address1, setAddress1 ] = useState('');
+    const [ address2, setAddress2 ] = useState('');
+    const [ city, setCity ] = useState('');
+    const [zip, setZip] = useState('');
     const [useAsDefaultAddress, setUseAsDefaultAddress] = useState(false);    
     const context = useContext(AuthGlobal);
+    const [error, setError] = useState("");
+    const [error1, setError1] = useState("");
 
     useEffect(() => {
+        console.log("Add Item reloaded...")
+        setError('');
+        setError1('');
         if (context.stateUser.isAuthenticated !== true) {            
            
             props.navigation.navigate("Login", {msg: "You must login to perform this action."});
@@ -28,14 +35,20 @@ const AddPickupAddress = (props) => {
 
     const setPickupAddress = async () => {
         let address = {
-            city,
+            city:city,
             addressLine1: address1,
             addressLine2: address2,
-            zip,
+            zip:zip,
             isPrimary: useAsDefaultAddress,
             user: context.stateUser.user.userId
         }
-       
+
+        if (city.trim() === '' || address1.trim() === '' || address2.trim === '' || zip.trim() === '') {
+            setError('All fields are mandatory.')
+            setError1('Please enter all fields to proceed.')
+            return;
+        }
+
         //props.navigation.navigate("Payment", {order: order })
         if (useAsDefaultAddress) {
             address = await saveUserAddress(address)
@@ -50,6 +63,7 @@ const AddPickupAddress = (props) => {
     }
 
     return (
+        <View style={commonstyles.container}>
         <KeyboardAwareScrollView
             viewIsInsideTabBar={true}
             extraHeight={200}
@@ -60,33 +74,33 @@ const AddPickupAddress = (props) => {
             <FormContainer >
                 
                    <Input
-                    placeholder={"Address Line 1"}
-                    name={"AddressLine1"}
-                    id="1"
-                    value={address1}
-                    onChangeText={(text) => setAddress1(text)}
+                            placeholder={"Address Line 1"}
+                            name={"AddressLine1"}
+                            id="1"
+                            value={address1}
+                            onChangeText={(text) => { setError(''); setError1(''); setAddress1(text) }}
                 />
                    <Input
-                    placeholder={"Address Line 2"}
-                    name={"Address Line 2"}
-                    value={address2}
-                    id="2"
-                    onChangeText={(text) => setAddress2(text)}
+                            placeholder={"Address Line 2"}
+                            name={"Address Line 2"}
+                            value={address2}
+                            id="2"
+                            onChangeText={(text) => { setError(''); setError1(''); setAddress2(text) }}
                 />
                    <Input
-                    placeholder={"City"}
-                    name={"city"}
-                    value={city}
-                    id="3"
-                    onChangeText={(text) => setCity(text)}
+                            placeholder={"City"}
+                            name={"city"}
+                            value={city}
+                            id="3"
+                            onChangeText={(text) => { setError(''); setError1(''); setCity(text) }}
                 />
                    <Input
-                    placeholder={"Zip Code"}
-                    name={"zip"}
-                    value={zip}
-                    id="4"
-                    keyboardType={"numeric"}
-                    onChangeText={(text) => setZip(text)}
+                            placeholder={"Zip Code"}
+                            name={"zip"}
+                            value={zip}
+                            id="4"
+                            keyboardType={"numeric"}
+                            onChangeText={(text) => { setError(''); setError1(''); setZip(text) }}
                 />
                 <View>
                     <Checkbox key="chk1" aria-label="setdeafault" size="md" isInvalid={false} isDisabled={false} value={useAsDefaultAddress} onChange={setUseAsDefaultAddress}>
@@ -96,15 +110,19 @@ const AddPickupAddress = (props) => {
                         <CheckboxLabel>Use this as default address</CheckboxLabel>
                     </Checkbox>
                 </View>
-                <View style={{ width: '80%', alignItems: "center", marginTop:20 }}>
-                    <Button onPress={() => setPickupAddress()} >
-                        <ButtonText fontWeight="$medium" fontSize="$md">Confirm</ButtonText>
-                    </Button>
-                    </View>
+               
                 
-            </FormContainer>
+                    </FormContainer>
+                    <View>{error ? <Error message={error} /> : null}</View>
+                    <View>{error1 ? <Error message={error1} /> : null}</View>
             </View>
-        </KeyboardAwareScrollView>
+            </KeyboardAwareScrollView>
+            <View style={commonstyles.footer}>
+                <Button variant='link' onPress={() => setPickupAddress()} >
+                    <ButtonText color="$white" fontWeight="$medium" fontSize="$md">Confirm</ButtonText>
+                </Button>
+            </View>
+            </View>
     )
 }
 

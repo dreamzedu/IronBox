@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Text, Spinner, Button, ButtonIcon, ButtonText, ArrowRightIcon, ArrowLeftIcon } from "@gluestack-ui/themed";
 
 import axios from "axios";
-import baseURL from "../../assets/common/baseUrl";
+import { baseURL, apiPrefix } from "../../assets/common/baseUrl";
 
 const Register = (props) => {
   const [email, setEmail] = useState("");
@@ -38,7 +38,7 @@ const Register = (props) => {
       isAgent:false
     };
     axios
-      .post(`${baseURL}users/register`, user)
+        .post(`${baseURL}${apiPrefix}users/register`, user)
       .then((res) => {
         if (res.status == 200) {
           Toast.show({

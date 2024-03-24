@@ -19,7 +19,7 @@ const ProductCard = (props) => {
                 </View>
             </View>
             <View>
-                <Text style={{ textAlign: 'center' }}>Place order now</Text>
+                <Text style={{ textAlign: 'center', fontWeight: 600, marginTop:10 }}>PLACE ORDER NOW</Text>
             </View>
         </View>
 

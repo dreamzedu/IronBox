@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, ScrollView, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
 import axios from 'axios'
-import baseUrl from '../../assets/common/baseUrl'
+import { baseURL, apiPrefix } from '../../assets/common/baseUrl'
 import ServiceItemPrice from './ServiceItemPrice'
 
 var { width } = Dimensions.get("window");
@@ -30,7 +30,7 @@ const RateCard = (props) => {
     const [serviceItems, setServiceItems] = useState([]);
 
     useEffect(() => {
-        axios.get(`${baseUrl}service-items/available`)
+        axios.get(`${baseURL}${apiPrefix}service-items/available`)
             .then((result) => { setServiceItems(result.data) })
             .catch((error) => { console.log(error); })
     }, []);

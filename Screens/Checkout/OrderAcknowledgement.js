@@ -44,7 +44,7 @@ const OrderAcknowledgement = (props) => {
                 <Text size={"xl"} style={{ textAlign: 'center' }}>Thank you! Your order has been placed successfully. </Text>
                 <Heading style={{ fontSize: 20 }}>Order# {order.UUID}</Heading>
                 <Text size={"xl"} style={styles.buttonSpacing}>Total order value: ₹ {order.totalPrice}.00</Text>
-                <Text style={styles.info}>Our pickup boy will come to pickup the laundry on <Text bold={true}> {formatDate(order.pickupSlot.date)}</Text> between <Text bold={true}>{formatTime(order.pickupSlot.startTime) + " to " + formatTime(order.pickupSlot.endTime)}.</Text>
+                <Text style={styles.info}>Our pickup executive will come to pickup the laundry on <Text bold={true}> {formatDate(order.pickupSlot.date)}</Text> between <Text bold={true}>{formatTime(order.pickupSlot.startTime) + " to " + formatTime(order.pickupSlot.endTime)}.</Text>
                     <Text>Please make yourself available during the scheduled time.</Text></Text>
                 <View >
                     
@@ -52,9 +52,9 @@ const OrderAcknowledgement = (props) => {
                     <Button onPress={() => goToCheckout()} style={styles.buttonSpacing} >
                         <ButtonText fontWeight="$medium" fontSize="$md">Place another order</ButtonText>
                     </Button>
-                    <Button onPress={() => props.navigation.navigate("Order Detail", { orderId: order.id })}  style={styles.buttonSpacing}>
-                        <ButtonText fontWeight="$medium" fontSize="$md">View order detail</ButtonText>
-                    </Button>
+                    {/*<Button onPress={() => props.navigation.navigate("Order Detail", { orderId: order.id })}  style={styles.buttonSpacing}>*/}
+                    {/*    <ButtonText fontWeight="$medium" fontSize="$md">View order detail</ButtonText>*/}
+                    {/*</Button>*/}
                     <Button onPress={() => { props.navigation.dispatch(StackActions.popToTop()); props.navigation.navigate("Home"); }}>
                         <ButtonText fontWeight="$medium" fontSize="$md">Home</ButtonText>
                     </Button>

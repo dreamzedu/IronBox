@@ -54,7 +54,7 @@ const MyOrders = (props) => {
         }, [context.stateUser.isAuthenticated]))
 
 
-    return (loading ? <Spinner size='small'></Spinner>
+    return (loading ? <Spinner size='large'></Spinner>
         :
         <ScrollView >
             <View style={styles.container}>

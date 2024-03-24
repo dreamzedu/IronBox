@@ -1,4 +1,4 @@
-
+﻿
 import React, { useEffect, useState, useContext } from 'react';
 import { View, FlatList, StyleSheet, Dimensions,  ScrollView, SectionList } from 'react-native';
 import ServiceItem from './ServiceItem'
@@ -7,10 +7,11 @@ import AuthGlobal from "../../Context/store/AuthGlobal"
 import ItemsFilter from '../Products/ItemsFilter';
 import { getServiceItemCategories, getServiceItems } from '../../Services/data-service'
 import axios from "axios";
-import baseUrl from "../../assets/common/baseUrl";
+import { baseURL, apiPrefix } from "../../assets/common/baseUrl";
 import { connect } from "react-redux";
-import * as actions from "../../Redux/Actions/cartActions";
+//import * as actions from "../../Redux/Actions/cartActions";
 import * as orderActions from "../../Redux/Actions/orderActions";
+import * as commonstyles from "../../common-styles";
 
 var { width, height } = Dimensions.get("window");
 
@@ -45,12 +46,13 @@ const AddItems = (props) => {
     var [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log("Add Items reloaded...")
         let p = 0;
         if (order?.items?.length > 0) {
-            order.items.map((item) => {
-                p += item.price * item.count;
-            });
-            setTotalPrice(p);
+            //order.items.map((item) => {
+            //    p += item.price * item.count;
+            //});
+            //setTotalPrice(p);
             setConfirmBtnDisable(false);
         }
 
@@ -68,13 +70,26 @@ const AddItems = (props) => {
         //    .error((err) => { console.log(err); setLoading(false) })
 
         if (serviceItems === null || serviceItems.length===0) {
-            axios.get(`${baseUrl}service-items/available`)
+            axios.get(`${baseURL}${apiPrefix}service-items/available`)
                 .then((result) => {
                     var serviceItems = result.data;
-                    if (serviceItems && props.cartItems?.length > 0) {
-                        for (var i = 0; i < props.cartItems.length; i++) {
-                            var serviceItem = serviceItems.find(x => { if (x.id === props.cartItems[i].id) { x.count = props.cartItems[i].count; return; } });
+                    if (props.order?.items && props.order?.items?.length > 0) {
+                    let orderItems = [ ...props.order.items ];
+                        if (serviceItems && orderItems?.length > 0) {
+                            for (var i = 0; i < orderItems.length; i++) {
+                                var serviceItem = serviceItems.find(x => {
+                                    if (x.id === orderItems[i].id) {
+                                        x.count = orderItems[i].count;
+                                        orderItems[i].price = x.price;
+                                        return x;
+                                    }
+                                });
+                                if (serviceItem === null) {
+                                    props.removeItem({ id: serviceItem.id, name: serviceItem.name, price: serviceItem.price })
+                                }
+                            }
 
+                            props.updateOrder({ ...props.order, items: orderItems });
                         }
                     }
                     //console.log(serviceItems);
@@ -85,7 +100,7 @@ const AddItems = (props) => {
                 })
                 .catch((error) => { console.log(error); setLoading(false) })
         }
-    }, [props.cartItems]);
+    }, [props.order.items]);
 
 
     var groupBy = function (xs, key) {
@@ -111,51 +126,55 @@ const AddItems = (props) => {
     }
 
     const removeItem = (item) => {
-        if (props.cartItems === null || props.cartItems.length === 1) {
+        if (props.order.items === null || props.order.items.length === 1) {
             setConfirmBtnDisable(true);
         }
-        //setAddedItems(addedItems.filter(x => x.id !== item.id));
-        props.removeFromCart(item);
-        setTotalPrice(totalPrice - item.price);
-        //console.log(addedItems);
+        ////setAddedItems(addedItems.filter(x => x.id !== item.id));
+        //props.removeFromCart(item);
+        //setTotalPrice(totalPrice - item.price);
+        ////console.log(addedItems);
+        props.removeItem({ id: item.id, name: item.name, price: item.price, count: 1 });
         
     }
 
     const addItem = (item) => {
-        //let list = [...props.cartItems];
-        //list.push({ id: item.id, name: item.name, price: item.price, count: 1 });
-        //setAddedItems(list);
-        props.addToCart({ id: item.id, name: item.name, price: item.price, count: 1 });
-        setTotalPrice(totalPrice + item.price);
-        //console.log(addedItems);
-        //if (list && list.length > 0) {
+        ////let list = [...props.cartItems];
+        ////list.push({ id: item.id, name: item.name, price: item.price, count: 1 });
+        ////setAddedItems(list);
+        //props.addToCart({ id: item.id, name: item.name, price: item.price, count: 1 });
+        //setTotalPrice(totalPrice + item.price);
+        ////console.log(addedItems);
+        props.addItem({ id: item.id, name: item.name, price: item.price, count: 1 });
+        ////if (list && list.length > 0) {
             setConfirmBtnDisable(false);
         //}
     }
 
     const increase = (item) => {
-        props.addToCart({ id: item.id, name: item.name, price: item.price, count: 1 });
-        //let addedItem = addedItems.find(x => x.id === item.id);
-        //addedItem.count = addedItem.count + 1;
-        setTotalPrice(totalPrice + item.price);
-        //console.log(addedItems);
+        //props.addToCart({ id: item.id, name: item.name, price: item.price, count: 1 });
+        ////let addedItem = addedItems.find(x => x.id === item.id);
+        ////addedItem.count = addedItem.count + 1;
+        //setTotalPrice(totalPrice + item.price);
+        ////console.log(addedItems);
+        props.increaseItemCount({ id: item.id, name: item.name, price: item.price, count: 1 });
     }
 
     const decrease = (item) => {
-        props.removeFromCart({ id: item.id, name: item.name, price: item.price, count: 1 });
-        //let addedItem = addedItems.find(x => x.id === item.id);
-        //addedItem.count = addedItem.count - 1;
-        //setTotalPrice(totalPrice - item.price);
-        //console.log(addedItems);
+        //props.removeFromCart({ id: item.id, name: item.name, price: item.price, count: 1 });
+        ////let addedItem = addedItems.find(x => x.id === item.id);
+        ////addedItem.count = addedItem.count - 1;
+        ////setTotalPrice(totalPrice - item.price);
+        ////console.log(addedItems);
+        props.decreaseItemCount({ id: item.id, name: item.name, price: item.price, count: 1 });
     }
 
     const confirmItemSelection = () => {
-        order.items = props.cartItems;
-        order.totalPrice = totalPrice;
+        //order.items = props.cartItems;
+        //order.totalPrice = totalPrice;
 
-        props.updateOrder(order);
+        //props.updateOrder(order);
 
-        if (context.stateUser.user.isAdmin && props.flow === "admin") {
+        if (context.stateUser.user.isAdmin && props.flow === "update") {
             props.updateOrderItems(order) // updateOrderItems is coming from AdminUpdateOrderItems
         }
         else {
@@ -164,10 +183,11 @@ const AddItems = (props) => {
     }
 
     const skipItemSelection = () => {
-        if (context.stateUser.user.isAdmin && props.flow === "admin") {
-            props.navigation.navigate("OrderDetail", { order: order });
+        if (context.stateUser.user.isAdmin && props.flow === "update") {
+            props.navigation.navigate("Order Detail", { order: order });
         }
         else {
+            props.updateOrder({...props.order, items:[]})
             props.navigation.navigate("Review Order");
         }
     }
@@ -221,16 +241,21 @@ const AddItems = (props) => {
             //    keyExtractor={(item) => item.id}
                     ///>
                 }
+                <View style={[styles.row, styles.listHeader]}>
+                    <Text style={[styles.headerItem, { flexShrink: 0.1 }]}></Text>
+                    <Text style={[styles.headerItem, { flexGrow: 0.5 }]}>Total Price:  <Text style={{ fontWeight: 800 }}>₹{props.order?.totalPrice}</Text></Text>
+                    <Text style={[styles.headerItem, { flexGrow: 0.4 }]}>Item Count: <Text style={{ fontWeight: 800 }}>{props.order?.items?.reduce((n, { count }) => n + count, 0)}</Text></Text>
+                </View>
                 <View style={styles.info}>
 
                     < Text >You can add the items or skip it for now and our pickup agent will add this for you at the time of pickup.</Text>
                 </View>
-                <View style={[styles.row, { paddingLeft: 10, paddingRight: 10, marginBottom:10 }]} >
-                    <Button style={[styles.alignLeft, styles.buttonMargin]} onPress={() => skipItemSelection()}>
-                        <ButtonText fontWeight="$medium" fontSize="$md">{props.flow === "admin" ? "Cancel" : "Skip Selection"}</ButtonText>
+                <View style={[styles.row, commonstyles.footer]} >
+                    <Button variant='link' style={[styles.alignLeft, styles.buttonMargin]} onPress={() => skipItemSelection()}>
+                        <ButtonText color='$white' fontWeight="$medium" fontSize="$md">{props.flow === "admin" ? "Cancel" : "Skip Selection"}</ButtonText>
                     </Button>
-                    <Button style={[styles.alignLeft, styles.buttonMargin]} onPress={() => confirmItemSelection()} isDisabled={confirmBtnDisabled}>
-                        <ButtonText fontWeight="$medium" fontSize="$md">Confirm Selection</ButtonText>
+                    <Button variant='link' style={[styles.alignLeft, styles.buttonMargin]} onPress={() => confirmItemSelection()} isDisabled={confirmBtnDisabled}>
+                        <ButtonText color='$white' fontWeight="$medium" fontSize="$md">Confirm Selection</ButtonText>
                     </Button>
 
                     </View>
@@ -250,10 +275,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        clearCart: () => dispatch(actions.clearCart()),
-        removeFromCart: (item) => dispatch(actions.removeFromCart(item)),
-        addToCart: (item) => dispatch(actions.addToCart(item)),
-        updateOrder: (order) => dispatch(orderActions.updateOrder(order))
+        addItem: (item) => dispatch(orderActions.addItem(item)),
+        removeItem: (item) => dispatch(orderActions.removeItem(item)),
+        increaseItemCount: (item) => dispatch(orderActions.increaseItemCount(item)),
+        decreaseItemCount: (item) => dispatch(orderActions.decreaseItemCount(item)),
+        updateOrder: (order) => dispatch(orderActions.updateOrder(order)),
     }
 }
 
@@ -271,11 +297,16 @@ const styles = StyleSheet.create({
     listHeader: {
         flexDirection: 'row',
         padding: 5,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        elevation:1,
     },
     headerItem: {
         margin: 3,
-        width: (width - 20) / 3
+        //width: (width - 20) / 3,
+        flex:0.3,
+        //fontWeight: '600',
+        fontWeight: '400',
+
     },
     header: {
         fontSize: 20,
@@ -286,10 +317,10 @@ const styles = StyleSheet.create({
     info:
     {
         backgroundColor: '#fafad2',
-        margin: 10,
+        //margin: 10,
         marginTop:0,
-        elevation: 1,
-        padding: 10
+        //elevation: 1,
+        padding: 10,
     },
     row: {
         display: 'flex',

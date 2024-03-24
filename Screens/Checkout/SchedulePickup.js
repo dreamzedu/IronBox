@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, ScrollView, TextInput, StyleSheet, Dimensions } from 'react-native';
-import { Text, Radio, RadioGroup, VStack, RadioIndicator, RadioLabel, RadioIcon, CircleIcon, Heading, Button, ButtonText } from '@gluestack-ui/themed'
+import { Text, Radio, RadioGroup, VStack, RadioIndicator, RadioLabel, RadioIcon, CircleIcon, Spinner, Button, ButtonText } from '@gluestack-ui/themed'
 import Error from "../../Shared/Error";
 import AuthGlobal from "../../Context/store/AuthGlobal";
 import { connect } from "react-redux";
 import * as actions from "../../Redux/Actions/orderActions";
+import * as commonstyles from "../../common-styles";
 
 const { width, height } = Dimensions.get("window")
 
@@ -14,7 +15,7 @@ const SchedulePickup = (props) => {
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     //let order = props.route.params.order;
     let order = props.order;
-
+   
     let date = new Date();
     let today = new Date();
     let tomorrow = new Date(date.setDate(today.getDate() + 1));
@@ -35,13 +36,14 @@ const SchedulePickup = (props) => {
     const [selectedTimeSlotIndex, setSelectedTimeSlotIndex] = useState(-1);
 
     const [error, setError] = useState("");
+    const [processing, setProcessing] = useState(false);
     //const [testTime, setTestTime] = useState("1");
 
     
     
     useEffect(() => {
         try {
-            
+            console.log("Schedule Pickup reloaded...")
             var currentHours = date.getHours();
             if (currentHours >= timeSlots[timeSlots.length - 1].startTime - 2) {
                 let slots = [...dateSlots]; // making a copy of array as the state should be treated as immutable if we use the same array then the change detection does not work because it compares the reference
@@ -49,25 +51,33 @@ const SchedulePickup = (props) => {
                 setDateSlots(slots);
             }
 
-            setDefaultPickupSlot();
-
+         
             // Set date time in case editing or reviewing the screen
-            if (order.pickupSlot !== null) {
-                var dt = new Date(order.pickupSlot?.date);
+            let pickupSlot = order?.pickupSlot;
+            if (props.flow === 'update') {
+                pickupSlot = props.pickupSlot;
+            }
+
+            setDefaultPickupSlot();            
+
+            if (pickupSlot !== null) {
+                var dt = new Date(pickupSlot?.date);
                 for (var i = 0; i < dateSlots.length; i++) {
                     if (dt?.getDate() === dateSlots[i]?.date?.getDate() && dateSlots[i].isAvailable) {
-                        setSelectedDateSlotIndex(i);
+                        //setSelectedDateSlotIndex(i);
+                        onDateSlotChanged(i)
                         break;
                     }
                 }
 
                 for (var i = 0; i < timeSlots.length; i++) {
-                    if (order?.pickupSlot?.startTime === timeSlots[i].startTime && order?.pickupSlot?.endTime === timeSlots[i].endTime && timeSlots[i].isAvailable) {
+                    if (pickupSlot?.startTime === timeSlots[i].startTime && pickupSlot?.endTime === timeSlots[i].endTime && timeSlots[i].isAvailable) {
                         setSelectedTimeSlotIndex(i);
                         break;
                     }
                 }
             }
+                        
         }
         catch (e) {
             console.log(e)
@@ -100,18 +110,20 @@ const SchedulePickup = (props) => {
         else {
             let pickupSlot = { date: dateSlots[selectedDateSlotIndex].date.toString(), startTime: timeSlots[selectedTimeSlotIndex].startTime, endTime: timeSlots[selectedTimeSlotIndex].endTime }
             order = { ...order, pickupSlot: pickupSlot};
-
-            props.updateOrder(order);
-
-            if (context.stateUser.user.isAdmin && props.flow === "admin") {
-                props.updatePickupSchedule(order) // updatePickupSchedule is coming from AdminUpdatePickupSchedule
+                        
+            if (context.stateUser.user.isAdmin && props.flow === "update") {
+                props.updatePickupSchedule(pickupSlot) // updatePickupSchedule is coming from AdminUpdatePickupSchedule
+                
+                
             }
             else {
+                props.updateOrder(order);
                 //props.navigation.navigate("Add Items", { order: order });
                 props.navigation.navigate("Add Items");
             }
         }
     }
+
 
     function onTimeSlotChanged(selectedIndex) {
         setSelectedTimeSlotIndex(selectedIndex);
@@ -123,81 +135,86 @@ const SchedulePickup = (props) => {
         setError("");
         resetTimeSlots();
 
-        let selectedDate = dateSlots[selectedIndex];
-        if (selectedDate.date.getDate() === today.getDate()) {
-            var currentHours = date.getHours(); //testTime;
-            for (var i = timeSlots.length-1; i >=0 ; i--) {
-                if (currentHours >= timeSlots[i].startTime -2) {
-                    for (var j = 0; j <= i; j++) {
-                        timeSlots[j].isAvailable = false;
+        if (selectedIndex !== -1) {
+            let selectedDate = dateSlots[selectedIndex];
+            if (selectedDate.date.getDate() === today.getDate()) {
+                var currentHours = date.getHours(); //testTime;
+                for (var i = timeSlots.length - 1; i >= 0; i--) {
+                    if (currentHours >= timeSlots[i].startTime - 2) {
+                        for (var j = 0; j <= i; j++) {
+                            timeSlots[j].isAvailable = false;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
+            setTimeSlots(timeSlots);
         }
-        setTimeSlots(timeSlots);
     }
 
     function resetTimeSlots() {
         for (var j = 0; j < timeSlots.length; j++) {
             timeSlots[j].isAvailable = true;
         }
+        onTimeSlotChanged(-1);
     }
         
 
     return (
-        <ScrollView style={{ backgroundColor: 'white' }}>
-        <View style={styles.container}>
-            
+        
+            <View style={commonstyles.container}>
+            <ScrollView style={{ backgroundColor: 'white' }}>
+                <View style={commonstyles.subContainer}>
+                    <View >
+                        <Text style={styles.title}>Choose pickup date</Text>            
+                        <View style={{ paddingLeft: 10, paddingBottom: 10 }}>
 
-                <View >
-                    <Text style={styles.title}>Choose pickup date</Text>            
-                    <View style={{ paddingLeft: 10, paddingBottom: 10 }}>
-
-                    <RadioGroup value={selectedDateSlotIndex} onChange={(selectedIndex) => onDateSlotChanged(selectedIndex)}>
-                        <VStack space="md">
-                            {dateSlots.map((slot, index) => {
-                                return (<Radio value={index} isDisabled={!slot.isAvailable} key={ 'date'+ index}>
-                                <RadioIndicator mr="$2">
-                                    <RadioIcon as={CircleIcon} />
-                                </RadioIndicator>
-                                    <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)": "")}</RadioLabel>
-                                </Radio>)                           
-                            })}
-                        </VStack>
-                    </RadioGroup>
-                </View>
-                </View>
-                <View style={{ paddingTop: 20, paddingBottom:20 }}>
-                    <Text style={styles.title}>Choose pickup time-slot</Text>            
-                    <View style={{ paddingLeft: 10, paddingBottom: 10 }}>
-                    <RadioGroup value={selectedTimeSlotIndex} onChange={(selectedIndex) => onTimeSlotChanged(selectedIndex)}>
-                        <VStack space="md">
-                            {timeSlots.map((slot, index) => {
-                                return (<Radio value={index} isDisabled={!slot.isAvailable} key={'time' + index}>
+                        <RadioGroup value={selectedDateSlotIndex} onChange={(selectedIndex) => onDateSlotChanged(selectedIndex)}>
+                            <VStack space="md">
+                                    {dateSlots.map((slot, index) => {
+                                        return (<Radio style={{marginVertical:5}} value={index} isDisabled={!slot.isAvailable} key={'date' + index}>
                                     <RadioIndicator mr="$2">
                                         <RadioIcon as={CircleIcon} />
                                     </RadioIndicator>
-                                    <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)" : "")}</RadioLabel>
-                                </Radio>)
-                            })}
-                        </VStack>
-                    </RadioGroup>
+                                        <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)": "")}</RadioLabel>
+                                    </Radio>)                           
+                                })}
+                            </VStack>
+                        </RadioGroup>
+                    </View>
+                    </View>
+                    <View style={{ paddingTop: 20, paddingBottom:20 }}>
+                        <Text style={styles.title}>Choose pickup time-slot</Text>            
+                        <View style={{ paddingLeft: 10, paddingBottom: 10 }}>
+                        <RadioGroup value={selectedTimeSlotIndex} onChange={(selectedIndex) => onTimeSlotChanged(selectedIndex)}>
+                            <VStack space="md">
+                                {timeSlots.map((slot, index) => {
+                                    return (<Radio style={{ marginVertical: 5 }} value={index} isDisabled={!slot.isAvailable} key={'time' + index}>
+                                        <RadioIndicator mr="$2">
+                                            <RadioIcon as={CircleIcon} />
+                                        </RadioIndicator>
+                                        <RadioLabel>{slot.description + (!slot.isAvailable ? " (Not Available)" : "")}</RadioLabel>
+                                    </Radio>)
+                                })}
+                            </VStack>
+                        </RadioGroup>
                 
-                                </View>
+                                    </View>
+                    </View>
+                    {/*<View><Text>Note: you can re-schedule the pick until one hour before the scheduled pickup. Any re-schedule or cancellation after that is chargable.</Text></View>*/}
+                    {/*<TextInput value={testTime} onChangeText={(value) => setTestTime(value)} />*/}
+            
+                    <View>{error ? <Error message={error} /> : null}</View>
+                    {processing ? <Spinner size='large'></Spinner> : null}
                 </View>
-            {/*<View><Text>Note: you can re-schedule the pick until one hour before the scheduled pickup. Any re-schedule or cancellation after that is chargable.</Text></View>*/}
-            {/*<TextInput value={testTime} onChangeText={(value) => setTestTime(value)} />*/}
-            <View style={{ alignItems: "center" }}>
-                    <Button onPress={() => setPickupslot()} >
-                        <ButtonText fontWeight="$medium" fontSize="$md">Confirm
+            </ScrollView>
+            <View style={commonstyles.footer}>
+                <Button variant='link' onPress={() => setPickupslot()} >
+                    <ButtonText color='$white' fontWeight="$medium" fontSize="$md">Confirm
                         </ButtonText>
-                    </Button>
+                </Button>
             </View>
-            <View>{error ? <Error message={error} /> : null}</View>
-          
-            </View>
-        </ScrollView>
+        </View>
     )
 
 }
@@ -216,12 +233,7 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 10,
-        margin:10,
-        borderRadius: 10,
-        backgroundColor:'white',
-    },
+    
     title: {
         fontWeight: 'bold',
         fontSize: 18,

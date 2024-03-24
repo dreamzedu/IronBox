@@ -17,8 +17,9 @@ import MyCancelOrder from '../Screens/User/MyCancelOrder';
 import UpdateUserProfile from '../Screens/User/UpdateUserProfile';
 import AddressEditor from '../Screens/User/AddressEditor';
 import CancelOrder from '../Screens/Order/CancelOrder';
-
+import * as commonstyles from "../common-styles";
 import MyOrders from "../Screens/User/MyOrders";
+import PaymentOptions from '../Screens/Payment/PaymentOptions';
 
 const Stack = createNativeStackNavigator();
 
@@ -64,17 +65,21 @@ function MyStack() {
             <Stack.Screen
                 name="Rate Card"
                 component={RateCard}
-                options={{ headerShown: true }} />
+                options={{ headerShown: true, headerStyle: commonstyles.header, }} />
             <Stack.Screen
                 name="Order Detail"
                 component={OrderDetail}
-                options={{ headerShown: true }} />
+                options={{
+                    headerShown: true,
+                    headerStyle: commonstyles.header
+                }} />
             <Stack.Screen
                 name="My Order Detail"
                 component={MyOrderDetail}                
                 options={{
                     headerShown: true,
-                    title: 'Order Detail'
+                    title: 'Order Detail',
+                    headerStyle: commonstyles.header
                 }} />
             <Stack.Screen
                 name="My Cancel Order"
@@ -88,6 +93,7 @@ function MyStack() {
                 component={CancelOrder}
                 options={{
                     headerShown: true,
+                    headerStyle: commonstyles.header,
                 }} />
 
             {/*<Stack.Screen*/}
@@ -100,20 +106,31 @@ function MyStack() {
                 options={{
                     title: 'My Orders',
                     headerShown: true,
+                    headerStyle: commonstyles.header,
                 }}
             />
             <Stack.Screen
                 name="Edit Profile"
                 component={UpdateUserProfile}
                 options={{
-                    headerShown: true
+                    headerShown: true,
+                    headerStyle: commonstyles.header,
                 }}
             />
             <Stack.Screen
                 name="AddressEditor"
                 component={AddressEditor}
                 options={{
-                    headerShown: true
+                    headerShown: true,
+                    headerStyle: commonstyles.header,
+                }}
+            />
+            <Stack.Screen
+                name="Payment"
+                component={PaymentOptions}
+                options={{
+                    headerShown: true,
+                    headerStyle: commonstyles.header
                 }}
             />
         </Stack.Navigator>

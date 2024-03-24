@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     },
 
     col3: {
-        flexWrap: "wrap",
+        flexWrap: "nowrap",
         width: (width-20) / 3,
         flexShrink: 1,
         justifyContent: 'flex-end',

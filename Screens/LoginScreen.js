@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import baseURL from "../assets/common/baseUrl";
+import { baseURL, apiPrefix } from "../assets/common/baseUrl";
 import Toast from "react-native-toast-message";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
@@ -43,7 +43,7 @@ const LoginScreen = ({navigation}) => {
     }
     setLoading(true);
     let dataToSend = {phone: userPhone, password: userPassword};
-      fetch(`${baseURL}users/login`, {
+      fetch(`${baseURL}${apiPrefix}users/login`, {
           method: "POST",
 
       body: JSON.stringify(dataToSend),

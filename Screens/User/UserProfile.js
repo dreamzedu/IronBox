@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useEffect } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from "@react-navigation/native"
 import OrderCard from "../../Shared/OrderCard"
 import { getUserOrders } from '../../Services/data-service';
@@ -124,8 +124,10 @@ const UserProfile = (props) => {
                     <View>
                         {orders ? (
                         orders.map((x) => {
-                            return <View key={x.id} style={[styles.borderTop, { padding:10 }]}>
-                                    <OrderCard order={x} navigation={props.navigation} />                                  
+                            return <View key={x.id} style={[styles.borderTop, { padding: 10 }]}>
+                                <TouchableOpacity onPress={() => props.navigation.navigate("Order Detail", { orderId: x.id })}>
+                                    <OrderCard order={x} navigation={props.navigation} />
+                                </TouchableOpacity>
                                 </View>
                         })
 
@@ -180,6 +182,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 20,
         paddingBottom: 10,
+    },
+    alignLeft:
+    {
+        alignSelf: 'stretch',
+        flex: 1
     },
 })
 

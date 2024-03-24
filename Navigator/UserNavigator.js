@@ -8,6 +8,7 @@ import UpdateUserProfile from '../Screens/User/UpdateUserProfile';
 import AddressEditor from '../Screens/User/AddressEditor';
 import MyOrderDetail from '../Screens/User/MyOrderDetail'
 import AuthGlobal from "../Context/store/AuthGlobal"
+import * as commonstyles from "../common-styles";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,7 +21,8 @@ function MyStack() {
                 component={UserProfile}
             
                 options={{
-                    headerShown: true
+                    headerShown: true,
+                    headerStyle:  commonstyles.header 
                 }}
             />
             {/*<Stack.Screen*/}

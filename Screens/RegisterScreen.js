@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 
 import Loader from './Components/Loader';
-import baseURL from "../assets/common/baseUrl";
+import { baseURL, apiPrefix } from "../assets/common/baseUrl";
 import Toast from "react-native-toast-message";
 import axios from "axios";
 
@@ -71,7 +71,7 @@ const RegisterScreen = (props) => {
         };
 
         axios
-            .post(`${baseURL}users/register`, user)
+            .post(`${baseURL}${apiPrefix}users/register`, user)
             .then((res) => {
                 setLoading(false);
                 if (res.status == 200) {

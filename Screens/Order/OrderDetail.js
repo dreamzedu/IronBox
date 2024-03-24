@@ -8,8 +8,6 @@ import AddressCard from "../../Shared/AddressCard"
 import AuthGlobal from "../../Context/store/AuthGlobal"
 
 
-
-
 const OrderDetail = (props) => {
     const [orderStatus, setOrderStatus] = useState();
     const [order, setOrder] = useState();
@@ -18,7 +16,7 @@ const OrderDetail = (props) => {
 
     useEffect(() => {
         const orderId = props.route.params.orderId;
-        
+        console.log('order detail reloaded')
            
                 getOrderDetail(orderId).then((res) => {
 
@@ -49,9 +47,6 @@ const OrderDetail = (props) => {
                         console.log(e)
                     }
                 });
-                
-                 
-
 
         return () => {
             setOrderStatus();
@@ -66,17 +61,17 @@ const OrderDetail = (props) => {
                 order ?
                     (<View style={styles.container}>
                         <View style={[styles.box, styles.roundBorder]}>
-                            <View style={styles.row}><Text style={styles.center} size={"md"}>{order.product.name}</Text></View>
+                            <View style={styles.row}><Text style={[styles.center, { fontSize:18 }]} size={"md"}>{order.product.name}</Text></View>
                             <View style={styles.row}><Text style={styles.alignLeft}>Order Number:</Text><Text> #{order.UUID}</Text></View>
                             <View style={styles.row}><Text style={styles.alignLeft}>Date Ordered:</Text><Text> {formatDate(order.dateOrdered.split("T")[0])}</Text></View>
                             <View style={styles.row}><Text style={styles.alignLeft}>Total Cost: </Text><Text>₹ {order.totalPrice + order.cancelCharges}.00</Text></View>
                         </View>
 
                         <View style={styles.row}>
-                            <Heading style={styles.alignLeft}>Oredr Status</Heading>
-                        {order.status.name !== "Cancelled" ?
-                                <View style={styles.alignRight}>
-                                    <Button style={{ marginBottom:-10 }} variant="link" onPress={() => props.navigation.navigate("Cancel Order", { orderData: order })}>
+                            <Heading size='md' style={styles.alignLeft}>Oredr Status</Heading>
+                            {(context.stateUser.user.isAdmin && order.status.code !== 5 && order.status.code !== 6) || order.status.code < 3 ?
+                                <View >
+                                    <Button style={{ marginBottom:-5, marginTop:-5 }} variant="link" onPress={() => props.navigation.navigate("Cancel Order", { orderData: order })}>
                                     {/*<Button style={{ marginBottom: -10 }} variant="link" onPress={() => props.cancelOrder(order)}>*/}
                                     <ButtonText fontWeight="$medium" fontSize="$md">Cancel Order</ButtonText>
                             </Button></View>
@@ -98,11 +93,12 @@ const OrderDetail = (props) => {
                            
                         </View>
                         <View style={styles.row}>
-                            <Heading style={styles.alignLeft}>Pickup Slot</Heading>
+                            <Heading size='md' style={styles.alignLeft}>Pickup Slot</Heading>
                             {//admin flow for updating pick schedule before the order is picked up
                                 (context.stateUser.user.isAdmin && order.status.code < 3) ?
-                                    <View style={styles.alignRight}>
-                                        <Button style={{ marginBottom: -10 }} variant="link" onPress={() => { props.navigation.navigate("AdminNavigator", { screen: "Admin - Update Pickup Schedule", params: { order: order } }) }}>
+                                    <View >
+                                        <Button style={{ marginBottom: -5, marginTop:-5 }} variant="link" onPress={() => { props.navigation.navigate("AdminNavigator", { screen: "Admin - Update Pickup Schedule", params: { order: order } }) }}>
+                                        {/*<Button style={{ marginBottom: -5, marginTop: -5 }} variant="link" onPress={() => { props.navigation.navigate("CartNavigator", { screen: "Schedule Pickup", params: { order: order, flow:'update' } } ) }}>*/}
                                             <ButtonText fontWeight="$medium" fontSize="$md">Update Pickup</ButtonText>
                                         </Button></View>
                                     : null}
@@ -112,17 +108,17 @@ const OrderDetail = (props) => {
                             <View style={styles.row}><Text style={styles.alignLeft}>Pickup Time: </Text><Text>{formatTime(order.pickupSlot.startTime) + " to " + formatTime(order.pickupSlot.endTime)}</Text></View>
                         </View>
 
-                        <Heading>Pickup Address</Heading>
+                        <Heading size='md' style={{ marginBottom:5 }}>Pickup Address</Heading>
                         <View style={[styles.box, styles.roundBorder]}>
                             <AddressCard address={order.pickupAddress} />                            
                         </View>
 
                         <View style={styles.row}>
-                            <Heading style={styles.alignLeft}>Item Summary</Heading>
+                            <Heading size='md' style={styles.alignLeft}>Item Summary</Heading>
                             {//order status 2 is not pickedup and 4 is in progress and 5 is complete
                                 (context.stateUser.user.isAdmin && order.status.code < 5) || order.status.code < 3 ?
-                                <View style={styles.alignRight}>
-                                        <Button style={{ marginBottom: -10 }} variant="link" onPress={() => { props.navigation.navigate("AdminNavigator", { screen: "Admin - Update Order Items", params: { order: order } }) }}>
+                                <View >
+                                        <Button style={{ marginBottom: -5, marginTop: -5 }} variant="link" onPress={() => { props.navigation.navigate("AdminNavigator", { screen: "Admin - Update Order Items", params: { order: order } }) }}>
                                         <ButtonText fontWeight="$medium" fontSize="$md">Update Items</ButtonText>
                                     </Button></View>
                                 : null}
@@ -151,10 +147,11 @@ const OrderDetail = (props) => {
   );
 }
 
+
 const styles = StyleSheet.create({
     container: {
         padding: 10,
-        margin: 10,
+        //margin: 10,
         borderRadius: 10,
     },
     //title: {
@@ -208,7 +205,12 @@ const styles = StyleSheet.create({
     },
     alignLeft:
     {
-        alignSelf: 'stretch',
+        justifyContent: 'flex-start',
+        flex: 1
+    },
+    alignRight:
+    {
+        justifyContent: 'flex-end',
         flex: 1
     },
     roundBorder:
@@ -244,3 +246,4 @@ const styles = StyleSheet.create({
 });
 
 export default OrderDetail;
+

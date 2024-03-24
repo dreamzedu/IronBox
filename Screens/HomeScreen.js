@@ -14,19 +14,25 @@ import { Text, Heading, Spinner, Button, ButtonText } from "@gluestack-ui/themed
 import ProductList from "./Products/ProductList";
 import Banner from "../Shared/Banner";
 import OrderCard from "../Shared/OrderCard";
-import { getUserOrders, getProducts, getOrderDetail } from '../Services/data-service';
+import { getHomePageOrderData, getProducts, getOrderDetail } from '../Services/data-service';
 import AuthGlobal from "../Context/store/AuthGlobal";
 import { connect } from "react-redux";
 import * as orderActions from "../Redux/Actions/orderActions";
 import * as actions from "../Redux/Actions/cartActions";
+import { baseURL, apiPrefix } from "../assets/common/baseUrl";
+import PaymentCard from "./Payment/PaymentCard";
 
 var { height, width } = Dimensions.get('window')
 
 const HomeScreen = (props) => {
+    console.log('base url: ' + baseURL)
+    console.log('api prefix: ' + apiPrefix)
+
     const [products, setProducts] = useState([]);
     const [productsCtg, setProductsCtg] = useState([]);
     const [focus, setFocus] = useState(false);
-    const [lastOrder, setLastOrder] = useState();   
+    const [lastOrder, setLastOrder] = useState();
+    const [ordersPendingPayment, setOrdersPendingPayment] = useState([]);
     const [loading, setLoading] = useState(true)
     const [processing, setProcessing] = useState(false)
     const [error, setError] = useState(true);
@@ -75,12 +81,21 @@ const HomeScreen = (props) => {
             () => {
                 setLoading(true);
                 if (context?.stateUser?.isAuthenticated) {
-                    getUserOrders(context?.stateUser?.user.userId, pageIndex, pageSize).then((result) => {
-                        console.log("user order: " + result[0]);
-                        if (result?.length > 0)
-                            setLastOrder(result[0]);
+                    //getUserOrders(context?.stateUser?.user.userId, pageIndex, pageSize).then((result) => {                      
+                    //    if (result?.length > 0)
+                    //        setLastOrder(result[0]);
+                    //})
+                    //    .catch((err) => { console.log(err) })
+
+                    getHomePageOrderData(context?.stateUser?.user.userId, pageIndex, pageSize).then((result) => {
+                        if (result) {
+                            if(result.latestOrders.length >0)
+                                setLastOrder(result.latestOrders[0]);
+                            if (result.pendingPayment.length > 0)
+                                setOrdersPendingPayment(result.pendingPayment);
+                        }
                     })
-                        .catch((err) => { console.log(err) })
+                    .catch((err) => { console.log(err) })
                 }
 
                 try {
@@ -133,7 +148,7 @@ const HomeScreen = (props) => {
                             
                         };
                         props.createOrder(order);
-                        props.setCartItems(order.items);
+                        //props.setCartItems(order.items);
                         setProcessing(false);
                         props.navigation.navigate("CartNavigator", { screen: "Schedule Pickup" });
                     }
@@ -197,13 +212,21 @@ const HomeScreen = (props) => {
                 <View>
                     <Banner />
                 </View>
-                <Heading style={styles.heading}>
-                    Our services
-                </Heading>
                 {loading ?
-                    <Spinner size='small' ></Spinner>
+                    <Spinner size='large' ></Spinner>
                     :
+                <>
+                        {context?.stateUser?.isAuthenticated && ordersPendingPayment ?
+                            
+                                ordersPendingPayment.map((order) => {
+                                    return (
+                                        <View style={styles.cardContainer}><PaymentCard order={order} navigation={props.navigation}></PaymentCard></View>)
+                                }) : null}
+                    <Heading style={styles.heading}>
+                        Our services
+                    </Heading>               
                     <View>
+                        
                         <View>
                             {productsCtg.length > 0 ? (
                                 <View style={styles.listContainer}>
@@ -267,7 +290,8 @@ const HomeScreen = (props) => {
                             null
                         }
                        
-                    </View>
+                            </View>
+                </>
                 }
                 <View style={{ height:40 }}></View>
             </View>

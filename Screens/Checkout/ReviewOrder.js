@@ -11,6 +11,7 @@ import AddressCard from "../../Shared/AddressCard";
 import AuthGlobal from "../../Context/store/AuthGlobal";
 import { connect } from "react-redux";
 import * as actions from "../../Redux/Actions/orderActions";
+import * as commonstyles from "../../common-styles";
 
 var { width, height } = Dimensions.get("window");
 
@@ -23,7 +24,7 @@ const ReviewOrder = (props) => {
     const [productUpdate, setProductUpdate] = useState();
     const [processing, setProcessing] = useState(false);
   useEffect(() => {
-      
+      console.log("Review Order reloaded...")
   }, [props]);
 
   
@@ -45,7 +46,7 @@ const ReviewOrder = (props) => {
                         props.setLatestOrder(newOrder);
                         props.navigation.navigate("Order Acknowledgement" );
                         setProcessing(false);
-              }, 50);
+              }, 0);
           }
           else {
               Toast.show({
@@ -67,61 +68,67 @@ const ReviewOrder = (props) => {
       });
   };
 
-  return (
-        <ScrollView>
-          {
-                order ?
-                    (<View style={styles.container}>
-                        <View style={[styles.box, styles.roundBorder]}>
-                          <View style={styles.row}><Text style={styles.center} size={"lg"}>{order.productName}</Text></View>
+    return (
+        <View style={commonstyles.container}>
+            {processing ? <Spinner size='small'></Spinner> :
+                <ScrollView>
+                    {
+                        order ?
+                            (<View style={commonstyles.subContainer}>
+                                <View style={[styles.box, styles.roundBorder]}>
+                                    <View style={styles.row}><Text style={styles.center} size={"lg"}>{order.productName}</Text></View>
 
-                            <View style={[styles.row, { justifyContent: 'center' }]}>
-                                <Text >Total Order Value: </Text><Text>₹ {order.totalPrice}.00</Text>
-                            </View> 
-                          {order.totalPrice < 100 ?
-                              <View style={{ backgroundColor: 'yellow', padding: 5, marginTop:10 }}><Text>Your minimum order value has to be ₹100. If you have not added the items to your order now, no worries! our executive will add items for you while pickup.</Text></View> : <></>
-                          }
-                      </View>
-                                              
-                        <Heading>Pickup Schedule</Heading>
-                        <View style={[styles.box, styles.roundBorder]}>
-                            <View style={styles.row}><Text style={styles.alignLeft}>Pickup Date: </Text><Text>{formatDate(order.pickupSlot.date)}</Text></View>
-                            <View style={styles.row}><Text style={styles.alignLeft}>Pickup Time: </Text><Text>{formatTime(order.pickupSlot.startTime) + " to " + formatTime(order.pickupSlot.endTime)}</Text></View>
-                        </View>
+                                    <View style={[styles.row, { justifyContent: 'center' }]}>
+                                        <Text >Total Order Value: </Text><Text>₹ {order.totalPrice}.00</Text>
+                                    </View>
+                                    {order.totalPrice < 100 ?
+                                        <View style={{ backgroundColor: 'yellow', padding: 5, marginTop: 10 }}><Text>Your minimum order value has to be ₹100. If you have not added the items to your order now, no worries! our executive will add items for you while pickup.</Text></View> : <></>
+                                    }
+                                </View>
 
-                        <Heading>Pickup Address</Heading>
-                        <View style={[styles.box, styles.roundBorder]}>
-                            <AddressCard address={order.pickupAddress} />
-                        </View>
+                                <Heading>Pickup Schedule</Heading>
+                                <View style={[styles.box, styles.roundBorder]}>
+                                    <View style={styles.row}><Text style={styles.alignLeft}>Pickup Date: </Text><Text>{formatDate(order.pickupSlot.date)}</Text></View>
+                                    <View style={styles.row}><Text style={styles.alignLeft}>Pickup Time: </Text><Text>{formatTime(order.pickupSlot.startTime) + " to " + formatTime(order.pickupSlot.endTime)}</Text></View>
+                                </View>
 
-                        <Heading style={styles.alignLeft}>Item Summary</Heading>
-                         
-                        <View style={[styles.box, styles.roundBorder]}>
-                            {order.items.length <= 0 ? <View><Text>No items added.</Text></View> :
-                                <>
-                                    <View style={[styles.row, styles.borderBottom]} ><Text style={[styles.col1, styles.listHeader]}>Item name</Text><Text style={[styles.col2, styles.listHeader]} >Count</Text><Text style={[styles.col3, styles.listHeader]}>Price</Text></View>
+                                <Heading>Pickup Address</Heading>
+                                <View style={[styles.box, styles.roundBorder]}>
+                                    <AddressCard address={order.pickupAddress} />
+                                </View>
 
-                                  {order.items.map((item) => {
-                                      return (<View style={[styles.row, { paddingVertical: 5 }]} key={item.id}><Text style={styles.col1}>{item.name}</Text><Text style={styles.col2} >{item.count}</Text><Text style={styles.col3}>₹ {item.count * item.price}.0</Text></View>)
-                                    })}
+                                <Heading style={styles.alignLeft}>Item Summary</Heading>
 
-                                  <View style={[styles.row, styles.borderTop, { marginTop: 5 }]} ><Text style={[styles.col1, styles.listHeader]}>Total</Text><Text style={[styles.col2, styles.listHeader]} >{order.items.length}</Text><Text style={[styles.col3, styles.listHeader]}>₹ {order.totalPrice}.0</Text></View>
-                                </>
-                            }
+                                <View style={[styles.box, styles.roundBorder]}>
+                                    {order.items.length <= 0 ? <View><Text>No items added.</Text></View> :
+                                        <>
+                                            <View style={[styles.row, styles.borderBottom]} ><Text style={[styles.col1, styles.listHeader]}>Item name</Text><Text style={[styles.col2, styles.listHeader]} >Count</Text><Text style={[styles.col3, styles.listHeader]}>Price</Text></View>
 
-                      </View>
-                      <View style={{ alignItems: "center", margin: 20 }}>
-                          <Button onPress={() => placeOrder()} isDisabled={processing}>
-                              <ButtonText fontWeight="$medium" fontSize="$md">Place Order</ButtonText>
-                          </Button>
-                          {processing ? <Spinner size='small'></Spinner> : null}
-                      </View>
-                    </View>)
-                    :
-                    (<Spinner size='small'></Spinner>)
+                                            {order.items.map((item) => {
+                                                return (<View style={[styles.row, { paddingVertical: 5 }]} key={item.id}><Text style={styles.col1}>{item.name}</Text><Text style={styles.col2} >{item.count}</Text><Text style={styles.col3}>₹ {item.count * item.price}.0</Text></View>)
+                                            })}
 
+                                            <View style={[styles.row, styles.borderTop, { marginTop: 5 }]} ><Text style={[styles.col1, styles.listHeader]}>Total</Text><Text style={[styles.col2, styles.listHeader]} >{order.items?.reduce((n, { count }) => n + count, 0)}</Text><Text style={[styles.col3, styles.listHeader]}>₹ {order.totalPrice}.0</Text></View>
+                                        </>
+                                    }
+
+                                </View>
+
+                            </View>)
+                            :
+                            (<Spinner size='small'></Spinner>)
+
+                    }
+                </ ScrollView>
             }
-        </ ScrollView>
+            <View style={commonstyles.footer}>
+                <Button variant='link' onPress={() => placeOrder()} isDisabled={processing}>
+                    <ButtonText color='$white' fontWeight="$medium" fontSize="$md">Place Order</ButtonText>
+                </Button>
+                
+            </View>
+        </View>
+
     );
 }
 
@@ -140,11 +147,7 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 10,
-        //margin: 10,
-        borderRadius: 10,
-    },
+    
     //title: {
     //    backgroundColor: "#62B1F6",
     //    padding: 5,

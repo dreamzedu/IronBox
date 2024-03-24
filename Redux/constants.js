@@ -6,3 +6,7 @@ export const UPDATE_ORDER = "UPDATE_ORDER";
 export const CLEAR_ORDER = "CLEAR_ORDER";
 export const SET_LATEST_ORDER = "SET_LATEST_ORDER";
 export const SET_CART_ITEMS = "SET_CART_ITEMS";
+export const ADD_ITEM = "ADD_ITEM";
+export const REMOVE_ITEM = "REMOVE_ITEM";
+export const INCREASE_ITEM_COUNT = "INCREASE_ITEM_COUNT";
+export const DECREASE_ITEM_COUNT = "DECREASE_ITEM_COUNT";

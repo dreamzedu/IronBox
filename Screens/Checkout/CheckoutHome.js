@@ -6,7 +6,7 @@ import ProductList from "../Products/ProductList";
 import { Text, Heading, Spinner, CheckboxIndicator, CheckboxIcon, CheckboxLabel, CheckIcon } from '@gluestack-ui/themed';
 import { connect } from "react-redux";
 import * as orderActions from "../../Redux/Actions/orderActions";
-import * as actions from "../../Redux/Actions/cartActions";
+//import * as actions from "../../Redux/Actions/cartActions";
 
 
 const CheckoutHome = (props) => {    
@@ -52,9 +52,10 @@ const CheckoutHome = (props) => {
                 productId: productId,
                 productName: productName,
                 productCode: productCode,
+                items:[]
             }
             props.clearOrder(); // When landing on home page, any newly created order data should be cleared.
-            props.clearCart(); // any added items should also be cleared.
+            //props.clearCart(); // any added items should also be cleared.
             props.createOrder(orderDetail)
 
             if (orderDetail.pickupAddress) {

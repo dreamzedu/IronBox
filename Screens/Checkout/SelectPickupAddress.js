@@ -6,6 +6,7 @@ import AuthGlobal from '../../Context/store/AuthGlobal'
 import AddressCard from '../../Shared/AddressCard'
 import { connect } from "react-redux";
 import * as actions from "../../Redux/Actions/orderActions";
+import * as commonstyles from "../../common-styles";
 
 const { width, height } = Dimensions.get("window")
 const SelectPickupAddress = (props) => {
@@ -15,6 +16,7 @@ const SelectPickupAddress = (props) => {
     const address = props.order?.pickupAddress;
 
     useEffect(() => {
+        console.log("Select Pickup Address reloaded...")
         if (!context.stateUser.isAuthenticated) {
 
             props.navigation.navigate("Login", { msg: "You must login for this." });
@@ -35,33 +37,37 @@ const SelectPickupAddress = (props) => {
     }
 
     return (
+        <View style={commonstyles.container}>
         <KeyboardAwareScrollView
             viewIsInsideTabBar={true}
             extraHeight={200}
             enableOnAndroid={true}
-            style={{
-                backgroundColor: 'white'
-            }}>
-            <View style={styles.container}>
+            
+           >
+            <View style={styles.subContainer}>
                 <Text style={styles.title}>Pickup Address</Text>
                 <View style={[styles.box, styles.margin]}>
                     <AddressCard address={address} />
                 </View>
-                <View style={styles.center}>
-                    <View style={{ marginTop: 5, marginBottom: 10 }}>
-                        <Button onPress={() => confirmPickupAddress()} >
-                            <ButtonText fontWeight="$medium" fontSize="$md">Confirm</ButtonText>
-                        </Button>
-                    </View>
+                    <View style={commonstyles.center}>
                     <View >
                         <Button variant="link" onPress={() => useDifferentPickupAddress()} >
                             <ButtonText fontWeight="$medium" fontSize="$md">Use Different Address</ButtonText>
                         </Button>
                     </View>
+                    
                 </View>
 
             </View>
-        </KeyboardAwareScrollView>
+            
+            
+            </KeyboardAwareScrollView>
+            <View style={commonstyles.footer}>
+                <Button variant="link" onPress={() => confirmPickupAddress()} >
+                    <ButtonText color="$white" fontWeight="$medium" fontSize="$md">Confirm</ButtonText>
+                </Button>
+            </View>
+            </View>
     )
 }
 
@@ -80,7 +86,8 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    
+    subContainer: {
         padding: 10,
         margin: 10,
         borderRadius: 10,
@@ -125,10 +132,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         
     },
-    center:
-    {
-        alignItems: 'center'
-    }
+
    
 });
 

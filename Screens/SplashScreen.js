@@ -13,7 +13,7 @@ const SplashScreen = ({navigation}) => {
 
     useEffect(() => {
         setTimeout(() => {
-            setAnimating(false);
+            setAnimating(true);
             //Check if user_id is set or not
             //If not then send for Authentication
             //else send to Home Screen
@@ -22,14 +22,14 @@ const SplashScreen = ({navigation}) => {
             //navigation.replace('DrawerNavigator');
             navigation.replace('BottomTabNavigator');
             
-            }, 5000);
+            }, 12000);
         }, []);
 
   return (
     <View style={styles.container}>
       <Image
-        source={require('../Image/aboutreact.png')}
-        style={{width: '90%', resizeMode: 'contain', margin: 30}}
+        source={require('../assets/ironbox-blue.gif')}
+        style={{width: '80%', resizeMode: 'contain', margin: 30}}
           />
           <ActivityIndicator
               animating={animating}
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#307ecc',
+    backgroundColor: '#ffffff',
   },
   activityIndicator: {
     alignItems: 'center',

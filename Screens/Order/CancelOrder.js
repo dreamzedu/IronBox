@@ -5,6 +5,7 @@ import Toast from "react-native-toast-message";
 import OrderCard from "../../Shared/OrderCard";
 import { cancelUserOrder } from '../../Services/data-service';
 import AuthGlobal from "../../Context/store/AuthGlobal"
+import * as commonstyles from "../../common-styles";
 
 var { width, height } = Dimensions.get("window");
 
@@ -111,72 +112,70 @@ const CancelOrder = (props) => {
   };
 
     return (
-        <View style={styles.container}>
-        <ScrollView style={{ backgroundColor:'white' }}>
-          
-              <View style={[styles.box, styles.roundBorder]}>
-                  <OrderCard order={order} navigation={props.navigation} />
-              </View>
-              <View>
-                  <View style={[ styles.info, { marginBottom: 10, marginLeft: 5 }]}>
-                  <Text size="sm" ><Text style={{ fontWeight: "bold" }}>Note: </Text>Any cancellation until one hour prior to the pick slot is free of cost, but any cancellation done after that will be charged Rs 50.</Text>
-                  </View>
-                  <Text style={styles.title}>Select reason for cancellation</Text>
-                  <Select onValueChange={(e) => cancellationReasonChanged(e)} selectedValue={cancelReason}>
-                      <SelectTrigger variant="outline" size="md" >
-                          <SelectInput placeholder="Select Reason" />
-                          <SelectIcon mr="$3">
-                              <Icon as={ChevronDownIcon} />
-                          </SelectIcon>
-                      </SelectTrigger>
-                      <SelectPortal>
-                          <SelectBackdrop />
-                          <SelectContent>
-                              <SelectDragIndicatorWrapper>
-                                  <SelectDragIndicator />
-                              </SelectDragIndicatorWrapper>
-                              {reasons.map((c) => {
-                                  return (
-                                      <SelectItem key={c.code} label={c.name} value={c.name} />
-                                  );
-                              })}
-                          </SelectContent>
-                      </SelectPortal>
-                  </Select>
-              </View>
-                <View style={{ alignItems: "center", margin: 20 }}>
-                    
-                    <Button onPress={() => cancelOrder()} isDisabled={ processing} >
-                        <ButtonText fontWeight="$medium" fontSize="$md">Cancel Order</ButtonText>
-                        
-                    </Button>
-                    {processing ? <Spinner size='large'></Spinner> : null}
-              </View>
-              <View style={{ alignItems: "center", margin: 20 }}>
-                  <Text style={{color:'red'}}>{error}</Text>
-              </View>
-      
-            </ScrollView>
+        <View style={commonstyles.container}>
+
+            {processing ? <Spinner size='large'></Spinner> :
+                <ScrollView style={{ backgroundColor: 'white' }}>
+                    <View style={commonstyles.subContainer}>
+                        <View style={[styles.box, styles.roundBorder]}>
+                            <OrderCard order={order} navigation={props.navigation} />
+                        </View>
+                        <View>
+                            <View style={[styles.info, { marginBottom: 10, marginLeft: 5 }]}>
+                                <Text size="sm" ><Text style={{ fontWeight: "bold" }}>Note: </Text>Any cancellation until one hour prior to the pick slot is free of cost, but any cancellation done after that will be charged Rs 50.</Text>
+                            </View>
+                            <Text style={styles.title}>Select reason for cancellation</Text>
+                            <Select onValueChange={(e) => cancellationReasonChanged(e)} selectedValue={cancelReason}>
+                                <SelectTrigger variant="outline" size="md" >
+                                    <SelectInput placeholder="Select Reason" />
+                                    <SelectIcon mr="$3">
+                                        <Icon as={ChevronDownIcon} />
+                                    </SelectIcon>
+                                </SelectTrigger>
+                                <SelectPortal>
+                                    <SelectBackdrop />
+                                    <SelectContent>
+                                        <SelectDragIndicatorWrapper>
+                                            <SelectDragIndicator />
+                                        </SelectDragIndicatorWrapper>
+                                        {reasons.map((c) => {
+                                            return (
+                                                <SelectItem key={c.code} label={c.name} value={c.name} />
+                                            );
+                                        })}
+                                    </SelectContent>
+                                </SelectPortal>
+                            </Select>
+                        </View>
+
+                        <View style={{ alignItems: "center", margin: 20 }}>
+                            <Text style={{ color: 'red' }}>{error}</Text>
+                        </View>
+                    </View>
+                </ScrollView>
+            }
+            <View style={commonstyles.footer}>
+
+                <Button variant='link' onPress={() => cancelOrder()} isDisabled={processing} >
+                    <ButtonText color='$white' fontWeight="$medium" fontSize="$md">Cancel Order</ButtonText>
+
+                </Button>
+            </View>
         </View>
   );
 };
 
 
 const styles = StyleSheet.create({
-  container: {
-        padding: 10,
-      margin:0,
-    alignContent: "center",
-        backgroundColor: "white",
-    height:height,
-  },
+  
   titleContainer: {
     justifyContent: "center",
     alignItems: "center",
     margin: 8,
   },
   title: {
-    marginTop: 10,
+      marginTop: 10,
+      marginBottom:5,
     fontSize: 18,
     fontWeight: "bold",
   },
